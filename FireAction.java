@@ -23,7 +23,6 @@ public class FireAction implements Action {
     private Texture bulletTexture;
     
     public FireAction() {
-        System.out.println("Fire key pressed!");
         
         bulletTexture = new Texture();
         String bulletTextureFile = "bullet.png";
@@ -42,6 +41,7 @@ public class FireAction implements Action {
     
     @Override
     public void execute() {
+        System.out.println("Fire key pressed!");
         Sprite bulletSprite = new Sprite(bulletTexture);
         
         bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));

@@ -23,6 +23,7 @@ public class PauseMenuScreen implements Screen {
     private final Button[] buttons = new Button[numButtons];
     
     public PauseMenuScreen() {
+        Window.getWindow().setMouseCursorVisible(true);
         buttons[0] = new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-100,
                                 24, 

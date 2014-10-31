@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,22 +29,32 @@ import org.jsfml.window.event.MouseEvent;
 public class Input {
 
     private static final Map<Keyboard.Key, Action> gameKeys = new HashMap<>();
+    
+    private static final Map<Mouse.Button, Action> gameMouseButtons = new HashMap<>();
 
-    private static final Map<String, Class<? extends Action>> Actions = new HashMap<>();
-
+    private static final Map<String, Class<? extends Action>> keyActions = new HashMap<>();
+    
+    private static final Map<String, Class<? extends Action>> mouseActions = new HashMap<>();
+    
     private static Keyboard.Key currentKey;
-
-    private static Vector2f currentMousePos;
     
     private static Mouse.Button currentMouseButton;
 
-    // init actions
+    private static Vector2f currentMousePos;
+    
     static {
-        Actions.put(FireAction.NAME, FireAction.class);
-        Actions.put(UseAction.NAME, UseAction.class);
-        Actions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
-        Actions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
-        Actions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
+        // init keyActions
+        keyActions.put(UseAction.NAME, UseAction.class);
+        keyActions.put(MoveUpAction.NAME, MoveUpAction.class);
+        keyActions.put(MoveDownAction.NAME, MoveDownAction.class);
+        keyActions.put(MoveLeftAction.NAME, MoveLeftAction.class);
+        keyActions.put(MoveRightAction.NAME, MoveRightAction.class);
+        keyActions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
+        keyActions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
+        keyActions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
+        
+        // int mouseActions
+        mouseActions.put(FireAction.NAME, FireAction.class);
     }
 
     public static void handleKeyInput(KeyEvent keyEvent) {
@@ -59,7 +68,6 @@ public class Input {
 
             case "GAME":
                 handleGameKeyInput();
-                handlePlayerKeyInput();
                 break;
         }
     }
@@ -73,17 +81,8 @@ public class Input {
 
     public static void handleGameKeyInput() {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            Window.changeScreen(new PauseMenuScreen());
-        }
-    }
-    
-    public static void handlePlayerKeyInput() {
-        if (gameKeys.containsKey(currentKey)) {
-            try {
-                gameKeys.get(currentKey).getClass().newInstance();
-            } catch (InstantiationException | IllegalAccessException ex) {
-                Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Window.changeScreen(new PauseMenuScreen());     
+        } else if (gameKeys.containsKey(currentKey)) {
             gameKeys.get(currentKey).execute();
         }
     }
@@ -92,27 +91,32 @@ public class Input {
 
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
         currentMouseButton = mouseEvent.button;
-        System.out.format("Mouse clicked on position (%s, %s)\n", currentMousePos.x, currentMousePos.y);
+        System.out.format("Mouse %s clicked on position (%s, %s)\n", currentMouseButton, currentMousePos.x, currentMousePos.y);
 
         if (currentMouseButton == Mouse.Button.LEFT) {
             for (Button i : Window.getCurrentScreen().getButtons()) {
                 if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
                     i.executeAction();
-                    break;
+                    return;
                 }
             }
         }
+        
+        if (Window.getCurrentScreen().toString().equals("GAME")) {
+            if (gameMouseButtons.containsKey(currentMouseButton)) {
+                gameMouseButtons.get(currentMouseButton).execute();
+            }
+        }
+        
     }
     
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
-        if (Window.getCurrentScreen().toString().equals("GAME")) {
-            handleGameMouseMoveInput(mouseEvent);
-        }
-    }
-    
-    public static void handleGameMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
     }
+    
+//    public static void handleGameMouseMoveInput(MouseEvent mouseEvent) {
+//        
+//    }
 
     public static void setKeys() throws FileNotFoundException, IOException {
 
@@ -120,19 +124,30 @@ public class Input {
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(incfg))) {
 
-            String line, key, action;
+            String line;
 
             while ((line = br.readLine()) != null) {
 
                 String[] l = line.split("\\: ");
-
-                if (Actions.containsKey(l[1])) {
-                    try {
-                        gameKeys.put(Keyboard.Key.valueOf(l[0]), Actions.get(l[1]).newInstance());
-                    } catch (InstantiationException ex) {
-                        Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IllegalAccessException ex) {
-                        Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                
+                int suffixIndex = l[0].indexOf("_") + 1;
+                String suffix = l[0].substring(suffixIndex);
+                
+                if(l[0].startsWith("KEYBOARD_")) {
+                    if (keyActions.containsKey(l[1])) {
+                        try {
+                            gameKeys.put(Keyboard.Key.valueOf(suffix), keyActions.get(l[1]).newInstance());
+                        } catch (InstantiationException | IllegalAccessException ex) {
+                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                } else if (l[0].startsWith("MOUSE_")) {
+                    if (mouseActions.containsKey(l[1])) {
+                        try {
+                            gameMouseButtons.put(Mouse.Button.valueOf(suffix), mouseActions.get(l[1]).newInstance());
+                        } catch (InstantiationException | IllegalAccessException ex) {
+                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }

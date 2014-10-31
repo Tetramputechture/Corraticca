@@ -5,9 +5,17 @@
  */
 package coratticca;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.RenderStates;
+import org.jsfml.graphics.Sprite;
+import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
 
 /**
@@ -26,6 +34,8 @@ public class GameScreen implements Screen {
     
     private static int numEntities;
     
+    private static final Sprite pointerSprite;
+    
     // private static Level currentLevel;
     
     private static final Clock clock;
@@ -36,6 +46,15 @@ public class GameScreen implements Screen {
         buttons = new Button[numButtons];
         bgColor = Color.WHITE;
         entities = new ArrayList<>();
+        
+        // init mouse sprite
+        Texture pointerTexture = new Texture();
+        try {
+            pointerTexture.loadFromFile(Paths.get("pointer.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pointerSprite = new Sprite(pointerTexture);
         
         // all game screens have a player
         Entity playerEntity = new PlayerEntity(PlayerEntity.getSprite());
@@ -50,6 +69,9 @@ public class GameScreen implements Screen {
 
         Window.getWindow().clear(bgColor);
         
+        Window.getWindow().setMouseCursorVisible(false);
+
+        
         float currentTime = clock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
         
@@ -57,6 +79,9 @@ public class GameScreen implements Screen {
             e.draw();
             e.update(dt);
         }
+        
+        pointerSprite.setPosition(Input.getMousePos());
+        Window.getWindow().draw(pointerSprite);
 
         Window.getWindow().display();
         

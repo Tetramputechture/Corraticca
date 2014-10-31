@@ -25,6 +25,11 @@ public final class PlayerEntity extends Entity {
     
     private static double angle;
     
+    private static float x;
+    private static float y;
+    private static float moveSpeed = 300;
+    private static float dt;
+    
     public PlayerEntity(Sprite s) {
         super(s);
     }
@@ -48,6 +53,8 @@ public final class PlayerEntity extends Entity {
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
         playerSprite.setPosition(Window.getHeight()/2, Window.getHeight()/2);
+        x = playerSprite.getPosition().x;
+        y = playerSprite.getPosition().y;
     }
     
     public static void setAngle(float angle) {
@@ -76,6 +83,7 @@ public final class PlayerEntity extends Entity {
 
     @Override
     public void update(float dt) {
+        PlayerEntity.dt = dt;
         angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
                             Input.getMousePos().x - playerSprite.getPosition().x);
         
@@ -85,5 +93,22 @@ public final class PlayerEntity extends Entity {
         }
         
         playerSprite.setRotation(90 + (float)angle);
+        playerSprite.setPosition(x, y);
+    }
+    
+    public static void moveUp() {
+        y -= moveSpeed * dt;
+    }
+    
+    public static void moveDown() {
+        y += moveSpeed * dt;
+    }
+        
+    public static void moveLeft() {
+        x -= moveSpeed * dt;
+    }
+    
+    public static void moveRight() {
+        x += moveSpeed * dt;
     }
 }

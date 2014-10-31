@@ -26,6 +26,7 @@ public class MainMenuScreen implements Screen {
     }
     
     public MainMenuScreen() {
+        Window.getWindow().setMouseCursorVisible(true);
         buttons[0] = new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-40,
                                 104, 
