@@ -46,10 +46,6 @@ public class GameScreen implements Screen {
         for (Entity e : entities) {
             e.draw();
         }
-        
-        if (numEntities > 1) {
-            entities.get(1).draw();
-        }
 
         Window.getWindow().display();
 
