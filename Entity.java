@@ -11,7 +11,7 @@ import org.jsfml.graphics.Sprite;
  *
  * @author Nick
  */
-public class Entity {
+public abstract class Entity {
     
     private final Sprite sprite;
     
@@ -23,6 +23,6 @@ public class Entity {
         Window.getWindow().draw(sprite);
     }
     
-    
-    
+    public abstract void update();
+
 }

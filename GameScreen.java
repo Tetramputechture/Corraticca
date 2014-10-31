@@ -34,7 +34,7 @@ public class GameScreen implements Screen {
         entities = new ArrayList<>();
         
         // all game screens have a player
-        Entity playerEntity = new Entity(Player.getSprite());
+        Entity playerEntity = new PlayerEntity(PlayerEntity.getSprite());
         addEntity(playerEntity);
     }
 
@@ -45,10 +45,7 @@ public class GameScreen implements Screen {
        
         for (Entity e : entities) {
             e.draw();
-        }
-        
-        if (numEntities > 1) {
-            entities.get(1).draw();
+            e.update();
         }
 
         Window.getWindow().display();

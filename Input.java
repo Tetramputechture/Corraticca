@@ -31,7 +31,7 @@ public class Input {
 
     private static final Map<Keyboard.Key, Action> gameKeys = new HashMap<>();
 
-    static final Map<String, Action> Actions = new HashMap<>();
+    private static final Map<String, Class<? extends Action>> Actions = new HashMap<>();
 
     private static Keyboard.Key currentKey;
 
@@ -41,11 +41,11 @@ public class Input {
 
     // init actions
     static {
-        Actions.put(FireAction.NAME, new FireAction());
-        Actions.put(UseAction.NAME, new UseAction());
-        Actions.put(ChangeToMainMenuScreenAction.NAME, new ChangeToMainMenuScreenAction());
-        Actions.put(ChangeToPauseMenuScreenAction.NAME, new ChangeToPauseMenuScreenAction());
-        Actions.put(ChangeToGameScreenAction.NAME, new ChangeToGameScreenAction());
+        Actions.put(FireAction.NAME, FireAction.class);
+        Actions.put(UseAction.NAME, UseAction.class);
+        Actions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
+        Actions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
+        Actions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
     }
 
     public static void handleKeyInput(KeyEvent keyEvent) {
@@ -112,15 +112,6 @@ public class Input {
     
     public static void handleGameMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
-        double angle = Math.atan2( Input.getMousePos().y - Player.getSprite().getPosition().y, 
-                            Input.getMousePos().x - Player.getSprite().getPosition().x);
-        
-        angle *= (180/Math.PI);
-        if(angle < 0) {
-            angle = 360 + angle;
-        }
-        
-        Player.setAngle((float)(90 + angle));
     }
 
     public static void setKeys() throws FileNotFoundException, IOException {
@@ -136,7 +127,13 @@ public class Input {
                 String[] l = line.split("\\: ");
 
                 if (Actions.containsKey(l[1])) {
-                    gameKeys.put(Keyboard.Key.valueOf(l[0]), Actions.get(l[1]));
+                    try {
+                        gameKeys.put(Keyboard.Key.valueOf(l[0]), Actions.get(l[1]).newInstance());
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }
