@@ -45,7 +45,10 @@ public class GameScreen implements Screen {
        
         for (Entity e : entities) {
             e.draw();
+<<<<<<< HEAD
             e.update();
+=======
+>>>>>>> origin/master
         }
 
         Window.getWindow().display();
