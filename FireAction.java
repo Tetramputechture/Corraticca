@@ -32,9 +32,9 @@ public class FireAction implements Action {
     
     public FireAction() {
         System.out.println("Fire key pressed!");
-        this.clock = new Clock();
+        clock = new Clock();
         
-        this.bulletTexture = new Texture();
+        bulletTexture = new Texture();
         String bulletTextureFile = "bullet.png";
        
         try {
@@ -45,31 +45,36 @@ public class FireAction implements Action {
                     ex);
         }
         
-        this.bulletTexture.setSmooth(true);
+        bulletTexture.setSmooth(true);
         
-        this.bulletSprite = new Sprite(bulletTexture);
+        bulletSprite = new Sprite(bulletTexture);
         
-        this.bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
+        bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
         
-        x = (float) (Player.getPos().x + 20 + Math.random() * 100);
-        System.out.println(x);
-        y = (float) (Player.getPos().y + 20 + Math.random() * 100);
-        System.out.println(y);
-        this.bulletSprite.setRotation((float)Player.getAngle());
+        dt = 0;
     }
     
     @Override
     public void execute() {
-        //move();
+        dt = clock.getElapsedTime().asSeconds();
+        x = Player.getPos().x + 20 * dt;
+        y = Player.getPos().y + 20 * dt;
+        bulletSprite.setRotation((float)Player.getAngle());
         
-        this.bulletSprite.setPosition(x, y);
+        Entity bulletEntity = new Entity(bulletSprite);
         
-        Window.getWindow().draw(this.bulletSprite);
+        GameScreen.addEntity(bulletEntity);
+        
+        bulletSprite.setPosition(x, y);
     }
     
     private void move() {
         x += vx;
         y -= vy;
+    }
+    
+    public Sprite getSprite() {
+        return this.bulletSprite;
     }
     
     @Override

@@ -5,6 +5,8 @@
  */
 package coratticca;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jsfml.graphics.Color;
 
 /**
@@ -19,20 +21,35 @@ public class GameScreen implements Screen {
 
     private static final Button[] buttons;
     
+    private static final List<Entity> entities;
+    
+    private static int numEntities;
+    
     // private static Level currentLevel;
 
     static {
         numButtons = 0;
         buttons = new Button[numButtons];
         bgColor = Color.WHITE;
+        entities = new ArrayList<>();
+        
+        // all game screens have a player
+        Entity playerEntity = new Entity(Player.getSprite());
+        addEntity(playerEntity);
     }
 
     @Override
     public void show() {
 
         Window.getWindow().clear(bgColor);
+       
+        for (Entity e : entities) {
+            e.draw();
+        }
         
-        Player.draw(Window.getWidth()/2, Window.getHeight()/2);
+        if (numEntities > 1) {
+            entities.get(1).draw();
+        }
 
         Window.getWindow().display();
 
@@ -46,6 +63,12 @@ public class GameScreen implements Screen {
 
     public static Color getBGColor() {
         return bgColor;
+    }
+    
+    public static void addEntity(Entity e) {
+        entities.add(e);
+        numEntities++;
+        System.out.format("Entity count: %s\n", numEntities);
     }
 
     @Override

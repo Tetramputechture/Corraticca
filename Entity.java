@@ -5,13 +5,23 @@
  */
 package coratticca;
 
+import org.jsfml.graphics.Sprite;
+
 /**
  *
  * @author Nick
  */
-class Entity {
+public class Entity {
     
-    private Action action;
+    private final Sprite sprite;
+    
+    public Entity(Sprite s) {
+        sprite = s;
+    }
+    
+    public void draw() {
+        Window.getWindow().draw(sprite);
+    }
     
     
     

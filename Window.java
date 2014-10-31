@@ -51,7 +51,7 @@ public final class Window {
     }  
     
     public static void changeScreen(Screen screen) {
-        System.out.format("%s Showing!\n", screen);
+        System.out.format("\n%s Showing!\n\n", screen);
         currentScreen = screen;
     }
     

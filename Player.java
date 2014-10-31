@@ -42,25 +42,20 @@ public final class Player {
         playerSprite = new Sprite(playerTexture);
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
+        
+        Player.setPos(Window.getHeight()/2, Window.getHeight()/2);
     }
     
-    public static void draw(int x, int y) {
-        
+    public static void setAngle(float angle) {
+        playerSprite.setRotation(angle);
+    }
+    
+    public static void setPos(int x, int y) {
         playerSprite.setPosition(x, y);
-        
-        angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
-                            Input.getMousePos().x - playerSprite.getPosition().x);
-        
-        angle *= (180/Math.PI);
-        if(angle < 0) {
-            angle = 360 + angle;
-        }
-        
-        playerSprite.setRotation((float)(90 + angle));
-        
-        // Input.handlePlayerKeyInput();
-        
-        Window.getWindow().draw(playerSprite);
+    }
+    
+    public static Sprite getSprite() {
+        return playerSprite;
     }
     
     public static Vector2f getPos() {

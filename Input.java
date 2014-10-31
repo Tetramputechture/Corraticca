@@ -105,9 +105,23 @@ public class Input {
     }
     
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
-        currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
+        if (Window.getCurrentScreen().toString().equals("GAME")) {
+            handleGameMouseMoveInput(mouseEvent);
+        }
     }
-
+    
+    public static void handleGameMouseMoveInput(MouseEvent mouseEvent) {
+        currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
+        double angle = Math.atan2( Input.getMousePos().y - Player.getSprite().getPosition().y, 
+                            Input.getMousePos().x - Player.getSprite().getPosition().x);
+        
+        angle *= (180/Math.PI);
+        if(angle < 0) {
+            angle = 360 + angle;
+        }
+        
+        Player.setAngle((float)(90 + angle));
+    }
 
     public static void setKeys() throws FileNotFoundException, IOException {
 
