@@ -23,12 +23,10 @@ public class BulletEntity extends Entity {
         super(s);
         bulletSprite = s;
         
-        x = PlayerEntity.getPos().x - PlayerEntity.getSize().x/4;
-        y = PlayerEntity.getPos().y - PlayerEntity.getSize().y/4;
-        vx = (int) (20 * Math.cos(PlayerEntity.getAngle()));
-        System.out.println(vx);
-        vy = (int) (20 * Math.sin(PlayerEntity.getAngle()));
-        System.out.println(vy);
+        x = PlayerEntity.getPos().x - PlayerEntity.getSize().x/3.0f;
+        y = PlayerEntity.getPos().y + PlayerEntity.getSize().y/3.0f;
+        vx = (int) (20 * Math.sin(Math.toRadians(PlayerEntity.getAngle())));
+        vy = (int) (20 * Math.cos(Math.toRadians(PlayerEntity.getAngle())));
         bulletSprite.setRotation(PlayerEntity.getAngle());
         bulletSprite.setPosition(x, y);
     }
@@ -36,7 +34,7 @@ public class BulletEntity extends Entity {
     @Override
     public void update(float dt) {
         x += vx * dt;
-        y += vy * dt;
+        y -= vy * dt;
 
         bulletSprite.setPosition(x, y);
     }
