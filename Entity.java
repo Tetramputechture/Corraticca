@@ -23,6 +23,6 @@ public abstract class Entity {
         Window.getWindow().draw(sprite);
     }
     
-    public abstract void update();
+    public abstract void update(float dt);
 
 }

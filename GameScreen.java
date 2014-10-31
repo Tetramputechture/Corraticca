@@ -8,6 +8,7 @@ package coratticca;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsfml.graphics.Color;
+import org.jsfml.system.Clock;
 
 /**
  *
@@ -26,6 +27,9 @@ public class GameScreen implements Screen {
     private static int numEntities;
     
     // private static Level currentLevel;
+    
+    private static final Clock clock;
+    private static float lastTime;
 
     static {
         numButtons = 0;
@@ -36,22 +40,27 @@ public class GameScreen implements Screen {
         // all game screens have a player
         Entity playerEntity = new PlayerEntity(PlayerEntity.getSprite());
         addEntity(playerEntity);
+        
+        clock = new Clock();
+        lastTime = 0;
     }
 
     @Override
     public void show() {
 
         Window.getWindow().clear(bgColor);
-       
+        
+        float currentTime = clock.getElapsedTime().asSeconds();
+        float dt = currentTime - lastTime;
+        
         for (Entity e : entities) {
             e.draw();
-<<<<<<< HEAD
-            e.update();
-=======
->>>>>>> origin/master
+            e.update(dt);
         }
 
         Window.getWindow().display();
+        
+        lastTime = currentTime;
 
     }
 

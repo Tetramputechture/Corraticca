@@ -75,7 +75,7 @@ public final class PlayerEntity extends Entity {
     }
 
     @Override
-    public void update() {
+    public void update(float dt) {
         angle = Math.atan2( Input.getMousePos().y - PlayerEntity.getSprite().getPosition().y, 
                             Input.getMousePos().x - PlayerEntity.getSprite().getPosition().x);
         

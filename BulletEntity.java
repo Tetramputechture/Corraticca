@@ -6,7 +6,6 @@
 package coratticca;
 
 import org.jsfml.graphics.Sprite;
-import org.jsfml.system.Clock;
 
 /**
  *
@@ -14,28 +13,30 @@ import org.jsfml.system.Clock;
  */
 public class BulletEntity extends Entity {
     
-    private final int vx = 20;
-    private final int vy = 20;
-    private final Clock clock;
-    private float dt;
     private float x;
     private float y;
+    private final int vx;
+    private final int vy;
     private final Sprite bulletSprite;
 
     public BulletEntity(Sprite s) {
         super(s);
         bulletSprite = s;
-        clock = new Clock();
-        dt = 0;
+        
+        System.out.println(PlayerEntity.getAngle());
+        
+        x = PlayerEntity.getPos().x - PlayerEntity.getSize().x/4;
+        y = PlayerEntity.getPos().y - PlayerEntity.getSize().y/4;
+        vx = (int) (20 * Math.cos(PlayerEntity.getAngle()));
+        vy = (int) (20 * Math.sin(PlayerEntity.getAngle()));
         bulletSprite.setRotation(PlayerEntity.getAngle());
+        bulletSprite.setPosition(x, y);
     }
 
     @Override
-    public void update() {
-        dt = clock.getElapsedTime().asSeconds();
-        
-        x = PlayerEntity.getPos().x + vx * dt;
-        y = PlayerEntity.getPos().y + vy * dt;
+    public void update(float dt) {
+        x += vx * dt;
+        y += vy * dt;
         
         bulletSprite.setPosition(x, y);
     }
