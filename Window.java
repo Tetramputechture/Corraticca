@@ -80,7 +80,7 @@ public final class Window {
             }
         }
     }
-    
+   
     public static Screen getCurrentScreen() {
         return currentScreen;
     }

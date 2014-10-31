@@ -21,8 +21,6 @@ public class FireAction implements Action {
     public static final String NAME = "FIRE_ACTION";
     
     private Texture bulletTexture;
-    private final Sprite bulletSprite;
-    private final Entity bulletEntity;
     
     public FireAction() {
         System.out.println("Fire key pressed!");
@@ -39,24 +37,20 @@ public class FireAction implements Action {
         }
         
         bulletTexture.setSmooth(true);
-        
-        bulletSprite = new Sprite(bulletTexture);
-        
-        bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
-        
-        bulletEntity = new BulletEntity(bulletSprite);
+       
     }
     
     @Override
     public void execute() {
+        Sprite bulletSprite = new Sprite(bulletTexture);
+        
+        bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
+        
+        Entity bulletEntity = new BulletEntity(bulletSprite);
         bulletSprite.setRotation(PlayerEntity.getAngle());
         GameScreen.addEntity(bulletEntity); 
     }
-    
-    public Sprite getSprite() {
-        return this.bulletSprite;
-    }
-    
+
     @Override
     public String toString() {
         return NAME;

@@ -10,11 +10,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
-import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Text;
 
 /**
@@ -80,6 +78,10 @@ public class Button extends Input {
     
     public void draw() {     
         Window.getWindow().draw(text);
+    }
+    
+    public void setText(String t) {
+        text.setString(t);
     }
     
     public void setClickAction(Action action) {

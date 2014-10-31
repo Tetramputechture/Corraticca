@@ -84,6 +84,6 @@ public final class PlayerEntity extends Entity {
             angle = 360 + angle;
         }
         
-        playerSprite.setRotation((float)angle);
+        playerSprite.setRotation(90 + (float)angle);
     }
 }
