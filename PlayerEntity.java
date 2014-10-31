@@ -47,7 +47,7 @@ public final class PlayerEntity extends Entity {
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
-        PlayerEntity.setPos(Window.getHeight()/2, Window.getHeight()/2);
+        playerSprite.setPosition(Window.getHeight()/2, Window.getHeight()/2);
     }
     
     public static void setAngle(float angle) {
@@ -76,14 +76,14 @@ public final class PlayerEntity extends Entity {
 
     @Override
     public void update(float dt) {
-        angle = Math.atan2( Input.getMousePos().y - PlayerEntity.getSprite().getPosition().y, 
-                            Input.getMousePos().x - PlayerEntity.getSprite().getPosition().x);
+        angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
+                            Input.getMousePos().x - playerSprite.getPosition().x);
         
         angle *= (180/Math.PI);
         if(angle < 0) {
             angle = 360 + angle;
         }
         
-        PlayerEntity.setAngle((float)(90 + angle));
+        playerSprite.setRotation((float)angle);
     }
 }
