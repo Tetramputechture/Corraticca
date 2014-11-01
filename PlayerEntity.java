@@ -27,8 +27,10 @@ public final class PlayerEntity extends Entity {
     
     private static float x;
     private static float y;
-    private static float moveSpeed = 300;
-    private static float dt;
+    private static float vx;
+    private static float vy;
+    private static float targetX;
+    private static float targetY;
     
     public PlayerEntity(Sprite s) {
         super(s);
@@ -52,7 +54,7 @@ public final class PlayerEntity extends Entity {
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
-        playerSprite.setPosition(Window.getHeight()/2, Window.getHeight()/2);
+        playerSprite.setPosition(Window.getWidth()/2, Window.getHeight()/2);
         x = playerSprite.getPosition().x;
         y = playerSprite.getPosition().y;
     }
@@ -83,7 +85,14 @@ public final class PlayerEntity extends Entity {
 
     @Override
     public void update(float dt) {
-        PlayerEntity.dt = dt;
+        
+        vx += (targetX - vx) * 100 * dt;
+        vy += (targetY - vy) * 100 * dt;
+        x += vx * dt;
+        y += vy * dt;
+        
+        playerSprite.setPosition(x, y);
+        
         angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
                             Input.getMousePos().x - playerSprite.getPosition().x);
         
@@ -93,22 +102,21 @@ public final class PlayerEntity extends Entity {
         }
         
         playerSprite.setRotation(90 + (float)angle);
-        playerSprite.setPosition(x, y);
     }
     
     public static void moveUp() {
-        y -= moveSpeed * dt;
+        targetY = -1;
     }
     
     public static void moveDown() {
-        y += moveSpeed * dt;
+        targetY = 1;
     }
         
     public static void moveLeft() {
-        x -= moveSpeed * dt;
+        targetX = -1;
     }
     
     public static void moveRight() {
-        x += moveSpeed * dt;
+        targetX  = 1;
     }
 }
