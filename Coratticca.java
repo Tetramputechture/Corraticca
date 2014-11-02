@@ -15,10 +15,11 @@ public class Coratticca {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         
-        Window.display(1366/4, 768/4, 640, 480, "Test");
+        Window.display(1366/4, 768/4, 640, 480, "Corrattica Alpha");
         
     }
     

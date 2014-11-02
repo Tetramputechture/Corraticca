@@ -8,8 +8,9 @@ package coratticca;
 import org.jsfml.graphics.Sprite;
 
 /**
- *
  * @author Nick
+ * Abstract class to handle all Entities.
+ * Entities are glorified sprites that are easy to handle.
  */
 public abstract class Entity {
     

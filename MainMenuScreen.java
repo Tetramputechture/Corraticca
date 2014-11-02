@@ -5,6 +5,9 @@
  */
 package coratticca;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.jsfml.graphics.Color;
 
 /**
@@ -15,25 +18,23 @@ public class MainMenuScreen implements Screen {
     
     private static final Color bgColor;
     
-    private static final int numButtons;
-    
-    private static final Button[] buttons;
+    private final List<Button> buttons;
     
     static {
-        numButtons = 1;
-        buttons = new Button[numButtons];
         bgColor = Color.BLACK;
     }
     
     public MainMenuScreen() {
+        buttons = new ArrayList<>();
+        
         Window.getWindow().setMouseCursorVisible(true);
-        buttons[0] = new Button(Window.getWidth()/2, 
+        buttons.add(new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-40,
                                 104, 
                                 "Play!", 
                                 "OpenSans-Regular.ttf", 
                                 Color.RED,
-                                new ChangeToGameScreenAction());
+                                new ChangeToGameScreenAction(true)));
     }
    
 
@@ -50,8 +51,8 @@ public class MainMenuScreen implements Screen {
     }
     
     @Override
-    public Button[] getButtons() {
-        return buttons;
+    public List<Button> getButtons() {
+        return Collections.unmodifiableList(buttons);
     }
     
     @Override

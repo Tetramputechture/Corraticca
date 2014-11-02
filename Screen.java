@@ -5,6 +5,8 @@
  */
 package coratticca;
 
+import java.util.List;
+
 /**
  *
  * @author Nick
@@ -13,7 +15,7 @@ public interface Screen {
     
     void show();
     
-    public Button[] getButtons();
+    public List<Button> getButtons();
     
     @Override
     public String toString();

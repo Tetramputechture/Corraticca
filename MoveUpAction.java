@@ -11,7 +11,7 @@ package coratticca;
  */
 public class MoveUpAction implements Action {
     
-    public static final String NAME = "MOVE_UP_ACTION";
+    public static final String NAME = "MOVE_UP";
 
     @Override
     public void execute() {

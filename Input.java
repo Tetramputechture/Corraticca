@@ -23,17 +23,21 @@ import org.jsfml.window.event.MouseButtonEvent;
 import org.jsfml.window.event.MouseEvent;
 
 /**
- *
  * @author Nick
+ * Handles all input. 
  */
 public class Input {
 
+    // To read the game keyboard keys.
     private static final Map<Keyboard.Key, Action> gameKeys = new HashMap<>();
     
+    // To read the game mouse buttons.
     private static final Map<Mouse.Button, Action> gameMouseButtons = new HashMap<>();
 
+    // To assign the keyboard key actions.
     private static final Map<String, Class<? extends Action>> keyActions = new HashMap<>();
     
+    // To assign the mouse button actions.
     private static final Map<String, Class<? extends Action>> mouseActions = new HashMap<>();
     
     private static Keyboard.Key currentKey;
@@ -44,7 +48,6 @@ public class Input {
     
     static {
         // init keyActions
-        keyActions.put(UseAction.NAME, UseAction.class);
         keyActions.put(MoveUpAction.NAME, MoveUpAction.class);
         keyActions.put(MoveDownAction.NAME, MoveDownAction.class);
         keyActions.put(MoveLeftAction.NAME, MoveLeftAction.class);
@@ -75,7 +78,7 @@ public class Input {
     public static void handleMainMenuKeyInput() {
 
         switch (currentKey) {
-
+            // TO DO
         }
     }
 
@@ -102,6 +105,7 @@ public class Input {
             }
         }
         
+        // If a Button isn't pressed, then execute the associated action on the game screen
         if (Window.getCurrentScreen().toString().equals("GAME")) {
             if (gameMouseButtons.containsKey(currentMouseButton)) {
                 gameMouseButtons.get(currentMouseButton).execute();
@@ -113,12 +117,9 @@ public class Input {
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
     }
-    
-//    public static void handleGameMouseMoveInput(MouseEvent mouseEvent) {
-//        
-//    }
 
-    public static void setKeys() throws FileNotFoundException, IOException {
+    // Set the game inputs from a file.
+    public static void setInputs() throws FileNotFoundException, IOException {
 
         FileInputStream incfg = new FileInputStream(new File("inputconfig.cfg"));
 
@@ -133,20 +134,24 @@ public class Input {
                 int suffixIndex = l[0].indexOf("_") + 1;
                 String suffix = l[0].substring(suffixIndex);
                 
+                String action = l[1];
+                
                 if(l[0].startsWith("KEYBOARD_")) {
                     if (keyActions.containsKey(l[1])) {
                         try {
-                            gameKeys.put(Keyboard.Key.valueOf(suffix), keyActions.get(l[1]).newInstance());
+                            gameKeys.put(Keyboard.Key.valueOf(suffix), keyActions.get(action).newInstance());
                         } catch (InstantiationException | IllegalAccessException ex) {
-                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, 
+                                    String.format("Error in input.cfg at %s!", l[0] + l[1]), ex);
                         }
                     }
                 } else if (l[0].startsWith("MOUSE_")) {
                     if (mouseActions.containsKey(l[1])) {
                         try {
-                            gameMouseButtons.put(Mouse.Button.valueOf(suffix), mouseActions.get(l[1]).newInstance());
+                            gameMouseButtons.put(Mouse.Button.valueOf(suffix), mouseActions.get(action).newInstance());
                         } catch (InstantiationException | IllegalAccessException ex) {
-                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, 
+                                    String.format("Error in input.cfg at %s!", l[0] + l[1]), ex);
                         }
                     }
                 }

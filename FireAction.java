@@ -13,12 +13,12 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 /**
- *
  * @author Nick
+ * Execute() creates a bullet entity, and fires a bullet.
  */
 public class FireAction implements Action {
     
-    public static final String NAME = "FIRE_ACTION";
+    public static final String NAME = "FIRE";
     
     private Texture bulletTexture;
     

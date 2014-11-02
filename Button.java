@@ -16,23 +16,15 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Text;
 
 /**
- *
  * @author Nick
+ * This class is for a button on a screen.
+ * A button can have any action assigned to it.
+ * If you just want to make a simple text object, assign the button to
+ * Unassigned Action.
  */
 public class Button extends Input {
     
-    private final String fontName;
-    
-    private final String label;
-    
     private final Text text;
-    
-    private final int posX;
-    private final int posY;
-    
-    private final int fontSize;
-    
-    private final Color color;
     
     private Action action;
     
@@ -44,14 +36,10 @@ public class Button extends Input {
                     Color color,
                     Action action) {
         
-        this.posX = posX;
-        this.posY = posY;
-        this.fontSize = fontSize;
-        this.fontName = fontName;
-        this.color = color;
-        this.label = label;
+        // set action
         this.action = action;
         
+        // set text
         Font font = new Font();
         
         Path f = FileSystems.getDefault().getPath(fontName);
@@ -69,8 +57,11 @@ public class Button extends Input {
         text.setFont(font);
         text.setCharacterSize(fontSize);
         text.setString(label);
-        text.setColor(color);
+        
+        // set bounds for clicking
         FloatRect textbounds = text.getLocalBounds();
+        
+        text.setColor(color);
         text.setOrigin( textbounds.left + textbounds.width/2.0f,
                         textbounds.top  + textbounds.height/2.0f);
         text.setPosition(posX, posY);

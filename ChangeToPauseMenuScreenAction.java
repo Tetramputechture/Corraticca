@@ -6,12 +6,12 @@
 package coratticca;
 
 /**
- *
  * @author Nick
+ * Changes the current screen to the Pause Menu Screen.
  */
 public class ChangeToPauseMenuScreenAction implements Action {
     
-    public static final String NAME = "CHANGE_TO_PAUSE_MENU_SCREEN_ACTION";
+    public static final String NAME = "CHANGE_TO_PAUSE_MENU_SCREEN";
 
     @Override
     public void execute() {

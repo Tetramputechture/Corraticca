@@ -42,7 +42,7 @@ public final class Window {
         
         changeScreen(new MainMenuScreen());
         
-        Input.setKeys();
+        Input.setInputs();
         
         while(window.isOpen()) {
             Window.handleEvents();

@@ -5,6 +5,9 @@
  */
 package coratticca;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 
@@ -14,38 +17,38 @@ import org.jsfml.graphics.Font;
  */
 public class PauseMenuScreen implements Screen {
     
-    private Color bgColor;
+    private static final Color bgColor;
     
-    private Font menuFont;
+    private final List<Button> buttons;
     
-    private final int numButtons = 2;
-    
-    private final Button[] buttons = new Button[numButtons];
+    static {
+        bgColor = GameScreen.getBGColor();
+    }
     
     public PauseMenuScreen() {
+        buttons = new ArrayList<>();
+        
         Window.getWindow().setMouseCursorVisible(true);
-        buttons[0] = new Button(Window.getWidth()/2, 
+        buttons.add(new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-100,
                                 24, 
                                 "Exit to Main Menu", 
                                 "OpenSans-Regular.ttf", 
                                 Color.BLACK,
-                                new ChangeToMainMenuScreenAction());
+                                new ChangeToMainMenuScreenAction()));
         
-        buttons[1] = new Button(Window.getWidth()/2,
+        buttons.add(new Button(Window.getWidth()/2,
                                 Window.getHeight()/2,
                                 24,
                                 "Resume Game",
                                 "OpenSans-Regular.ttf",
                                 Color.BLACK,
-                                new ChangeToGameScreenAction());
+                                new ChangeToGameScreenAction(false)));
     }
    
 
     @Override
     public void show() {
-        
-        bgColor = GameScreen.getBGColor();
         
         Window.getWindow().clear(bgColor);
         
@@ -57,8 +60,8 @@ public class PauseMenuScreen implements Screen {
     }
 
     @Override
-    public Button[] getButtons() {
-        return buttons;
+    public List<Button> getButtons() {
+        return Collections.unmodifiableList(buttons);
     }
     
     @Override

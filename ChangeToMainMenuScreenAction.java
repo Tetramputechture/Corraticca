@@ -6,12 +6,12 @@
 package coratticca;
 
 /**
- *
  * @author Nick
+ * Changes the current screen to the Main Menu Screen.
  */
 public class ChangeToMainMenuScreenAction implements Action {
     
-    public static final String NAME = "CHANGE_TO_MAIN_MENU_SCREEN_ACTION";
+    public static final String NAME = "CHANGE_TO_MAIN_MENU_SCREEN";
 
     @Override
     public void execute() {
