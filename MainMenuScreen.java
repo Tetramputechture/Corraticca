@@ -11,7 +11,7 @@ import java.util.List;
 import org.jsfml.graphics.Color;
 
 /**
- *
+ * The Main Menu screen.
  * @author Nick
  */
 public class MainMenuScreen implements Screen {
@@ -24,9 +24,13 @@ public class MainMenuScreen implements Screen {
         bgColor = Color.BLACK;
     }
     
+    /**
+     * Initializes the screen, and adds the buttons.
+     */
     public MainMenuScreen() {
         buttons = new ArrayList<>();
         
+        // add play button
         Window.getWindow().setMouseCursorVisible(true);
         buttons.add(new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-40,
@@ -37,7 +41,9 @@ public class MainMenuScreen implements Screen {
                                 new ChangeToGameScreenAction(true)));
     }
    
-
+    /**
+     * Shows the Main Menu screen and all it's buttons.
+     */
     @Override
     public void show() {
         
@@ -50,6 +56,10 @@ public class MainMenuScreen implements Screen {
         Window.getWindow().display();
     }
     
+    /**
+     * Gets the Main Menu's buttons. 
+     * @return a List containing the main menu's buttons.
+     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);

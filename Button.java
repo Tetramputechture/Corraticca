@@ -16,11 +16,11 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Text;
 
 /**
- * @author Nick
  * This class is for a button on a screen.
  * A button can have any action assigned to it.
  * If you just want to make a simple text object, assign the button to
  * Unassigned Action.
+ * @author Nick
  */
 public class Button extends Input {
     
@@ -28,6 +28,16 @@ public class Button extends Input {
     
     private Action action;
     
+    /**
+     * Constructs a button.
+     * @param posX the x position of the button.
+     * @param posY the y position of the button.
+     * @param fontSize the button text's font size.
+     * @param label the button's label.
+     * @param fontName the name of the text font.
+     * @param color the color of the button text.
+     * @param action the action assigned to the button.
+     */
     public Button(  int posX, 
                     int posY, 
                     int fontSize, 
@@ -67,26 +77,48 @@ public class Button extends Input {
         text.setPosition(posX, posY);
     }
     
+    /**
+     * Draws the button on the screen.
+     */
     public void draw() {     
         Window.getWindow().draw(text);
     }
     
+    /**
+     * Sets the button's text.
+     * @param t the text to be set.
+     */
     public void setText(String t) {
         text.setString(t);
     }
     
+    /**
+     * Sets the button's action.
+     * @param action the action to be set.
+     */
     public void setClickAction(Action action) {
         this.action = action;
     }
     
+    /**
+     * Executes the button's action.
+     */
     public void executeAction() {
         this.action.execute();
     }
     
+    /**
+     * Gets the text object of the button.
+     * @return the button's text object.
+     */
     public Text getTextObject() {
         return text;
     }
     
+    /**
+     * Gets the action of the button.
+     * @return the String representation of the button's action.
+     */
     public String getAction() {
         return action.toString();
     }

@@ -6,13 +6,19 @@
 package coratticca;
 
 /**
- *
+ * An unassigned action (used for buttons with only text)
  * @author Nick
  */
 public class UnassignedAction implements Action {
     
+    /**
+     * The name of the action.
+     */
     public static final String NAME = "UNASSIGNED_ACTION";
     
+    /**
+     * Does nothing.
+     */
     @Override
     public void execute() {
     }

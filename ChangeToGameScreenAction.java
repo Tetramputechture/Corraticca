@@ -6,19 +6,29 @@
 package coratticca;
 
 /**
- * @author Nick
  * Changes the current screen to the Game Screen.
+ * @author Nick
  */
 public class ChangeToGameScreenAction implements Action {
     
+    /**
+     * The name of the action.
+     */
     public static final String NAME = "CHANGE_TO_GAME_SCREEN";
     
     private final boolean resetGame;
     
+    /**
+     * Sets if the game screen is to be reset or not.
+     * @param resetGame if the game is to be reset.
+     */
     public ChangeToGameScreenAction(boolean resetGame) {
         this.resetGame = resetGame;
     }
 
+    /**
+     * Changes the screen to the game screen.
+     */
     @Override
     public void execute() {
         System.out.println("Changing screen to Game Sreen!");

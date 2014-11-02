@@ -15,7 +15,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.Keyboard;
 
 /**
- *
+ * Entity representing the player.
  * @author Nick
  */
 public final class PlayerEntity extends Entity {
@@ -34,21 +34,18 @@ public final class PlayerEntity extends Entity {
     private static float targetY;
     private static final float moveSpeed;
     private static final float accelRate;
+    private static final float fConst;
     private static final boolean removable;
-    private static boolean isMovingDown;
-    private static boolean isMovingUp;
-    private static boolean isMovingLeft;
-    private static boolean isMovingRight;
     
+    /**
+     * Sets the player entity's sprite.
+     * @param s the player's sprite
+     */
     public PlayerEntity(Sprite s) {
         super(s);
     }
     
-    static {
-        
-        // should always be in the screen
-        removable = false;
-        
+    static { 
         playerTexture = new Texture();
         String playerTextureFile = "player.png";
        
@@ -69,58 +66,71 @@ public final class PlayerEntity extends Entity {
         playerSprite.setPosition(Window.getWidth()/2, Window.getHeight()/2);
         x = playerSprite.getPosition().x;
         y = playerSprite.getPosition().y;
+        
+        // set movement variables
         moveSpeed = 120;
         accelRate = 20;
+        fConst = 0.95f;
+        
+        // player can't be removed
+        removable = false;
     }
     
+    /**
+     * Updates the player entity based on frametime.
+     * @param dt the difference in time since last frame.
+     */
     @Override
     public void update(float dt) {
         
         targetX = (Keyboard.isKeyPressed(Keyboard.Key.A) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.D) ? 1 : 0);
 	targetY = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
+        
         float desiredX = targetX;
         float desiredY = targetY;
 
-        // Now find true velocity by getting the length of the vector using simple trigonometry. This is just Pythagora's theorem, with desiredX and desiredY instead of a and b!
+        // find true velocity by getting the magnitude of the vector.
         double length = Math.sqrt((desiredX * desiredX) + (desiredY * desiredY));   
 
-        // Normalize the vector - that is, set it's length to 1. You do this by dividing each component of the vector by it's length - be careful to make sure you don't divide by 0!
+        /* 
+         * normalize the vector
+        */
         if (length > 0) {
             desiredX /= length;
             desiredY /= length;
         }
 
-        // Now set the vectors length to your desired velocity. Because the vector is normalized (a length of 1), you can just multiply by it!
-        // Increasing the accelRate should make movements more sharp and dramatic
+        // set length to desired velocity
+        // increasing accelRate should make movements more sharp and dramatic
         desiredX *= accelRate;
         desiredY *= accelRate;
 
-        // Now we set the acceleration to our input
-        float ax = desiredX;    // a for acceleration
+        // set acc variables
+        float ax = desiredX;   
         float ay = desiredY;
         
-        // Now lets do the euler integration!
+        // integrate acceleration to get velocity
         vx += ax * dt;
         vy += ay * dt;
         
-        // Now lets limit our velocity vector to our moveSpeed, using the same method we use to normalize our input
+        // limit velocity vector to moveSpeed
         double speed = Math.sqrt((vx * vx) + (vy * vy));
         if (speed > moveSpeed) {
-            vx /= speed;    // If moveSpeed is always > 0, we don't need to worry about diving by 0!
+            vx /= speed;    
             vy /= speed;
 
             vx *= moveSpeed;
             vy *= moveSpeed;
         }
 
+        // set velocity
         x += vx;
         y += vy;
-
-        // And zero out the inputs
-        targetX = 0;
-        targetY = 0;
-        vx *= 0.95;    // Fake friction. Perhaps we should move this into it's own variable?
-        vy *= 0.95;
+        
+        // apply friction
+        vx *= fConst;    
+        vy *= fConst;
+        
         // go from one side of the map to another
         if (x > Window.getWidth()) {
             x = 0;
@@ -147,40 +157,71 @@ public final class PlayerEntity extends Entity {
         playerSprite.setRotation(90 + (float)angle);
     }
     
+    /**
+     * Checks if the player is removable.
+     * @return if the player is removable.
+     */
     @Override
     public boolean isRemovable() {
         return removable;
     }
     
+    /**
+     * Checks if the player is out of bounds.
+     * @return if the player is out of bounds.
+     */
+    @Override
+    public boolean isOutOfBounds() {
+        // will never be out of bounds, since player wraps around screen
+        return false;
+    }
+    
+    /**
+     * Sets the angle of the player.
+     * @param angle the angle for the player to be set at.
+     */
     public static void setAngle(float angle) {
         playerSprite.setRotation(angle);
     }
     
+    /**
+     * Sets the position of the player.
+     * @param x the x position for the player to be set at.
+     * @param y the y position for the player to be set at.
+     */
     public static void setPos(int x, int y) {
         playerSprite.setPosition(x, y);
     }
     
+    /**
+     * Gets the player's sprite.
+     * @return the player's sprite.
+     */
     public static Sprite getSprite() {
         return playerSprite;
     }
     
+    /**
+     * Gets the player's position.
+     * @return the player's position.
+     */
     public static Vector2f getPos() {
         return playerSprite.getPosition();
     }
 
+    /**
+     * Gets the player's size.
+     * @return the player's size.
+     */
     public static Vector2f getSize() {
         return new Vector2f(playerSprite.getLocalBounds().width, playerSprite.getLocalBounds().height);
     }
     
+    /**
+     * Gets the player's angle.
+     * @return the player's angle.
+     */
     public static float getAngle() {
         return playerSprite.getRotation();
-    }
-    
-    public static void setTargetX(float x) {
-        targetX = x;
-    }
-    
-    public static void setTargetY(float y) {
-        targetY = y;
     }
 }

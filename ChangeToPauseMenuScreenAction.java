@@ -6,13 +6,19 @@
 package coratticca;
 
 /**
- * @author Nick
  * Changes the current screen to the Pause Menu Screen.
+ * @author Nick
  */
 public class ChangeToPauseMenuScreenAction implements Action {
     
+    /**
+     * The name of the action.
+     */
     public static final String NAME = "CHANGE_TO_PAUSE_MENU_SCREEN";
 
+    /**
+     * Changes the current screen to the Pause Menu screen.
+     */
     @Override
     public void execute() {
         System.out.println("Changing screen to Pause Menu Sreen!");

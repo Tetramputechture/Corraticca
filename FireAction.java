@@ -12,16 +12,22 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
-/**
+/** 
+ * Action to create a bullet entity.
  * @author Nick
- * Execute() creates a bullet entity, and fires a bullet.
  */
 public class FireAction implements Action {
     
+    /**
+     * The name of the action.
+     */
     public static final String NAME = "FIRE";
     
     private Texture bulletTexture;
     
+    /**
+     * Set's the bullet's sprite.
+     */
     public FireAction() {
         
         bulletTexture = new Texture();
@@ -39,6 +45,9 @@ public class FireAction implements Action {
        
     }
     
+    /**
+     * Makes a bullet entity and adds it to the game screen.
+     */
     @Override
     public void execute() {
         System.out.println("Fire key pressed!");

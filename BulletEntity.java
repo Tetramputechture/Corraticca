@@ -8,8 +8,8 @@ package coratticca;
 import org.jsfml.graphics.Sprite;
 
 /**
+ * An entity representing a bullet, what the player shoots.
  * @author Nick
- * This handles the creation of a 'bullet', what the player shoots.
  */
 public class BulletEntity extends Entity {
     
@@ -20,12 +20,16 @@ public class BulletEntity extends Entity {
     private final Sprite bulletSprite;
     private final boolean removable;
 
+    /**
+     * Sets rotation and position of bullet.
+     * @param s the sprite of the bullet.
+     */
     public BulletEntity(Sprite s) {
         // init sprite
         super(s);
         bulletSprite = s;
         
-        // entity must be removed when out of bounds
+        // must be deleted when out of bounds
         removable = true;
         
         // set position and angle based off current player sprite
@@ -37,22 +41,32 @@ public class BulletEntity extends Entity {
         bulletSprite.setPosition(x, y);
     }
 
+    /**
+     * Updates the bullet's position based on frametime.
+     * @param dt the difference in time to be updated by.
+     */
     @Override
     public void update(float dt) {
-        
-        // move based on time
+       
         x += vx * dt;
         y -= vy * dt;
         
-
         bulletSprite.setPosition(x, y);
     }
     
+    /**
+     * If bullet is out of bounds.
+     * @return if the bullet is out of bounds .
+     */
     @Override
     public boolean isOutOfBounds() {
         return (x > Window.getWidth() || x < 0 || y > Window.getHeight() || y < 0);
     }
     
+    /**
+     * If bullet is removable.
+     * @return if bullet is removable.
+     */
     @Override
     public boolean isRemovable() {
         return removable;

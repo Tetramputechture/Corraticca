@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
-import org.jsfml.graphics.Font;
 
 /**
- *
+ * The Pause Menu screen.
  * @author Nick
  */
 public class PauseMenuScreen implements Screen {
@@ -25,10 +24,16 @@ public class PauseMenuScreen implements Screen {
         bgColor = GameScreen.getBGColor();
     }
     
+    /**
+     * Initializes the pause menu and all of it's buttons.
+     */
     public PauseMenuScreen() {
         buttons = new ArrayList<>();
         
+        // cursor must be visible
         Window.getWindow().setMouseCursorVisible(true);
+        
+        // add exit button
         buttons.add(new Button(Window.getWidth()/2, 
                                 Window.getHeight()/2-100,
                                 24, 
@@ -37,6 +42,7 @@ public class PauseMenuScreen implements Screen {
                                 Color.BLACK,
                                 new ChangeToMainMenuScreenAction()));
         
+        // add resume game button
         buttons.add(new Button(Window.getWidth()/2,
                                 Window.getHeight()/2,
                                 24,
@@ -46,7 +52,9 @@ public class PauseMenuScreen implements Screen {
                                 new ChangeToGameScreenAction(false)));
     }
    
-
+    /**
+     * Shows the Pause Screen and all it's buttons. 
+     */
     @Override
     public void show() {
         
@@ -59,6 +67,10 @@ public class PauseMenuScreen implements Screen {
         Window.getWindow().display();
     }
 
+    /**
+     * Gets the Pause Screen's buttons.
+     * @return a List containing all the buttons of the Pause Screen.
+     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);

@@ -23,8 +23,8 @@ import org.jsfml.window.event.MouseButtonEvent;
 import org.jsfml.window.event.MouseEvent;
 
 /**
- * @author Nick
  * Handles all input. 
+ * @author Nick
  */
 public class Input {
 
@@ -56,6 +56,10 @@ public class Input {
         mouseActions.put(FireAction.NAME, FireAction.class);
     }
 
+    /**
+     * Handles all key input.
+     * @param keyEvent the keyEvent to be handled.
+     */
     public static void handleKeyInput(KeyEvent keyEvent) {
 
         currentKey = keyEvent.key;
@@ -71,6 +75,9 @@ public class Input {
         }
     }
 
+    /**
+     * handles Main Menu key input.
+     */
     public static void handleMainMenuKeyInput() {
 
         switch (currentKey) {
@@ -78,6 +85,9 @@ public class Input {
         }
     }
 
+    /**
+     * handles Game key input.
+     */
     public static void handleGameKeyInput() {
         if (currentKey == Keyboard.Key.ESCAPE) {
             Window.changeScreen(new PauseMenuScreen());     
@@ -86,6 +96,10 @@ public class Input {
         }
     }
 
+    /**
+     * Handles mouse click input.
+     * @param mouseEvent the Mouse Event to be handled.
+     */
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
 
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
@@ -110,13 +124,23 @@ public class Input {
         
     }
     
+    /**
+     * Handles mouse move input.
+     * @param mouseEvent the Mouse Event to be handled.
+     */
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
     }
 
-    // Set the game inputs from a file.
-    public static void setInputs() throws FileNotFoundException, IOException {
+    /**
+     * Sets the inputs from a file.
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+        public static void setInputs() throws FileNotFoundException, IOException {
 
+            
+        // gets the config file   
         FileInputStream incfg = new FileInputStream(new File("inputconfig.cfg"));
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(incfg))) {
@@ -125,6 +149,7 @@ public class Input {
 
             while ((line = br.readLine()) != null) {
 
+                // format: key/button: action
                 String[] l = line.split("\\: ");
                 
                 int suffixIndex = l[0].indexOf("_") + 1;
@@ -132,6 +157,7 @@ public class Input {
                 
                 String action = l[1];
                 
+                // keyboard input specified
                 if(l[0].startsWith("KEYBOARD_")) {
                     if (keyActions.containsKey(l[1])) {
                         try {
@@ -141,6 +167,7 @@ public class Input {
                                     String.format("Error in input.cfg at %s!", l[0] + l[1]), ex);
                         }
                     }
+                // mouse input specified
                 } else if (l[0].startsWith("MOUSE_")) {
                     if (mouseActions.containsKey(l[1])) {
                         try {
@@ -155,10 +182,18 @@ public class Input {
         }
     }
 
+    /**
+     * Gets the current key pressed.
+     * @return the current key being pressed.
+     */
     public static Keyboard.Key getCurrentKey() {
         return currentKey;
     }
 
+    /**
+     * Gets the current mouse position.
+     * @return the current mouse position.
+     */
     public static Vector2f getMousePos() {
         return currentMousePos;
     }

@@ -19,8 +19,8 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
 
 /**
- * @author Nick
  * The screen for the game.
+ * @author Nick
  */
 public final class GameScreen implements Screen {
 
@@ -32,8 +32,6 @@ public final class GameScreen implements Screen {
     
     private final Sprite pointerSprite;
     
-    // private static Level currentLevel;
-    
     private final Clock clock;
     private float lastTime;
     
@@ -42,6 +40,10 @@ public final class GameScreen implements Screen {
         bgColor = Color.WHITE;
     }
 
+    /**
+     * Makes the game screen, resets if needed to.
+     * @param resetGame if the game is to be reset or not.
+     */
     public GameScreen(boolean resetGame) {
         
         buttons = new ArrayList<>();
@@ -68,6 +70,9 @@ public final class GameScreen implements Screen {
         lastTime = 0;
     }
 
+    /**
+     * shows the screen.
+     */
     @Override
     public void show() {
 
@@ -76,9 +81,11 @@ public final class GameScreen implements Screen {
         // use the custom mouse sprite
         Window.getWindow().setMouseCursorVisible(false);
 
+        // set delta time
         float currentTime = clock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
         
+        // iterate through entities
         for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
             Entity e = it.next();
             e.draw();
@@ -88,6 +95,7 @@ public final class GameScreen implements Screen {
             }
         }
         
+        // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
         
         Window.getWindow().draw(pointerSprite);
@@ -96,23 +104,29 @@ public final class GameScreen implements Screen {
         lastTime = currentTime;
     }
 
+    /**
+     * Gets the buttons on the screen.
+     * @return the list of buttons on the screen.
+     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
     }
     
-
+    /**
+     * Gets the screen's background color.
+     * @return the screen's background color.
+     */
     public static Color getBGColor() {
         return bgColor;
     }
     
+    /**
+     * Adds an entity to the screen.
+     * @param e the entity to add.
+     */
     public static void addEntity(Entity e) {
         entities.add(e);
-        System.out.format("Entity count: %s\n", entities.size());
-    }
-    
-    private static void removeEntity(Entity e) {
-        entities.remove(e);
         System.out.format("Entity count: %s\n", entities.size());
     }
 

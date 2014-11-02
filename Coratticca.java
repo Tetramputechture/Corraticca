@@ -8,7 +8,7 @@ package coratticca;
 import java.io.IOException;
 
 /**
- *
+ * The main method of the game.
  * @author Nick
  */
 public class Coratticca {
