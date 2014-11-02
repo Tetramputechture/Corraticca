@@ -1,0 +1,6 @@
+org.jsfml.audio
+org.jsfml.graphics
+org.jsfml.internal
+org.jsfml.system
+org.jsfml.window
+org.jsfml.window.event
