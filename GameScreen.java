@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,9 +79,13 @@ public final class GameScreen implements Screen {
         float currentTime = clock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
         
-        for (Entity e : entities) {
+        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
             e.draw();
             e.update(dt);
+            if (e.isRemovable() && e.isOutOfBounds()) {
+                it.remove();
+            }
         }
         
         pointerSprite.setPosition(Input.getMousePos());
@@ -103,6 +108,11 @@ public final class GameScreen implements Screen {
     
     public static void addEntity(Entity e) {
         entities.add(e);
+        System.out.format("Entity count: %s\n", entities.size());
+    }
+    
+    private static void removeEntity(Entity e) {
+        entities.remove(e);
         System.out.format("Entity count: %s\n", entities.size());
     }
 

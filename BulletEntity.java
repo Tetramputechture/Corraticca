@@ -18,11 +18,15 @@ public class BulletEntity extends Entity {
     private final int vx;
     private final int vy;
     private final Sprite bulletSprite;
+    private final boolean removable;
 
     public BulletEntity(Sprite s) {
         // init sprite
         super(s);
         bulletSprite = s;
+        
+        // entity must be removed when out of bounds
+        removable = true;
         
         // set position and angle based off current player sprite
         x = (float) (PlayerEntity.getPos().x + Math.cos(Math.toRadians(PlayerEntity.getAngle())));
@@ -40,15 +44,18 @@ public class BulletEntity extends Entity {
         x += vx * dt;
         y -= vy * dt;
         
-        // bounce off walls
-//        if (x > Window.getWidth() || x < 0) {
-//            vx = -vx;
-//        }
-//        if (y > Window.getHeight() || y < 0) {
-//            vy = -vy;
-//        }
 
         bulletSprite.setPosition(x, y);
+    }
+    
+    @Override
+    public boolean isOutOfBounds() {
+        return (x > Window.getWidth() || x < 0 || y > Window.getHeight() || y < 0);
+    }
+    
+    @Override
+    public boolean isRemovable() {
+        return removable;
     }
     
 }

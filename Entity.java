@@ -26,4 +26,12 @@ public abstract class Entity {
     
     public abstract void update(float dt);
 
+    boolean isRemovable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    boolean isOutOfBounds() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

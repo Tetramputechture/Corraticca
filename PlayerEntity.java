@@ -33,12 +33,17 @@ public final class PlayerEntity extends Entity {
     private static float targetY;
     private static final float moveSpeed;
     private static final float accelRate;
+    private static final boolean removable;
     
     public PlayerEntity(Sprite s) {
         super(s);
     }
     
     static {
+        
+        // should always be in the screen
+        removable = false;
+        
         playerTexture = new Texture();
         String playerTextureFile = "player.png";
        
@@ -60,33 +65,9 @@ public final class PlayerEntity extends Entity {
         x = playerSprite.getPosition().x;
         y = playerSprite.getPosition().y;
         moveSpeed = 200;
-        accelRate = 40;
+        accelRate = 50;
     }
     
-    public static void setAngle(float angle) {
-        playerSprite.setRotation(angle);
-    }
-    
-    public static void setPos(int x, int y) {
-        playerSprite.setPosition(x, y);
-    }
-    
-    public static Sprite getSprite() {
-        return playerSprite;
-    }
-    
-    public static Vector2f getPos() {
-        return playerSprite.getPosition();
-    }
-
-    public static Vector2f getSize() {
-        return new Vector2f(playerSprite.getLocalBounds().width, playerSprite.getLocalBounds().height);
-    }
-    
-    public static float getAngle() {
-        return playerSprite.getRotation();
-    }
-
     @Override
     public void update(float dt) {
         
@@ -159,6 +140,35 @@ public final class PlayerEntity extends Entity {
         playerSprite.setRotation(90 + (float)angle);
     }
     
+    @Override
+    public boolean isRemovable() {
+        return removable;
+    }
+    
+    public static void setAngle(float angle) {
+        playerSprite.setRotation(angle);
+    }
+    
+    public static void setPos(int x, int y) {
+        playerSprite.setPosition(x, y);
+    }
+    
+    public static Sprite getSprite() {
+        return playerSprite;
+    }
+    
+    public static Vector2f getPos() {
+        return playerSprite.getPosition();
+    }
+
+    public static Vector2f getSize() {
+        return new Vector2f(playerSprite.getLocalBounds().width, playerSprite.getLocalBounds().height);
+    }
+    
+    public static float getAngle() {
+        return playerSprite.getRotation();
+    }
+ 
     public static void moveUp() {
         targetY = -1;
     }
