@@ -48,10 +48,6 @@ public class Input {
     
     static {
         // init keyActions
-        keyActions.put(MoveUpAction.NAME, MoveUpAction.class);
-        keyActions.put(MoveDownAction.NAME, MoveDownAction.class);
-        keyActions.put(MoveLeftAction.NAME, MoveLeftAction.class);
-        keyActions.put(MoveRightAction.NAME, MoveRightAction.class);
         keyActions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
         keyActions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
         keyActions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);

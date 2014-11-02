@@ -68,6 +68,10 @@ public final class Window {
                     Input.handleKeyInput(keyEvent);
                     break;
                     
+                case KEY_RELEASED:
+                    //Input.setCurrentActions(new UnassignedAction(), Input.getCurrentKeys().);
+                    break;
+                    
                 case MOUSE_BUTTON_PRESSED:
                     MouseButtonEvent mouseButtonEvent = event.asMouseButtonEvent();
                     Input.handleMouseClickInput(mouseButtonEvent);

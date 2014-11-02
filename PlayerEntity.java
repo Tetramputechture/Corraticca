@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
+import org.jsfml.window.Keyboard;
 
 /**
  *
@@ -34,6 +35,10 @@ public final class PlayerEntity extends Entity {
     private static final float moveSpeed;
     private static final float accelRate;
     private static final boolean removable;
+    private static boolean isMovingDown;
+    private static boolean isMovingUp;
+    private static boolean isMovingLeft;
+    private static boolean isMovingRight;
     
     public PlayerEntity(Sprite s) {
         super(s);
@@ -64,13 +69,15 @@ public final class PlayerEntity extends Entity {
         playerSprite.setPosition(Window.getWidth()/2, Window.getHeight()/2);
         x = playerSprite.getPosition().x;
         y = playerSprite.getPosition().y;
-        moveSpeed = 200;
-        accelRate = 50;
+        moveSpeed = 120;
+        accelRate = 20;
     }
     
     @Override
     public void update(float dt) {
         
+        targetX = (Keyboard.isKeyPressed(Keyboard.Key.A) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.D) ? 1 : 0);
+	targetY = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
         float desiredX = targetX;
         float desiredY = targetY;
 
@@ -167,22 +174,6 @@ public final class PlayerEntity extends Entity {
     
     public static float getAngle() {
         return playerSprite.getRotation();
-    }
- 
-    public static void moveUp() {
-        targetY = -1;
-    }
-    
-    public static void moveDown() {
-        targetY = 1;
-    }
-        
-    public static void moveLeft() {
-        targetX = -1;
-    }
-    
-    public static void moveRight() {
-        targetX  = 1;
     }
     
     public static void setTargetX(float x) {
