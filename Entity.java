@@ -6,6 +6,7 @@
 package coratticca;
 
 import org.jsfml.graphics.Sprite;
+import org.jsfml.system.Vector2f;
 
 /**
  * Abstract class to handle all Entities.
@@ -38,15 +39,11 @@ public abstract class Entity {
     public abstract void update(float dt);
 
     /**
-     * Gets if the entity is removable or not.
-     * @return if the entity is removable.
+     * Gets if the entity should be removed.
+     * @return if the entity needs to be removed from the game's entity list.
      */
-    public abstract boolean isRemovable();
-
-    /**
-     * Gets if the entity is out of bounds of the window.
-     * @return if the entity is out of the window bounds.
-     */
-    public abstract boolean isOutOfBounds();
+    public abstract boolean remove();
+    
+    public abstract Vector2f getPos();
 
 }

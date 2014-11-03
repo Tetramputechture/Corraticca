@@ -6,6 +6,7 @@
 package coratticca;
 
 import org.jsfml.graphics.Sprite;
+import org.jsfml.system.Vector2f;
 
 /**
  * An entity representing a bullet, what the player shoots.
@@ -15,10 +16,9 @@ public class BulletEntity extends Entity {
     
     private float x;
     private float y;
-    private final int vx;
-    private final int vy;
+    private final float vx;
+    private final float vy;
     private final Sprite bulletSprite;
-    private final boolean removable;
 
     /**
      * Sets rotation and position of bullet.
@@ -29,15 +29,12 @@ public class BulletEntity extends Entity {
         super(s);
         bulletSprite = s;
         
-        // must be deleted when out of bounds
-        removable = true;
-        
         // set position and angle based off current player sprite
-        x = (float) (PlayerEntity.getPos().x + Math.cos(Math.toRadians(PlayerEntity.getAngle())));
-        y = (float) (PlayerEntity.getPos().y + Math.sin(Math.toRadians(PlayerEntity.getAngle())));
-        vx = (int) (220 * Math.sin(Math.toRadians(PlayerEntity.getAngle())));
-        vy = (int) (220 * Math.cos(Math.toRadians(PlayerEntity.getAngle())));
-        bulletSprite.setRotation(PlayerEntity.getAngle());
+        x = (float) (GameScreen.getCurrentPlayer().getPos().x + Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        y = (float) (GameScreen.getCurrentPlayer().getPos().y + Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        vx = (float) (300 * Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        vy = (float) (300 * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        bulletSprite.setRotation(GameScreen.getCurrentPlayer().getAngle());
         bulletSprite.setPosition(x, y);
     }
 
@@ -47,29 +44,28 @@ public class BulletEntity extends Entity {
      */
     @Override
     public void update(float dt) {
-       
         x += vx * dt;
         y -= vy * dt;
-        
         bulletSprite.setPosition(x, y);
     }
     
     /**
-     * If bullet is out of bounds.
-     * @return if the bullet is out of bounds .
+     * If bullet should be removed
+     * @return if the bullet is out of bounds, and therefore should be removed
      */
     @Override
-    public boolean isOutOfBounds() {
+    public boolean remove() {
         return (x > Window.getWidth() || x < 0 || y > Window.getHeight() || y < 0);
     }
     
-    /**
-     * If bullet is removable.
-     * @return if bullet is removable.
-     */
     @Override
-    public boolean isRemovable() {
-        return removable;
+    public Vector2f getPos() {
+        return bulletSprite.getPosition();
     }
     
+    @Override
+    public String toString() {
+        return "Bullet";
+    }
+
 }

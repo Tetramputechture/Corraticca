@@ -11,74 +11,79 @@ import java.util.List;
 import org.jsfml.graphics.Color;
 
 /**
- * The Pause Menu screen.
+ *
  * @author Nick
  */
-public class PauseMenuScreen implements Screen {
+public class GameLostScreen implements Screen {
     
     private static final Color bgColor;
     
     private final List<Button> buttons;
     
     static {
-        bgColor = GameScreen.getBGColor();
+        bgColor = Color.BLACK;
     }
     
     /**
      * Initializes the pause menu and all of it's buttons.
      */
-    public PauseMenuScreen() {
+    public GameLostScreen() {
         buttons = new ArrayList<>();
         
         // cursor must be visible
         Window.getWindow().setMouseCursorVisible(true);
         
+        // add game lost text
+        buttons.add(new Button(Window.getWidth()/2,
+                                Window.getHeight()/2 - 50,
+                                48,
+                                "Game Lost! :(",
+                                "OpenSans-Regular.ttf",
+                                Color.WHITE,
+                                new UnassignedAction()));
+        
         // add exit button
         buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2-100,
+                                Window.getHeight()/2 + 50,
                                 24, 
                                 "Exit to Main Menu", 
                                 "OpenSans-Regular.ttf", 
-                                Color.BLACK,
+                                Color.WHITE,
                                 new ChangeToMainMenuScreenAction()));
         
-        // add resume game button
+        // add new game button
         buttons.add(new Button(Window.getWidth()/2,
-                                Window.getHeight()/2,
+                                Window.getHeight()/2 + 100,
                                 24,
-                                "Resume Game",
+                                "New Game",
                                 "OpenSans-Regular.ttf",
-                                Color.BLACK,
-                                new ChangeToGameScreenAction(false)));
+                                Color.WHITE,
+                                new ChangeToGameScreenAction(true)));
     }
-   
-    /**
-     * Shows the Pause Screen and all it's buttons. 
-     */
+
     @Override
     public void show() {
         
         Window.getWindow().clear(bgColor);
         
-        for (Button b : buttons) {
-            b.draw();
+        for (Button i : buttons) {
+            i.draw();
         }
 
         Window.getWindow().display();
     }
 
     /**
-     * Gets the Pause Screen's buttons.
-     * @return a List containing all the buttons of the Pause Screen.
+     * Gets the Game Lost Screen's buttons.
+     * @return a List containing all the buttons of the Game Lost Screen.
      */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
     }
     
-    @Override
     public String toString() {
-        return "PAUSE_MENU";
+        return "GAME_LOST";
     }
     
 }

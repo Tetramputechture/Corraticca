@@ -54,10 +54,8 @@ public class FireAction implements Action {
         Sprite bulletSprite = new Sprite(bulletTexture);
         
         bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
-        
-        Entity bulletEntity = new BulletEntity(bulletSprite);
-        bulletSprite.setRotation(PlayerEntity.getAngle());
-        GameScreen.addEntity(bulletEntity); 
+
+        GameScreen.addEntity(new BulletEntity(bulletSprite)); 
     }
 
     @Override

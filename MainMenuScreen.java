@@ -49,8 +49,8 @@ public class MainMenuScreen implements Screen {
         
         Window.getWindow().clear(bgColor);
         
-        for (Button i : buttons) {
-            i.draw();
+        for (Button b : buttons) {
+            b.draw();
         }
 
         Window.getWindow().display();

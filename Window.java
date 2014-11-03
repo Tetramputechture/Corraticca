@@ -81,6 +81,12 @@ public final class Window {
                 case CLOSED:
                     window.close();
                     break;
+                
+                case LOST_FOCUS:
+                    if (currentScreen.toString().equals("GAME")) {
+                        changeScreen(new PauseMenuScreen());
+                    }
+                    break;
 
                 case KEY_PRESSED:
                     KeyEvent keyEvent = event.asKeyEvent();

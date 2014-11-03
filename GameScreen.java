@@ -28,16 +28,20 @@ public final class GameScreen implements Screen {
 
     private final List<Button> buttons;
     
-    private static final List<Entity> entities;
+    private static List<Entity> entities;
+    
+    private int numEnemies;
+    private static int maxEnemies;
     
     private final Sprite pointerSprite;
+    
+    private static PlayerEntity playerEntity;
     
     private final Clock clock;
     private float lastTime;
     
     static {
-        entities = new ArrayList<>();
-        bgColor = Color.WHITE;
+        bgColor = new Color(150, 150, 150);
     }
 
     /**
@@ -46,12 +50,12 @@ public final class GameScreen implements Screen {
      */
     public GameScreen(boolean resetGame) {
         
+        if (resetGame) {
+            entities = new ArrayList<>();
+        }
         buttons = new ArrayList<>();
         
-        // clears entities (including Player) if game is reset
-        if (resetGame) {
-            entities.clear();
-        }
+        maxEnemies = 100;
        
         // init mouse sprite
         Texture pointerTexture = new Texture();
@@ -62,9 +66,19 @@ public final class GameScreen implements Screen {
         }
         pointerSprite = new Sprite(pointerTexture);
         
-        // all game screens have a player
-        Entity playerEntity = new PlayerEntity(PlayerEntity.getSprite());
-        addEntity(playerEntity);
+        if (resetGame) {
+            playerEntity = new PlayerEntity(PlayerEntity.getSprite());
+            addEntity(playerEntity);
+        }
+        
+        // health text
+        buttons.add(new Button(100,
+                               50,
+                               30,
+                               "Health: " + playerEntity.getHealth(),
+                               "OpenSans-Regular.ttf",
+                               Color.BLACK,
+                               new UnassignedAction()));
         
         clock = new Clock();
         lastTime = 0;
@@ -90,18 +104,42 @@ public final class GameScreen implements Screen {
             Entity e = it.next();
             e.draw();
             e.update(dt);
-            if (e.isRemovable() && e.isOutOfBounds()) {
-                it.remove();
+            if (e.remove()) {
+                if (e.toString().equals("Player")) {
+                    System.out.println("Game lost!");
+                    Window.changeScreen(new GameLostScreen());
+                }
+                if (e.toString().equals("Enemy")) {
+                    numEnemies--;
+                    it.remove();
+                } else {
+                    it.remove();
+                }
+            }
+        }
+        
+        if (numEnemies <= maxEnemies) {
+            if (Math.random() < 0.1) {
+                new SpawnEnemyAction().execute();
+                numEnemies++;
             }
         }
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
         
+        // show health text
+        buttons.get(0).setText("Health: " + Integer.toString(playerEntity.getHealth()));
+        buttons.get(0).draw();
+        
         Window.getWindow().draw(pointerSprite);
         Window.getWindow().display();
         
         lastTime = currentTime;
+    }
+    
+    public static PlayerEntity getCurrentPlayer() {
+        return playerEntity;
     }
 
     /**
@@ -128,6 +166,10 @@ public final class GameScreen implements Screen {
     public static void addEntity(Entity e) {
         entities.add(e);
         System.out.format("Entity count: %s\n", entities.size());
+    }
+    
+    public static List<Entity> getEntities() {
+        return Collections.unmodifiableList(entities);
     }
 
     @Override

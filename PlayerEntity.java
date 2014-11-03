@@ -24,28 +24,21 @@ public final class PlayerEntity extends Entity {
     
     private static final Sprite playerSprite;
     
-    private static double angle;
+    private double angle;
     
-    private static float x;
-    private static float y;
-    private static float vx;
-    private static float vy;
-    private static float targetX;
-    private static float targetY;
-    private static final float moveSpeed;
-    private static final float accelRate;
-    private static final float fConst;
-    private static final boolean removable;
+    private float x;
+    private float y;
+    private float vx;
+    private float vy;
+    private float targetX;
+    private float targetY;
+    private final float moveSpeed;
+    private final float accelRate;
+    private final float fConst;
     
-    /**
-     * Sets the player entity's sprite.
-     * @param s the player's sprite
-     */
-    public PlayerEntity(Sprite s) {
-        super(s);
-    }
+    private int health;
     
-    static { 
+    static {
         playerTexture = new Texture();
         String playerTextureFile = "player.png";
        
@@ -60,6 +53,15 @@ public final class PlayerEntity extends Entity {
         playerTexture.setSmooth(true);
         
         playerSprite = new Sprite(playerTexture);
+    }
+    
+    /**
+     * Sets the player entity's sprite.
+     * @param s the player's sprite
+     */
+    public PlayerEntity(Sprite s) {
+        super(s);
+        health = 3;
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
@@ -71,9 +73,6 @@ public final class PlayerEntity extends Entity {
         moveSpeed = 120;
         accelRate = 20;
         fConst = 0.95f;
-        
-        // player can't be removed
-        removable = false;
     }
     
     /**
@@ -158,29 +157,24 @@ public final class PlayerEntity extends Entity {
     }
     
     /**
-     * Checks if the player is removable.
-     * @return if the player is removable.
+     * If the player should be removed.
+     * @return if the enemy has no health, and therefore should be removed.
      */
     @Override
-    public boolean isRemovable() {
-        return removable;
+    public boolean remove() {
+        return health == 0;
     }
     
-    /**
-     * Checks if the player is out of bounds.
-     * @return if the player is out of bounds.
-     */
-    @Override
-    public boolean isOutOfBounds() {
-        // will never be out of bounds, since player wraps around screen
-        return false;
+    public void changeHealth(int r) {
+        health += r;
+        System.out.println("Health: " + health);
     }
     
     /**
      * Sets the angle of the player.
      * @param angle the angle for the player to be set at.
      */
-    public static void setAngle(float angle) {
+    public void setAngle(float angle) {
         playerSprite.setRotation(angle);
     }
     
@@ -189,7 +183,7 @@ public final class PlayerEntity extends Entity {
      * @param x the x position for the player to be set at.
      * @param y the y position for the player to be set at.
      */
-    public static void setPos(int x, int y) {
+    public void setPos(int x, int y) {
         playerSprite.setPosition(x, y);
     }
     
@@ -205,7 +199,8 @@ public final class PlayerEntity extends Entity {
      * Gets the player's position.
      * @return the player's position.
      */
-    public static Vector2f getPos() {
+    @Override
+    public Vector2f getPos() {
         return playerSprite.getPosition();
     }
 
@@ -213,7 +208,7 @@ public final class PlayerEntity extends Entity {
      * Gets the player's size.
      * @return the player's size.
      */
-    public static Vector2f getSize() {
+    public Vector2f getSize() {
         return new Vector2f(playerSprite.getLocalBounds().width, playerSprite.getLocalBounds().height);
     }
     
@@ -221,7 +216,16 @@ public final class PlayerEntity extends Entity {
      * Gets the player's angle.
      * @return the player's angle.
      */
-    public static float getAngle() {
+    public float getAngle() {
         return playerSprite.getRotation();
+    }
+    
+    public int getHealth() {
+        return health;
+    }
+    
+    @Override
+    public String toString() {
+        return "Player";
     }
 }
