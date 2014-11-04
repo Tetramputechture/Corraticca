@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -48,6 +49,7 @@ public class Input {
     
     static {
         // init keyActions
+        
         keyActions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
         keyActions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
         keyActions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
@@ -101,7 +103,6 @@ public class Input {
      * @param mouseEvent the Mouse Event to be handled.
      */
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
-
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
         currentMouseButton = mouseEvent.button;
         System.out.format("Mouse %s clicked on position (%s, %s)\n", currentMouseButton, currentMousePos.x, currentMousePos.y);
@@ -130,6 +131,16 @@ public class Input {
      */
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
+        
+        for (Button i : Window.getCurrentScreen().getButtons()) {
+            if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
+                if (!(i.getAction().equals("UNASSIGNED_ACTION"))) {
+                    i.handleMouseHover();
+                }
+            } else {
+                i.setDefaultColor();
+            }
+        }
     }
 
     /**
@@ -137,9 +148,7 @@ public class Input {
      * @throws FileNotFoundException
      * @throws IOException
      */
-        public static void setInputs() throws FileNotFoundException, IOException {
-
-            
+        public static void setInputs() throws FileNotFoundException, IOException {  
         // gets the config file   
         FileInputStream incfg = new FileInputStream(new File("inputconfig.cfg"));
 
@@ -188,6 +197,10 @@ public class Input {
      */
     public static Keyboard.Key getCurrentKey() {
         return currentKey;
+    }
+    
+    public static Map<Keyboard.Key, Action> getGameKeys() {
+        return Collections.unmodifiableMap(gameKeys);
     }
 
     /**

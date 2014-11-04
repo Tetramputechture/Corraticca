@@ -30,12 +30,12 @@ public final class GameScreen implements Screen {
     
     private static List<Entity> entities;
     
-    private int numEnemies;
-    private static int maxEnemies;
-    
     private final Sprite pointerSprite;
     
     private static PlayerEntity playerEntity;
+    
+    private static int numWaves;
+    private static EnemyWave currentWave;
     
     private final Clock clock;
     private float lastTime;
@@ -54,8 +54,6 @@ public final class GameScreen implements Screen {
             entities = new ArrayList<>();
         }
         buttons = new ArrayList<>();
-        
-        maxEnemies = 100;
        
         // init mouse sprite
         Texture pointerTexture = new Texture();
@@ -79,6 +77,12 @@ public final class GameScreen implements Screen {
                                "OpenSans-Regular.ttf",
                                Color.BLACK,
                                new UnassignedAction()));
+        
+        // get number of waves
+        numWaves = 10;
+        
+        // set current wave
+        currentWave = new EnemyWave(1, 10);
         
         clock = new Clock();
         lastTime = 0;
@@ -108,22 +112,16 @@ public final class GameScreen implements Screen {
                 if (e.toString().equals("Player")) {
                     System.out.println("Game lost!");
                     Window.changeScreen(new GameLostScreen());
-                }
-                if (e.toString().equals("Enemy")) {
-                    numEnemies--;
-                    it.remove();
                 } else {
                     it.remove();
                 }
             }
         }
         
-        if (numEnemies <= maxEnemies) {
-            if (Math.random() < 0.1) {
-                new SpawnEnemyAction().execute();
-                numEnemies++;
-            }
+        if (Math.random() < 0.07) {
+            new SpawnEnemyAction().execute();
         }
+        
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
@@ -157,6 +155,10 @@ public final class GameScreen implements Screen {
      */
     public static Color getBGColor() {
         return bgColor;
+    }
+    
+    public static int getNumWaves() {
+        return numWaves;
     }
     
     /**

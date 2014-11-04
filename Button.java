@@ -14,6 +14,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Text;
+import org.jsfml.window.Mouse;
 
 /**
  * This class is for a button on a screen.
@@ -25,6 +26,7 @@ import org.jsfml.graphics.Text;
 public class Button extends Input {
     
     private final Text text;
+    private final Color defaultColor;
     
     private Action action;
     
@@ -48,6 +50,8 @@ public class Button extends Input {
         
         // set action
         this.action = action;
+        
+        defaultColor = color;
         
         // set text
         Font font = new Font();
@@ -84,12 +88,21 @@ public class Button extends Input {
         Window.getWindow().draw(text);
     }
     
+    public void handleMouseHover() {
+        text.setColor(Color.RED);
+        Window.getWindow().draw(text);
+    }
+    
     /**
      * Sets the button's text.
      * @param t the text to be set.
      */
     public void setText(String t) {
         text.setString(t);
+    }
+    
+    public void setDefaultColor() {
+        text.setColor(defaultColor);
     }
     
     /**

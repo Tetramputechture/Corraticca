@@ -33,12 +33,20 @@ public class MainMenuScreen implements Screen {
         // add play button
         Window.getWindow().setMouseCursorVisible(true);
         buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2-40,
-                                104, 
+                                Window.getHeight()/2-80,
+                                52, 
                                 "Play!", 
                                 "OpenSans-Regular.ttf", 
-                                Color.RED,
+                                Color.WHITE,
                                 new ChangeToGameScreenAction(true)));
+        
+        buttons.add(new Button(Window.getWidth()/2, 
+                                Window.getHeight()/2+20,
+                                52, 
+                                "Exit!", 
+                                "OpenSans-Regular.ttf", 
+                                Color.WHITE,
+                                new ExitGameAction()));
     }
    
     /**

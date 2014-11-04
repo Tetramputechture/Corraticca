@@ -37,8 +37,6 @@ public class EnemyEntity extends Entity {
         Random r = new Random();
         x = r.nextInt(Window.getWidth());
         y = r.nextInt(Window.getHeight());
-        vx = r.nextInt(150) + 100;
-        vy = r.nextInt(150) + 100;
         if (r.nextDouble() < 0.5) {
             x = 0;
         } else {
@@ -67,9 +65,15 @@ public class EnemyEntity extends Entity {
      */
     @Override
     public void update(float dt) {
+        
+        Vector2f top = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
+                                    GameScreen.getCurrentPlayer().getPos().y - y);
+        double length = Math.sqrt(top.x*top.x + top.y*top.y);
+        double normX = top.x/length;
+        double normY = top.y/length;
        
-        x += vx * dt;
-        y -= vy * dt;
+        x += normX * 160 * dt;
+        y += normY * 160 * dt;
         
         if (x > Window.getWidth() || x < 0) {
             vx = -vx;
@@ -88,7 +92,7 @@ public class EnemyEntity extends Entity {
      */
     @Override
     public boolean remove() {
-        return health == 0 || intersectsWithPlayer() || intersectsWithBullet();
+        return (health == 0 || intersectsWithPlayer() || intersectsWithBullet());
     }
     
     public boolean intersectsWithPlayer() {
@@ -104,6 +108,7 @@ public class EnemyEntity extends Entity {
         for (Entity e : GameScreen.getEntities()) {
             if (e.toString().equals("Bullet") && 
                     enemySprite.getGlobalBounds().contains(e.getPos())) {
+                health--;
                 return true;   
             }
         }
