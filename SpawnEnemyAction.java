@@ -7,7 +7,9 @@ package coratticca;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Random;
 import java.util.logging.Logger;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -52,6 +54,13 @@ public class SpawnEnemyAction implements Action {
         
         Sprite enemySprite = new Sprite(enemyTexture);
         enemySprite.setOrigin(Vector2f.div(new Vector2f(enemyTexture.getSize()), 2));
+        
+        Random c = new Random();
+        int r = (int)(Math.random()*256);
+        int g = (int)(Math.random()*206) + 50;
+        int b = (int)(Math.random()*256);
+        
+        enemySprite.setColor(new Color(r, g, b));
         
         GameScreen.addEntity(new EnemyEntity(enemySprite));
     }

@@ -40,7 +40,7 @@ public class GameLostScreen implements Screen {
                                 "Game Lost! :(",
                                 "OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                new UnassignedAction()));
+                                null));
         
         // add exit button
         buttons.add(new Button(Window.getWidth()/2, 

@@ -14,13 +14,11 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Text;
-import org.jsfml.window.Mouse;
 
 /**
  * This class is for a button on a screen.
  * A button can have any action assigned to it.
- * If you just want to make a simple text object, assign the button to
- * Unassigned Action.
+ * If you just want to make a simple text object, leave the action as null.
  * @author Nick
  */
 public class Button extends Input {
@@ -132,8 +130,8 @@ public class Button extends Input {
      * Gets the action of the button.
      * @return the String representation of the button's action.
      */
-    public String getAction() {
-        return action.toString();
+    public Action getAction() {
+        return action;
     }
     
 }

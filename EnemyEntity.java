@@ -6,6 +6,7 @@
 package coratticca;
 
 import java.util.Random;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -92,7 +93,14 @@ public class EnemyEntity extends Entity {
      */
     @Override
     public boolean remove() {
-        return (health == 0 || intersectsWithPlayer() || intersectsWithBullet());
+        if (health == 0 || intersectsWithPlayer() || intersectsWithBullet()) {
+            Random r = new Random();
+            double randomValue = 0.5 + (1 - 0.5) * r.nextDouble();
+            Audio.playSound("enemydeath.wav", (float)randomValue );
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public boolean intersectsWithPlayer() {
@@ -106,7 +114,7 @@ public class EnemyEntity extends Entity {
     
     public boolean intersectsWithBullet() {
         for (Entity e : GameScreen.getEntities()) {
-            if (e.toString().equals("Bullet") && 
+            if (e.getClass().equals(BulletEntity.class) && 
                     enemySprite.getGlobalBounds().contains(e.getPos())) {
                 health--;
                 return true;   

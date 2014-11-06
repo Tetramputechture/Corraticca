@@ -55,7 +55,19 @@ public class BulletEntity extends Entity {
      */
     @Override
     public boolean remove() {
-        return (x > Window.getWidth() || x < 0 || y > Window.getHeight() || y < 0);
+        return (x > Window.getWidth() || x < 0 || 
+                y > Window.getHeight() || y < 0 ||
+                hitsEnemy());
+    }
+    
+    public boolean hitsEnemy() {
+        for (Entity e : GameScreen.getEntities()) {
+            if (e.getClass().equals(EnemyEntity.class) && 
+                    bulletSprite.getGlobalBounds().contains(e.getPos())) {
+                return true;   
+            }
+        } 
+        return false;
     }
     
     @Override

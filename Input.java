@@ -110,14 +110,17 @@ public class Input {
         if (currentMouseButton == Mouse.Button.LEFT) {
             for (Button i : Window.getCurrentScreen().getButtons()) {
                 if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
-                    i.executeAction();
+                    if (i.getAction() != null) {
+                        Audio.playSound("buttonsound1.wav", 1f);
+                        i.executeAction();
+                    }
                     return;
                 }
             }
         }
         
         // If a Button isn't pressed, then execute the associated action on the game screen
-        if (Window.getCurrentScreen().toString().equals("GAME")) {
+        if (Window.getCurrentScreen().getClass().equals(GameScreen.class)) {
             if (gameMouseButtons.containsKey(currentMouseButton)) {
                 gameMouseButtons.get(currentMouseButton).execute();
             }
@@ -134,7 +137,7 @@ public class Input {
         
         for (Button i : Window.getCurrentScreen().getButtons()) {
             if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
-                if (!(i.getAction().equals("UNASSIGNED_ACTION"))) {
+                if (i.getAction() != null) {
                     i.handleMouseHover();
                 }
             } else {

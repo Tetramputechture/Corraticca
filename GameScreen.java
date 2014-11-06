@@ -76,7 +76,7 @@ public final class GameScreen implements Screen {
                                "Health: " + playerEntity.getHealth(),
                                "OpenSans-Regular.ttf",
                                Color.BLACK,
-                               new UnassignedAction()));
+                               null));
         
         // get number of waves
         numWaves = 10;
@@ -109,7 +109,7 @@ public final class GameScreen implements Screen {
             e.draw();
             e.update(dt);
             if (e.remove()) {
-                if (e.toString().equals("Player")) {
+                if (e.getClass().equals(PlayerEntity.class)) {
                     System.out.println("Game lost!");
                     Window.changeScreen(new GameLostScreen());
                 } else {

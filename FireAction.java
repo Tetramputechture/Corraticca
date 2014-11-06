@@ -55,6 +55,7 @@ public class FireAction implements Action {
         
         bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
 
+        Audio.playSound("firesound.wav", 1);
         GameScreen.addEntity(new BulletEntity(bulletSprite)); 
     }
 
