@@ -5,6 +5,7 @@
  */
 package coratticca;
 
+import java.util.Iterator;
 import java.util.Random;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
@@ -103,29 +104,39 @@ public class EnemyEntity extends Entity {
         }
     }
     
+    @Override
+    public void setRemove() {
+    }
+    
     public boolean intersectsWithPlayer() {
         if (enemySprite.getGlobalBounds().contains(GameScreen.getCurrentPlayer().getPos())) {
             GameScreen.getCurrentPlayer().changeHealth(-1);
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
     
     public boolean intersectsWithBullet() {
-        for (Entity e : GameScreen.getEntities()) {
-            if (e.getClass().equals(BulletEntity.class) && 
-                    enemySprite.getGlobalBounds().contains(e.getPos())) {
-                health--;
-                return true;   
-            }
-        }
-        return false;
+      for (Entity e : GameScreen.getEntities()) {
+        if (e.getClass().equals(BulletEntity.class) &&
+            enemySprite.getGlobalBounds().contains(e.getPos())) {   
+            health--;
+            GameScreen.killEnemy();
+            e.setRemove();
+            return true;
+        } 
+      }
+      return false;
     }
     
     @Override
     public Vector2f getPos() {
         return enemySprite.getPosition();
+    }
+    
+    @Override
+    public Sprite getSprite() {
+        return enemySprite;
     }
     
     @Override

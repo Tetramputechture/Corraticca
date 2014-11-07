@@ -49,13 +49,9 @@ public class SpawnEnemyAction implements Action {
 
     @Override
     public void execute() {
-        
-        System.out.println("Enemy spawned!");
-        
         Sprite enemySprite = new Sprite(enemyTexture);
         enemySprite.setOrigin(Vector2f.div(new Vector2f(enemyTexture.getSize()), 2));
         
-        Random c = new Random();
         int r = (int)(Math.random()*256);
         int g = (int)(Math.random()*206) + 50;
         int b = (int)(Math.random()*256);

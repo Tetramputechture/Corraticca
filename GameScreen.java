@@ -37,6 +37,9 @@ public final class GameScreen implements Screen {
     private static int numWaves;
     private static EnemyWave currentWave;
     
+    private static int enemiesKilled;
+    private static int shotsFired;
+    
     private final Clock clock;
     private float lastTime;
     
@@ -65,15 +68,15 @@ public final class GameScreen implements Screen {
         pointerSprite = new Sprite(pointerTexture);
         
         if (resetGame) {
-            playerEntity = new PlayerEntity(PlayerEntity.getSprite());
+            playerEntity = new PlayerEntity(PlayerEntity.getCurrentSprite());
             addEntity(playerEntity);
         }
         
         // health text
-        buttons.add(new Button(100,
-                               50,
-                               30,
-                               "Health: " + playerEntity.getHealth(),
+        buttons.add(new Button((int)playerEntity.getPos().x - 10,
+                               (int)playerEntity.getPos().y - 10,
+                               20,
+                               Integer.toString(playerEntity.getHealth()),
                                "OpenSans-Regular.ttf",
                                Color.BLACK,
                                null));
@@ -109,16 +112,11 @@ public final class GameScreen implements Screen {
             e.draw();
             e.update(dt);
             if (e.remove()) {
-                if (e.getClass().equals(PlayerEntity.class)) {
-                    System.out.println("Game lost!");
-                    Window.changeScreen(new GameLostScreen());
-                } else {
-                    it.remove();
-                }
+                it.remove();
             }
         }
         
-        if (Math.random() < 0.07) {
+        if (Math.random() < 0.03) {
             new SpawnEnemyAction().execute();
         }
         
@@ -127,7 +125,8 @@ public final class GameScreen implements Screen {
         pointerSprite.setPosition(Input.getMousePos());
         
         // show health text
-        buttons.get(0).setText("Health: " + Integer.toString(playerEntity.getHealth()));
+        buttons.get(0).setText(Integer.toString(playerEntity.getHealth()));
+        buttons.get(0).setPosition((int)playerEntity.getPos().x + 15, (int)playerEntity.getPos().y - 15);
         buttons.get(0).draw();
         
         Window.getWindow().draw(pointerSprite);
@@ -161,13 +160,33 @@ public final class GameScreen implements Screen {
         return numWaves;
     }
     
+    public static int getEnemiesKilled() {
+        return enemiesKilled;
+    }
+    
+    public static int getShotsFired() {
+        return shotsFired;
+    }
+    
+    public static double getAccuracy() {
+        return (double)enemiesKilled/shotsFired;
+    }
+    
+    public static void killEnemy() {
+        enemiesKilled++;
+    }
+    
+    public static void fireShot() {
+        shotsFired++;
+    }
+    
     /**
      * Adds an entity to the screen.
      * @param e the entity to add.
      */
     public static void addEntity(Entity e) {
         entities.add(e);
-        System.out.format("Entity count: %s\n", entities.size());
+        System.out.format("Entity count: %s\n\n", entities.size());
     }
     
     public static List<Entity> getEntities() {

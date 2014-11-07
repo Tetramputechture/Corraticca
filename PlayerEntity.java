@@ -162,7 +162,16 @@ public final class PlayerEntity extends Entity {
      */
     @Override
     public boolean remove() {
-        return health == 0;
+        if (health == 0) {
+            System.out.println("Game lost!");
+            Window.changeScreen(new GameLostScreen());
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public void setRemove() {
     }
     
     public void changeHealth(int r) {
@@ -191,7 +200,12 @@ public final class PlayerEntity extends Entity {
      * Gets the player's sprite.
      * @return the player's sprite.
      */
-    public static Sprite getSprite() {
+    @Override
+    public Sprite getSprite() {
+        return playerSprite;
+    }
+    
+    public static Sprite getCurrentSprite() {
         return playerSprite;
     }
     

@@ -44,10 +44,14 @@ public abstract class Entity {
      */
     public abstract boolean remove();
     
+    public abstract void setRemove();
+    
     /**
      * Gets the position of the entity relative to the current window.
      * @return the position of the entity as a float vector
      */
     public abstract Vector2f getPos();
+    
+    public abstract Sprite getSprite();
 
 }

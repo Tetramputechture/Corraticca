@@ -19,6 +19,7 @@ public class BulletEntity extends Entity {
     private final float vx;
     private final float vy;
     private final Sprite bulletSprite;
+    private boolean toBeRemoved;
 
     /**
      * Sets rotation and position of bullet.
@@ -57,22 +58,22 @@ public class BulletEntity extends Entity {
     public boolean remove() {
         return (x > Window.getWidth() || x < 0 || 
                 y > Window.getHeight() || y < 0 ||
-                hitsEnemy());
+                toBeRemoved);
     }
     
-    public boolean hitsEnemy() {
-        for (Entity e : GameScreen.getEntities()) {
-            if (e.getClass().equals(EnemyEntity.class) && 
-                    bulletSprite.getGlobalBounds().contains(e.getPos())) {
-                return true;   
-            }
-        } 
-        return false;
+    @Override
+    public void setRemove() {
+        toBeRemoved = true;
     }
     
     @Override
     public Vector2f getPos() {
         return bulletSprite.getPosition();
+    }
+    
+    @Override
+    public Sprite getSprite() {
+        return bulletSprite;
     }
     
     @Override

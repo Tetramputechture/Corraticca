@@ -59,6 +59,17 @@ public class GameLostScreen implements Screen {
                                 "OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 new ChangeToGameScreenAction(true)));
+        
+        // add stats text
+        buttons.add(new Button(Window.getWidth() - 100,
+                                Window.getHeight()/2 + 200,
+                                18,
+                                String.format("Enemies killed: %s\n"
+                                        + "Shots fired: %s\n"
+                                        + "Accuracy: %.4f", GameScreen.getEnemiesKilled(), GameScreen.getShotsFired(), GameScreen.getAccuracy()),
+                                "OpenSans-Regular.ttf",
+                                Color.WHITE,
+                                null));
     }
 
     @Override

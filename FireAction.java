@@ -50,13 +50,13 @@ public class FireAction implements Action {
      */
     @Override
     public void execute() {
-        System.out.println("Fire key pressed!");
         Sprite bulletSprite = new Sprite(bulletTexture);
         
         bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
 
         Audio.playSound("firesound.wav", 1);
         GameScreen.addEntity(new BulletEntity(bulletSprite)); 
+        GameScreen.fireShot();
     }
 
     @Override

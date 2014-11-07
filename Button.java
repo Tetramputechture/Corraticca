@@ -27,6 +27,7 @@ public class Button extends Input {
     private final Color defaultColor;
     
     private Action action;
+    private boolean playHoverSound;
     
     /**
      * Constructs a button.
@@ -87,8 +88,15 @@ public class Button extends Input {
     }
     
     public void handleMouseHover() {
+        if (playHoverSound) {
+            Audio.playSound("buttonsound1.wav", 1f);
+        }
         text.setColor(Color.RED);
         Window.getWindow().draw(text);
+    }
+    
+    public void setPosition(int x, int y) {
+        text.setPosition(x, y);
     }
     
     /**
@@ -132,6 +140,13 @@ public class Button extends Input {
      */
     public Action getAction() {
         return action;
+    }
+    
+    /**
+     * @param playHoverSound the playHoverSound to set
+     */
+    public void setPlayHoverSound(boolean playHoverSound) {
+        this.playHoverSound = playHoverSound;
     }
     
 }

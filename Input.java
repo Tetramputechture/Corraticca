@@ -105,13 +105,12 @@ public class Input {
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
         currentMouseButton = mouseEvent.button;
-        System.out.format("Mouse %s clicked on position (%s, %s)\n", currentMouseButton, currentMousePos.x, currentMousePos.y);
+        System.out.format("Mouse %s clicked on position (%s, %s)\n\n", currentMouseButton, currentMousePos.x, currentMousePos.y);
 
         if (currentMouseButton == Mouse.Button.LEFT) {
             for (Button i : Window.getCurrentScreen().getButtons()) {
                 if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
                     if (i.getAction() != null) {
-                        Audio.playSound("buttonsound1.wav", 1f);
                         i.executeAction();
                     }
                     return;
@@ -140,8 +139,10 @@ public class Input {
                 if (i.getAction() != null) {
                     i.handleMouseHover();
                 }
+                i.setPlayHoverSound(false);
             } else {
                 i.setDefaultColor();
+                i.setPlayHoverSound(true);
             }
         }
     }
