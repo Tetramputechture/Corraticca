@@ -37,7 +37,7 @@ public class FireAction implements Action {
             this.bulletTexture.loadFromFile(Paths.get(bulletTextureFile));
         } catch (IOException ex) {
             Logger.getLogger(PlayerEntity.class.getName()).log(java.util.logging.Level.SEVERE, 
-                    String.format("Unable to load file %s!\n", bulletTextureFile), 
+                    String.format("Unable to load file %s!%n", bulletTextureFile), 
                     ex);
         }
         

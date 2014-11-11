@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +75,9 @@ public class Input {
             case "GAME":
                 handleGameKeyInput();
                 break;
+                
+            default:
+                break;
         }
     }
 
@@ -105,7 +109,7 @@ public class Input {
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
         currentMouseButton = mouseEvent.button;
-        System.out.format("Mouse %s clicked on position (%s, %s)\n\n", currentMouseButton, currentMousePos.x, currentMousePos.y);
+        System.out.format("Mouse %s clicked on position (%s, %s)%n%n", currentMouseButton, currentMousePos.x, currentMousePos.y);
 
         if (currentMouseButton == Mouse.Button.LEFT) {
             for (Button i : Window.getCurrentScreen().getButtons()) {
@@ -119,7 +123,7 @@ public class Input {
         }
         
         // If a Button isn't pressed, then execute the associated action on the game screen
-        if (Window.getCurrentScreen().getClass().equals(GameScreen.class)) {
+        if (Window.getCurrentScreen() instanceof GameScreen) {
             if (gameMouseButtons.containsKey(currentMouseButton)) {
                 gameMouseButtons.get(currentMouseButton).execute();
             }
@@ -134,7 +138,7 @@ public class Input {
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
         currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
         
-        for (Button i : Window.getCurrentScreen().getButtons()) {
+        Window.getCurrentScreen().getButtons().stream().forEach((i) -> {
             if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
                 if (i.getAction() != null) {
                     i.handleMouseHover();
@@ -144,7 +148,7 @@ public class Input {
                 i.setDefaultColor();
                 i.setPlayHoverSound(true);
             }
-        }
+        });
     }
 
     /**
@@ -154,9 +158,9 @@ public class Input {
      */
         public static void setInputs() throws FileNotFoundException, IOException {  
         // gets the config file   
-        FileInputStream incfg = new FileInputStream(new File("inputconfig.cfg"));
+        Reader reader = new InputStreamReader(new FileInputStream("inputconfig.cfg"), "utf-8");
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(incfg))) {
+        try (BufferedReader br = new BufferedReader(reader)) {
 
             String line;
 
@@ -165,7 +169,7 @@ public class Input {
                 // format: key/button: action
                 String[] l = line.split("\\: ");
                 
-                int suffixIndex = l[0].indexOf("_") + 1;
+                int suffixIndex = l[0].indexOf('_') + 1;
                 String suffix = l[0].substring(suffixIndex);
                 
                 String action = l[1];

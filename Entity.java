@@ -42,9 +42,8 @@ public abstract class Entity {
      * Gets if the entity should be removed.
      * @return if the entity needs to be removed from the game's entity list.
      */
-    public abstract boolean remove();
+    public abstract boolean toBeRemoved();
     
-    public abstract void setRemove();
     
     /**
      * Gets the position of the entity relative to the current window.

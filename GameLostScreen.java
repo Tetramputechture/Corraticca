@@ -66,7 +66,10 @@ public class GameLostScreen implements Screen {
                                 18,
                                 String.format("Enemies killed: %s\n"
                                         + "Shots fired: %s\n"
-                                        + "Accuracy: %.4f", GameScreen.getEnemiesKilled(), GameScreen.getShotsFired(), GameScreen.getAccuracy()),
+                                        + "Accuracy: %.4f", 
+                                        GameScreen.getEnemiesKilled(), 
+                                        GameScreen.getShotsFired(), 
+                                        GameScreen.getAccuracy()),
                                 "OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 null));
@@ -93,6 +96,7 @@ public class GameLostScreen implements Screen {
         return Collections.unmodifiableList(buttons);
     }
     
+    @Override
     public String toString() {
         return "GAME_LOST";
     }

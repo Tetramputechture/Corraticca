@@ -46,7 +46,7 @@ public final class PlayerEntity extends Entity {
             playerTexture.loadFromFile(Paths.get(playerTextureFile));
         } catch (IOException ex) {
             Logger.getLogger(PlayerEntity.class.getName()).log(Level.SEVERE, 
-                    String.format("Unable to load file %s!\n", playerTextureFile), 
+                    String.format("Unable to load file %s!%n", playerTextureFile), 
                     ex);
         }
         
@@ -65,7 +65,7 @@ public final class PlayerEntity extends Entity {
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
-        playerSprite.setPosition(Window.getWidth()/2, Window.getHeight()/2);
+        playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
         x = playerSprite.getPosition().x;
         y = playerSprite.getPosition().y;
         
@@ -161,17 +161,13 @@ public final class PlayerEntity extends Entity {
      * @return if the enemy has no health, and therefore should be removed.
      */
     @Override
-    public boolean remove() {
+    public boolean toBeRemoved() {
         if (health == 0) {
             System.out.println("Game lost!");
             Window.changeScreen(new GameLostScreen());
             return true;
         }
         return false;
-    }
-    
-    @Override
-    public void setRemove() {
     }
     
     public void changeHealth(int r) {

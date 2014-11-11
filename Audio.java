@@ -13,10 +13,11 @@ import org.jsfml.audio.Sound;
 import org.jsfml.audio.SoundBuffer;
 
 /**
- *
+ * Handles all game sounds.
  * @author Nick
  */
 public class Audio {
+    
     
     public static void playSound(String filename, float pitch) {
         

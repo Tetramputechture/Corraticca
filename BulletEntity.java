@@ -55,15 +55,10 @@ public class BulletEntity extends Entity {
      * @return if the bullet is out of bounds, and therefore should be removed
      */
     @Override
-    public boolean remove() {
+    public boolean toBeRemoved() {
         return (x > Window.getWidth() || x < 0 || 
                 y > Window.getHeight() || y < 0 ||
-                toBeRemoved);
-    }
-    
-    @Override
-    public void setRemove() {
-        toBeRemoved = true;
+                isToBeRemoved());
     }
     
     @Override
@@ -79,6 +74,20 @@ public class BulletEntity extends Entity {
     @Override
     public String toString() {
         return "Bullet";
+    }
+
+    /**
+     * @return the toBeRemoved
+     */
+    public boolean isToBeRemoved() {
+        return toBeRemoved;
+    }
+
+    /**
+     * @param toBeRemoved the toBeRemoved to set
+     */
+    public void setToBeRemoved(boolean toBeRemoved) {
+        this.toBeRemoved = toBeRemoved;
     }
 
 }

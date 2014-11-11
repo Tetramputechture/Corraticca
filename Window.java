@@ -67,7 +67,7 @@ public final class Window {
      * @param screen the screen to change to.
      */
     public static void changeScreen(Screen screen) {
-        System.out.format("\n%s Showing!\n\n", screen);
+        System.out.format("%n%s Showing!%n%n", screen);
         currentScreen = screen;
     }
     
@@ -101,6 +101,9 @@ public final class Window {
                 case MOUSE_MOVED:
                     MouseEvent mouseEvent = event.asMouseEvent();
                     Input.handleMouseMoveInput(mouseEvent);
+                    break;
+                
+                default:
                     break;
             }
         }

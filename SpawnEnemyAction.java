@@ -28,7 +28,7 @@ public class SpawnEnemyAction implements Action {
     private Texture enemyTexture;
     
     /**
-     * Set's the bullet's sprite.
+     * Set's the enemy's texture.
      */
     public SpawnEnemyAction() {
         
@@ -39,7 +39,7 @@ public class SpawnEnemyAction implements Action {
             this.enemyTexture.loadFromFile(Paths.get(enemyTextureFile));
         } catch (IOException ex) {
             Logger.getLogger(PlayerEntity.class.getName()).log(java.util.logging.Level.SEVERE, 
-                    String.format("Unable to load file %s!\n", enemyTextureFile), 
+                    String.format("Unable to load file %s!%n", enemyTextureFile), 
                     ex);
         }
         
@@ -51,12 +51,6 @@ public class SpawnEnemyAction implements Action {
     public void execute() {
         Sprite enemySprite = new Sprite(enemyTexture);
         enemySprite.setOrigin(Vector2f.div(new Vector2f(enemyTexture.getSize()), 2));
-        
-        int r = (int)(Math.random()*256);
-        int g = (int)(Math.random()*206) + 50;
-        int b = (int)(Math.random()*256);
-        
-        enemySprite.setColor(new Color(r, g, b));
         
         GameScreen.addEntity(new EnemyEntity(enemySprite));
     }

@@ -5,7 +5,6 @@
  */
 package coratticca;
 
-import java.util.Iterator;
 import java.util.Random;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
@@ -36,10 +35,10 @@ public class EnemyEntity extends Entity {
         enemySprite = s;
         
         // set position at a random point on the bounds of the window
-        Random r = new Random();
-        x = r.nextInt(Window.getWidth());
-        y = r.nextInt(Window.getHeight());
-        if (r.nextDouble() < 0.5) {
+        Random rand = new Random();
+        x = rand.nextInt(Window.getWidth());
+        y = rand.nextInt(Window.getHeight());
+        if (rand.nextDouble() < 0.5) {
             x = 0;
         } else {
             y = 0;
@@ -58,7 +57,23 @@ public class EnemyEntity extends Entity {
         
         enemySprite.setRotation(90 + (float)angle);
         
-        health = 3;
+        int r = rand.nextInt(256);
+        while (r > 100) {
+            if (Math.random() > 0.1) {
+                r = rand.nextInt(256);
+            } else {
+                break;
+            }
+        }
+        int g = rand.nextInt(206) + 25;
+        int b = rand.nextInt(206) + 50;
+        
+        enemySprite.setColor(new Color(r, g, b));
+        
+        int size = (int)Math.sqrt(r + 1) / 3;
+        enemySprite.setScale(size, size);
+        
+        health = 1;
     }
 
     /**
@@ -70,6 +85,7 @@ public class EnemyEntity extends Entity {
         
         Vector2f top = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
                                     GameScreen.getCurrentPlayer().getPos().y - y);
+        
         double length = Math.sqrt(top.x*top.x + top.y*top.y);
         double normX = top.x/length;
         double normY = top.y/length;
@@ -77,14 +93,17 @@ public class EnemyEntity extends Entity {
         x += normX * 160 * dt;
         y += normY * 160 * dt;
         
-        if (x > Window.getWidth() || x < 0) {
-            vx = -vx;
-        }
-        if (y > Window.getHeight() || y < 0) {
-            vy = -vy;
-        }
-        
         enemySprite.setPosition(x, y);
+        
+        for (Entity e : GameScreen.getEntities()) {
+            if (e instanceof BulletEntity &&
+                    enemySprite.getGlobalBounds().contains(e.getPos())) {   
+                health--;
+                GameScreen.killEnemy();
+                ((BulletEntity)e).setToBeRemoved(true);
+                break;
+            }
+        }
         
     }
     
@@ -93,8 +112,8 @@ public class EnemyEntity extends Entity {
      * @return if the enemy has no health or intersected with the player, and therefore should be removed.
      */
     @Override
-    public boolean remove() {
-        if (health == 0 || intersectsWithPlayer() || intersectsWithBullet()) {
+    public boolean toBeRemoved() {
+        if (health == 0 || intersectsWithPlayer()) {
             Random r = new Random();
             double randomValue = 0.5 + (1 - 0.5) * r.nextDouble();
             Audio.playSound("enemydeath.wav", (float)randomValue );
@@ -104,29 +123,12 @@ public class EnemyEntity extends Entity {
         }
     }
     
-    @Override
-    public void setRemove() {
-    }
-    
     public boolean intersectsWithPlayer() {
         if (enemySprite.getGlobalBounds().contains(GameScreen.getCurrentPlayer().getPos())) {
             GameScreen.getCurrentPlayer().changeHealth(-1);
             return true;
         } 
         return false;
-    }
-    
-    public boolean intersectsWithBullet() {
-      for (Entity e : GameScreen.getEntities()) {
-        if (e.getClass().equals(BulletEntity.class) &&
-            enemySprite.getGlobalBounds().contains(e.getPos())) {   
-            health--;
-            GameScreen.killEnemy();
-            e.setRemove();
-            return true;
-        } 
-      }
-      return false;
     }
     
     @Override

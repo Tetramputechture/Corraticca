@@ -28,14 +28,14 @@ public final class GameScreen implements Screen {
 
     private final List<Button> buttons;
     
-    private static List<Entity> entities;
+    private static final List<Entity> entities = new ArrayList<>();
     
     private final Sprite pointerSprite;
     
-    private static PlayerEntity playerEntity;
+    private static PlayerEntity player;
     
-    private static int numWaves;
-    private static EnemyWave currentWave;
+    private final int numWaves;
+    private final EnemyWave currentWave;
     
     private static int enemiesKilled;
     private static int shotsFired;
@@ -54,7 +54,7 @@ public final class GameScreen implements Screen {
     public GameScreen(boolean resetGame) {
         
         if (resetGame) {
-            entities = new ArrayList<>();
+            entities.clear();
         }
         buttons = new ArrayList<>();
        
@@ -68,15 +68,15 @@ public final class GameScreen implements Screen {
         pointerSprite = new Sprite(pointerTexture);
         
         if (resetGame) {
-            playerEntity = new PlayerEntity(PlayerEntity.getCurrentSprite());
-            addEntity(playerEntity);
+            player = new PlayerEntity(PlayerEntity.getCurrentSprite());
+            addEntity(player);
         }
         
         // health text
-        buttons.add(new Button((int)playerEntity.getPos().x - 10,
-                               (int)playerEntity.getPos().y - 10,
+        buttons.add(new Button((int)player.getPos().x - 10,
+                               (int)player.getPos().y - 10,
                                20,
-                               Integer.toString(playerEntity.getHealth()),
+                               Integer.toString(player.getHealth()),
                                "OpenSans-Regular.ttf",
                                Color.BLACK,
                                null));
@@ -111,22 +111,21 @@ public final class GameScreen implements Screen {
             Entity e = it.next();
             e.draw();
             e.update(dt);
-            if (e.remove()) {
+            if (e.toBeRemoved()) {
                 it.remove();
             }
         }
         
-        if (Math.random() < 0.03) {
+        if (Math.random() < 0.04) {
             new SpawnEnemyAction().execute();
         }
-        
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
         
         // show health text
-        buttons.get(0).setText(Integer.toString(playerEntity.getHealth()));
-        buttons.get(0).setPosition((int)playerEntity.getPos().x + 15, (int)playerEntity.getPos().y - 15);
+        buttons.get(0).setText(Integer.toString(player.getHealth()));
+        buttons.get(0).setPosition((int)player.getPos().x + 15, (int)player.getPos().y - 15);
         buttons.get(0).draw();
         
         Window.getWindow().draw(pointerSprite);
@@ -136,7 +135,7 @@ public final class GameScreen implements Screen {
     }
     
     public static PlayerEntity getCurrentPlayer() {
-        return playerEntity;
+        return player;
     }
 
     /**
@@ -156,7 +155,7 @@ public final class GameScreen implements Screen {
         return bgColor;
     }
     
-    public static int getNumWaves() {
+    public int getNumWaves() {
         return numWaves;
     }
     
@@ -186,7 +185,7 @@ public final class GameScreen implements Screen {
      */
     public static void addEntity(Entity e) {
         entities.add(e);
-        System.out.format("Entity count: %s\n\n", entities.size());
+        System.out.format("Entity count: %s%n%n", entities.size());
     }
     
     public static List<Entity> getEntities() {
