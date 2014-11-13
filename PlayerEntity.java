@@ -57,10 +57,9 @@ public final class PlayerEntity extends Entity {
     
     /**
      * Sets the player entity's sprite.
-     * @param s the player's sprite
      */
-    public PlayerEntity(Sprite s) {
-        super(s);
+    public PlayerEntity() {
+        super(playerSprite);
         health = 3;
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
@@ -162,7 +161,7 @@ public final class PlayerEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        if (health == 0) {
+        if (health <= 0) {
             System.out.println("Game lost!");
             Window.changeScreen(new GameLostScreen());
             return true;
@@ -182,23 +181,16 @@ public final class PlayerEntity extends Entity {
     public void setAngle(float angle) {
         playerSprite.setRotation(angle);
     }
+
     
     /**
      * Sets the position of the player.
-     * @param x the x position for the player to be set at.
-     * @param y the y position for the player to be set at.
-     */
-    public void setPos(int x, int y) {
-        playerSprite.setPosition(x, y);
-    }
-    
-    /**
-     * Gets the player's sprite.
-     * @return the player's sprite.
+     * @param posx the x position for the player to be set at.
+     * @param posy the y position for the player to be set at.
      */
     @Override
-    public Sprite getSprite() {
-        return playerSprite;
+    public void setPos(int posx, int posy) {
+        playerSprite.setPosition(posx, posy);
     }
     
     public static Sprite getCurrentSprite() {

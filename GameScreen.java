@@ -29,13 +29,11 @@ public final class GameScreen implements Screen {
     private final List<Button> buttons;
     
     private static final List<Entity> entities = new ArrayList<>();
+    private static final List<Entity> entsToBeRemoved = new ArrayList<>();
     
     private final Sprite pointerSprite;
     
     private static PlayerEntity player;
-    
-    private final int numWaves;
-    private final EnemyWave currentWave;
     
     private static int enemiesKilled;
     private static int shotsFired;
@@ -68,7 +66,7 @@ public final class GameScreen implements Screen {
         pointerSprite = new Sprite(pointerTexture);
         
         if (resetGame) {
-            player = new PlayerEntity(PlayerEntity.getCurrentSprite());
+            player = new PlayerEntity();
             addEntity(player);
         }
         
@@ -80,13 +78,7 @@ public final class GameScreen implements Screen {
                                "OpenSans-Regular.ttf",
                                Color.BLACK,
                                null));
-        
-        // get number of waves
-        numWaves = 10;
-        
-        // set current wave
-        currentWave = new EnemyWave(1, 10);
-        
+       
         clock = new Clock();
         lastTime = 0;
     }
@@ -106,17 +98,26 @@ public final class GameScreen implements Screen {
         float currentTime = clock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
         
+        // reset removal list
+        entsToBeRemoved.clear();
+        
         // iterate through entities
-        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
-            Entity e = it.next();
+        for (Entity e : entities) {
             e.draw();
             e.update(dt);
             if (e.toBeRemoved()) {
-                it.remove();
+                entsToBeRemoved.add(e);
             }
         }
         
-        if (Math.random() < 0.04) {
+        for (Entity e : entsToBeRemoved) {
+            if (e instanceof EnemyEntity) {
+                ((EnemyEntity)e).spawnDeathParticle();
+            }
+            entities.remove(e);
+        }
+        
+        if (Math.random() < 0.03) {
             new SpawnEnemyAction().execute();
         }
         
@@ -153,10 +154,6 @@ public final class GameScreen implements Screen {
      */
     public static Color getBGColor() {
         return bgColor;
-    }
-    
-    public int getNumWaves() {
-        return numWaves;
     }
     
     public static int getEnemiesKilled() {

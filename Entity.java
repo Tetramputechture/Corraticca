@@ -51,6 +51,6 @@ public abstract class Entity {
      */
     public abstract Vector2f getPos();
     
-    public abstract Sprite getSprite();
+    public abstract void setPos(int x, int y);
 
 }

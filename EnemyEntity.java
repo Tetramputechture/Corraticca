@@ -20,8 +20,11 @@ public class EnemyEntity extends Entity {
     
     private float x;
     private float y;
-    private float vx;
-    private float vy;
+    private float normX;
+    private float normY;
+    private Vector2f pushBackVelocity;
+    private final float velocity;
+    private final float size;
     private final Sprite enemySprite;
     private int health;
 
@@ -59,7 +62,7 @@ public class EnemyEntity extends Entity {
         
         int r = rand.nextInt(256);
         while (r > 100) {
-            if (Math.random() > 0.1) {
+            if (Math.random() > 0.05) {
                 r = rand.nextInt(256);
             } else {
                 break;
@@ -70,10 +73,12 @@ public class EnemyEntity extends Entity {
         
         enemySprite.setColor(new Color(r, g, b));
         
-        int size = (int)Math.sqrt(r + 1) / 3;
+        size = (float)(Math.sqrt(r + 1) / 4) + 0.5f;
         enemySprite.setScale(size, size);
         
-        health = 1;
+        velocity = (1/size) * 250;
+        
+        health = (int)(size*1.5);
     }
 
     /**
@@ -83,27 +88,25 @@ public class EnemyEntity extends Entity {
     @Override
     public void update(float dt) {
         
-        Vector2f top = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
+        Vector2f d = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
                                     GameScreen.getCurrentPlayer().getPos().y - y);
         
-        double length = Math.sqrt(top.x*top.x + top.y*top.y);
-        double normX = top.x/length;
-        double normY = top.y/length;
+        float length = (float)Math.sqrt(d.x*d.x + d.y*d.y);
+        normX = d.x/length;
+        normY = d.y/length;
+        
+        float vx = velocity;
+        float vy = velocity;
+        
+        if (intersectsWithBullet()) {
+            vx += pushBackVelocity.x;
+            vy -= pushBackVelocity.y;
+        }     
        
-        x += normX * 160 * dt;
-        y += normY * 160 * dt;
+        x += normX * vx * dt;
+        y += normY * vy * dt;
         
         enemySprite.setPosition(x, y);
-        
-        for (Entity e : GameScreen.getEntities()) {
-            if (e instanceof BulletEntity &&
-                    enemySprite.getGlobalBounds().contains(e.getPos())) {   
-                health--;
-                GameScreen.killEnemy();
-                ((BulletEntity)e).setToBeRemoved(true);
-                break;
-            }
-        }
         
     }
     
@@ -114,13 +117,22 @@ public class EnemyEntity extends Entity {
     @Override
     public boolean toBeRemoved() {
         if (health == 0 || intersectsWithPlayer()) {
-            Random r = new Random();
-            double randomValue = 0.5 + (1 - 0.5) * r.nextDouble();
-            Audio.playSound("enemydeath.wav", (float)randomValue );
+            GameScreen.killEnemy();
+            Audio.playSound("enemydeath.wav", 1/size);
             return true;
         } else {
             return false;
         }
+    }
+    
+    public void spawnDeathParticle() {
+        Sprite t = enemySprite;
+        ParticleEntity deathParticle = new ParticleEntity(t);
+        deathParticle.setPos((int)t.getPosition().x, (int)t.getPosition().y);
+        deathParticle.setRotation(t.getRotation());
+        deathParticle.setNormalVector(new Vector2f(normX, normY));
+        deathParticle.setVelocity(velocity);
+        GameScreen.addEntity(deathParticle); 
     }
     
     public boolean intersectsWithPlayer() {
@@ -131,20 +143,34 @@ public class EnemyEntity extends Entity {
         return false;
     }
     
+    private boolean intersectsWithBullet() {
+        
+        for (Entity e : GameScreen.getEntities()) {
+            if (e instanceof BulletEntity &&
+                    enemySprite.getGlobalBounds().contains(e.getPos())) { 
+                BulletEntity b = (BulletEntity)e;
+                pushBackVelocity = b.getVelocity();
+                b.enemyHit(true);  
+                health--;
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public Vector2f getPos() {
         return enemySprite.getPosition();
     }
     
     @Override
-    public Sprite getSprite() {
-        return enemySprite;
+    public void setPos(int posx, int posy) {
+        enemySprite.setPosition(posx, posy);
     }
     
     @Override
     public String toString() {
         return "Enemy";
     }
-    
 }
 
