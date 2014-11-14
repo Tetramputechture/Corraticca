@@ -38,7 +38,7 @@ public class BulletEntity extends Entity {
         x = (float) (GameScreen.getCurrentPlayer().getPos().x + Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
         y = (float) (GameScreen.getCurrentPlayer().getPos().y + Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
         vx = (float) (speed * Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        vy = (float) (speed * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        vy = -1 * (float) (speed * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
         bulletSprite.setRotation(GameScreen.getCurrentPlayer().getAngle());
         bulletSprite.setPosition(x, y);
     }
@@ -50,7 +50,7 @@ public class BulletEntity extends Entity {
     @Override
     public void update(float dt) {
         x += vx * dt;   
-        y -= vy * dt;
+        y += vy * dt;
         bulletSprite.setPosition(x, y);
     }
     

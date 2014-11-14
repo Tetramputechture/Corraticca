@@ -20,11 +20,12 @@ public class EnemyEntity extends Entity {
     
     private float x;
     private float y;
-    private float normX;
-    private float normY;
-    private Vector2f pushBackVelocity;
-    private final float velocity;
+    private Vector2f norm;
+    private Vector2f collidingBulletVelocity;
+    private BulletEntity collidingBullet;
     private final float size;
+    private final float sizeScalar;
+    private final float sizeScalarCoefficient = 3;
     private final Sprite enemySprite;
     private int health;
 
@@ -76,9 +77,9 @@ public class EnemyEntity extends Entity {
         size = (float)(Math.sqrt(r + 1) / 4) + 0.5f;
         enemySprite.setScale(size, size);
         
-        velocity = (1/size) * 250;
-        
         health = (int)(size*1.5);
+        
+        sizeScalar = (1/size) * sizeScalarCoefficient;
     }
 
     /**
@@ -88,26 +89,30 @@ public class EnemyEntity extends Entity {
     @Override
     public void update(float dt) {
         
+        // normalize the vector betweeen the enemy and the player
         Vector2f d = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
                                     GameScreen.getCurrentPlayer().getPos().y - y);
         
         float length = (float)Math.sqrt(d.x*d.x + d.y*d.y);
-        normX = d.x/length;
-        normY = d.y/length;
+        if (length > 0) {
+            norm = Vector2f.div(d, length);
+        }
         
-        float vx = velocity;
-        float vy = velocity;
+        // no bullet until one has hit
+        collidingBulletVelocity = Vector2f.ZERO;
+        
+        if (intersectsWithPlayer()) {
+            handlePlayerIntersection();
+        }
         
         if (intersectsWithBullet()) {
-            vx += pushBackVelocity.x;
-            vy -= pushBackVelocity.y;
-        }     
+            handleBulletIntersection(collidingBullet);
+        }   
        
-        x += normX * vx * dt;
-        y += normY * vy * dt;
+        x += norm.x * sizeScalar + (collidingBulletVelocity.x * dt);
+        y += norm.y * sizeScalar + (collidingBulletVelocity.y * dt);
         
-        enemySprite.setPosition(x, y);
-        
+        enemySprite.setPosition(x, y); 
     }
     
     /**
@@ -130,32 +135,33 @@ public class EnemyEntity extends Entity {
         ParticleEntity deathParticle = new ParticleEntity(t);
         deathParticle.setPos((int)t.getPosition().x, (int)t.getPosition().y);
         deathParticle.setRotation(t.getRotation());
-        deathParticle.setNormalVector(new Vector2f(normX, normY));
-        deathParticle.setVelocity(velocity);
+        deathParticle.setNormalVector(new Vector2f(norm.x, norm.y));
         GameScreen.addEntity(deathParticle); 
     }
     
     public boolean intersectsWithPlayer() {
-        if (enemySprite.getGlobalBounds().contains(GameScreen.getCurrentPlayer().getPos())) {
-            GameScreen.getCurrentPlayer().changeHealth(-1);
-            return true;
-        } 
-        return false;
+        return (enemySprite.getGlobalBounds().contains(GameScreen.getCurrentPlayer().getPos()));
     }
     
-    private boolean intersectsWithBullet() {
-        
+    public void handlePlayerIntersection() {
+        GameScreen.getCurrentPlayer().changeHealth(-1);
+    }
+    
+    private boolean intersectsWithBullet() {    
         for (Entity e : GameScreen.getEntities()) {
             if (e instanceof BulletEntity &&
                     enemySprite.getGlobalBounds().contains(e.getPos())) { 
-                BulletEntity b = (BulletEntity)e;
-                pushBackVelocity = b.getVelocity();
-                b.enemyHit(true);  
-                health--;
+                collidingBullet = (BulletEntity)e;
                 return true;
             }
         }
         return false;
+    }
+    
+    public void handleBulletIntersection(BulletEntity b) {
+        collidingBulletVelocity = Vector2f.add(b.getVelocity(), norm);
+        b.enemyHit(true);
+        health--;
     }
     
     @Override

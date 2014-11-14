@@ -18,8 +18,8 @@ public class ParticleEntity extends Entity {
     private final Sprite particleSprite;
     private float x;
     private float y;
-    private Vector2f normVector;
-    private float velocity;
+    private Vector2f norm;
+    private Vector2f v;
     private final float decelRate;
     private final float fadeRate;
     
@@ -34,8 +34,8 @@ public class ParticleEntity extends Entity {
     @Override
     public void update(float dt) {
         
-        x += normVector.x * velocity * decelRate * dt;
-        y += normVector.y * velocity * decelRate * dt;
+        x += norm.x + (norm.x * decelRate) * dt;
+        y += norm.y + (norm.y * decelRate) * dt;
         
         particleSprite.setPosition(x, y);
         
@@ -70,11 +70,11 @@ public class ParticleEntity extends Entity {
     }
     
     public void setNormalVector(Vector2f norm) {
-        normVector = norm;
+        this.norm = norm;
     }
     
-    public void setVelocity(float v) {
-        velocity = v;
+    public void setVelocity(Vector2f v) {
+        this.v = new Vector2f(v.x, v.y);
     }
     
 }
