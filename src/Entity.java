@@ -51,6 +51,10 @@ public abstract class Entity {
      */
     public abstract Vector2f getPos();
     
+    /**
+     * Sets the position of the entity.
+     * @param pos the position to be set.
+     */
     public abstract void setPos(Vector2f pos);
 
 }

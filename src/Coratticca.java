@@ -6,6 +6,7 @@
 package coratticca;
 
 import java.io.IOException;
+import org.jsfml.system.Vector2i;
 
 /**
  * The main method of the game.
@@ -19,7 +20,9 @@ public class Coratticca {
      */
     public static void main(String[] args) throws IOException {
         
-        Window.display(1366/4, 768/4, 640, 480, "Corrattica Alpha");
+        Vector2i pos = new Vector2i(1366/4, 768/4);
+        
+        Window.display(pos, 640, 480, "Corrattica Alpha");
         
     }
     

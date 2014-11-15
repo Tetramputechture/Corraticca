@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
+import org.jsfml.system.Vector2f;
 
 /**
  *
@@ -36,35 +37,35 @@ public class GameLostScreen implements Screen {
         Window.getWindow().setMouseCursorVisible(true);
         
         // add game lost text
-        buttons.add(new Button(Window.getWidth()/2,
-                                Window.getHeight()/2 - 50,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
+                                Window.getHeight()/2 - 50),
                                 48,
                                 "Game Lost! :(",
-                                "OpenSans-Regular.ttf",
+                                "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 null));
         
         // add exit button
-        buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2 + 50,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
+                                Window.getHeight()/2 + 50),
                                 24, 
                                 "Exit to Main Menu", 
-                                "OpenSans-Regular.ttf", 
+                                "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
                                 new ChangeToMainMenuScreenAction()));
         
         // add new game button
-        buttons.add(new Button(Window.getWidth()/2,
-                                Window.getHeight()/2 + 100,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
+                                Window.getHeight()/2 + 100),
                                 24,
                                 "New Game",
-                                "OpenSans-Regular.ttf",
+                                "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 new ChangeToGameScreenAction(true)));
         
         // add stats text
-        buttons.add(new Button(Window.getWidth() - 100,
-                                Window.getHeight()/2 + 200,
+        buttons.add(new Button( new Vector2f(Window.getWidth() - 100,
+                                Window.getHeight()/2 + 200),
                                 18,
                                 String.format("Enemies killed: %s\n"
                                         + "Shots fired: %s\n"
@@ -72,7 +73,7 @@ public class GameLostScreen implements Screen {
                                         GameScreen.getEnemiesKilled(), 
                                         GameScreen.getShotsFired(), 
                                         GameScreen.getAccuracy()),
-                                "OpenSans-Regular.ttf",
+                                "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 null));
     }
@@ -89,23 +90,13 @@ public class GameLostScreen implements Screen {
         Window.getWindow().display();
     }
 
-    /**
-     * Gets the Game Lost Screen's buttons.
-     * @return a List containing all the buttons of the Game Lost Screen.
-     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
-    }
-    
-    @Override
-    public String toString() {
-        return "GAME_LOST";
     }
 
     @Override
     public ScreenName getName() {
         return name;
-    }
-    
+    } 
 }

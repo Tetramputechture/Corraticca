@@ -13,8 +13,8 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 /**
- * @author Nick
  * The action to spawn an enemy.
+ * @author Nick
  */
 public class SpawnEnemyAction implements Action {
     
@@ -31,7 +31,7 @@ public class SpawnEnemyAction implements Action {
     public SpawnEnemyAction() {
         
         enemyTexture = new Texture();
-        String enemyTextureFile = "enemy1.png";
+        String enemyTextureFile = "sprites/enemy1.png";
        
         try {
             this.enemyTexture.loadFromFile(Paths.get(enemyTextureFile));

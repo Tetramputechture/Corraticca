@@ -142,10 +142,10 @@ public class Input {
                 if (i.getAction() != null) {
                     i.handleMouseHover();
                 }
-                i.setPlayHoverSound(false);
+                i.shouldPlaySelectSound(false);
             } else {
-                i.setDefaultColor();
-                i.setPlayHoverSound(true);
+                i.setToDefaultColor();
+                i.shouldPlaySelectSound(true);
             }
         });
     }
@@ -204,10 +204,6 @@ public class Input {
      */
     public static Keyboard.Key getCurrentKey() {
         return currentKey;
-    }
-    
-    public static Map<Keyboard.Key, Action> getGameKeys() {
-        return Collections.unmodifiableMap(gameKeys);
     }
 
     /**

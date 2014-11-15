@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
+import org.jsfml.system.Vector2f;
 
 /**
  * The Main Menu screen.
@@ -34,19 +35,19 @@ public class MainMenuScreen implements Screen {
         
         // add play button
         Window.getWindow().setMouseCursorVisible(true);
-        buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2-80,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
+                                Window.getHeight()/2-80),
                                 52, 
                                 "Play!", 
-                                "OpenSans-Regular.ttf", 
+                                "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
                                 new ChangeToGameScreenAction(true)));
         
-        buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2+20,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
+                                Window.getHeight()/2+20),
                                 52, 
                                 "Exit!", 
-                                "OpenSans-Regular.ttf", 
+                                "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
                                 new ExitGameAction()));
     }
@@ -66,23 +67,13 @@ public class MainMenuScreen implements Screen {
         Window.getWindow().display();
     }
     
-    /**
-     * Gets the Main Menu's buttons. 
-     * @return a List containing the main menu's buttons.
-     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
     }
     
     @Override
-    public String toString() {
-        return "MAIN_MENU";
-    }
-    
-    @Override
     public ScreenName getName() {
         return name;
-    }
-    
+    }  
 }

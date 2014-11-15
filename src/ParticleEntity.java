@@ -10,24 +10,46 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
 /**
- *
+ * A particle entity that fades out over time. 
  * @author Nick
  */
 public class ParticleEntity extends Entity {
     
     private final Sprite particleSprite;
+    
     private Vector2f pos;
     private Vector2f v;
-    private final float decelRate;
-    private final float fadeRate;
     
+    private static final float decelRate = 0.5f;
+    
+    private static final float fadeRate = 300;
+    
+    /**
+     * The constructor, initializes the sprite.
+     * @param s the sprite of the particle.
+     */
     public ParticleEntity(Sprite s) {
         super(s);
         particleSprite = s;
-        
-        decelRate = 0.5f;
-        fadeRate = 300;
+
+        pos = Vector2f.ZERO;
         v = Vector2f.ZERO;
+    }
+    
+    /**
+     * Sets the rotation of the particle.
+     * @param angle the angle to be set.
+     */
+    public void setRotation(float angle) {
+        particleSprite.setRotation(angle);
+    }
+    
+    /**
+     * Sets the velocity of the particle.
+     * @param v the velocity to be set.
+     */
+    public void setVelocity(Vector2f v) {
+        this.v = v;
     }
 
     @Override
@@ -61,13 +83,4 @@ public class ParticleEntity extends Entity {
     public void setPos(Vector2f pos) {
         this.pos = pos;
     }
-    
-    public void setRotation(float angle) {
-        particleSprite.setRotation(angle);
-    }
-    
-    public void setVelocity(Vector2f v) {
-        this.v = v;
-    }
-    
 }

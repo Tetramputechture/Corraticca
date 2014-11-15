@@ -18,7 +18,11 @@ import org.jsfml.audio.SoundBuffer;
  */
 public class Audio {
     
-    
+    /**
+     * Plays a sound with specified filename and pitch
+     * @param filename the filename of the sound to be played
+     * @param pitch the pitch of the played sound
+     */
     public static void playSound(String filename, float pitch) {
         
         SoundBuffer buffer = new SoundBuffer();

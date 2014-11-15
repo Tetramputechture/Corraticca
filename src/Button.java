@@ -14,6 +14,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Text;
+import org.jsfml.system.Vector2f;
 
 /**
  * This class is for a button on a screen.
@@ -27,20 +28,18 @@ public class Button extends Input {
     private final Color defaultColor;
     
     private Action action;
-    private boolean playHoverSound;
+    private boolean shouldPlaySelectSound;
     
     /**
      * Constructs a button.
-     * @param posX the x position of the button.
-     * @param posY the y position of the button.
+     * @param pos the button's position
      * @param fontSize the button text's font size.
      * @param label the button's label.
      * @param fontName the name of the text font.
      * @param color the color of the button text.
      * @param action the action assigned to the button.
      */
-    public Button(  int posX, 
-                    int posY, 
+    public Button(  Vector2f pos, 
                     int fontSize, 
                     String label, 
                     String fontName, 
@@ -77,7 +76,7 @@ public class Button extends Input {
         text.setColor(color);
         text.setOrigin( textbounds.left + textbounds.width/2.0f,
                         textbounds.top  + textbounds.height/2.0f);
-        text.setPosition(posX, posY);
+        text.setPosition(pos);
     }
     
     /**
@@ -87,20 +86,30 @@ public class Button extends Input {
         Window.getWindow().draw(text);
     }
     
+    /**
+     * Handles mouse hovering.
+     */
     public void handleMouseHover() {
         select();
     }
     
+    /**
+     * Plays a sound and changes the text color.
+     */
     public void select() {
-        if (playHoverSound) {
-            Audio.playSound("buttonsound1.wav", 1f);
+        if (shouldPlaySelectSound) {
+            Audio.playSound("sounds/buttonsound1.wav", 1f);
         }
         text.setColor(Color.RED);
         Window.getWindow().draw(text);
     }
     
-    public void setPosition(int x, int y) {
-        text.setPosition(x, y);
+    /**
+     * Sets the position of the text.
+     * @param pos the position to be set.
+     */
+    public void setPosition(Vector2f pos) {
+        text.setPosition(pos);
     }
     
     /**
@@ -111,7 +120,10 @@ public class Button extends Input {
         text.setString(t);
     }
     
-    public void setDefaultColor() {
+    /**
+     * Sets the color of the button to the default color.
+     */
+    public void setToDefaultColor() {
         text.setColor(defaultColor);
     }
     
@@ -147,10 +159,11 @@ public class Button extends Input {
     }
     
     /**
-     * @param playHoverSound the playHoverSound to set
+     * Sets if the button should play the select sound.
+     * @param b if the button should play the select sound.
      */
-    public void setPlayHoverSound(boolean playHoverSound) {
-        this.playHoverSound = playHoverSound;
+    public void shouldPlaySelectSound(boolean b) {
+        this.shouldPlaySelectSound = b;
     }
     
 }

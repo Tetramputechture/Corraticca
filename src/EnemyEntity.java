@@ -18,14 +18,18 @@ import org.jsfml.system.Vector2f;
  */
 public class EnemyEntity extends Entity {
     
+    private final Sprite enemySprite;
+    
     private Vector2f pos;
     private Vector2f norm;
-    private Vector2f collidingBulletVelocity;
+    
     private BulletEntity collidingBullet;
+    private Vector2f collidingBulletVelocity;
+    
     private final float size;
     private final float sizeScalar;
     private static final float sizeScalarCoefficient = 3.5f;
-    private final Sprite enemySprite;
+    
     private int health;
 
     /**
@@ -67,6 +71,7 @@ public class EnemyEntity extends Entity {
         
         health = (int)(size*3);
         
+        // how the enemy's velocity should be changed based on size
         sizeScalar = (1/size) * sizeScalarCoefficient;
     }
 
@@ -130,6 +135,9 @@ public class EnemyEntity extends Entity {
         }
     }
     
+    /**
+     * Spawns a new death particle for the enemy.
+     */
     public void spawnDeathParticle() {
         Sprite t = enemySprite;
         ParticleEntity deathParticle = new ParticleEntity(t);
@@ -139,16 +147,27 @@ public class EnemyEntity extends Entity {
         GameScreen.addEntity(deathParticle); 
     }
     
+    /**
+     * If the enemy intersects with the player.
+     * @return true if enemy intersects with player, false otherwise
+     */
     public boolean intersectsWithPlayer() {
         return (enemySprite.getGlobalBounds().contains(GameScreen.getCurrentPlayer().getPos()));
     }
     
+    /**
+     * Handles intersection with player.
+     */
     public void handlePlayerIntersection() {
         health = 0;
         GameScreen.getCurrentPlayer().changeHealth(-1);
     }
     
-    private boolean intersectsWithBullet() {    
+    /**
+     * If the enemy intersects with a bullet.
+     * @return true if enemy intersects with player, false otherwise.
+     */
+    public boolean intersectsWithBullet() {    
         for (Entity e : GameScreen.getEntities()) {
             if (e instanceof BulletEntity &&
                     enemySprite.getGlobalBounds().contains(e.getPos())) { 
@@ -159,30 +178,29 @@ public class EnemyEntity extends Entity {
         return false;
     }
     
+    /**
+     * Handles intersection with bullets.
+     * @param b the bullet the enemy intersected.
+     */
     public void handleBulletIntersection(BulletEntity b) {
         collidingBulletVelocity = Vector2f.add(b.getVelocity(), norm);
         if (Math.random() < 0.5) {
-            Audio.playSound("enemyHit.wav", 1/size);
+            Audio.playSound("sounds/enemyHit.wav", 1/size);
         } else {
-            Audio.playSound("enemyHit2.wav", 1/size);
+            Audio.playSound("sounds/enemyHit2.wav", 1/size);
         }
-        b.enemyHit(true);
+        b.setEnemyHit(true);
         health--;
     }
     
     @Override
     public Vector2f getPos() {
-        return enemySprite.getPosition();
+        return pos;
     }
     
     @Override
     public void setPos(Vector2f pos) {
         this.pos = pos;
-    }
-    
-    @Override
-    public String toString() {
-        return "Enemy";
     }
 }
 

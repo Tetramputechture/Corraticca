@@ -31,7 +31,7 @@ public class FireAction implements Action {
     public FireAction() {
         
         bulletTexture = new Texture();
-        String bulletTextureFile = "bullet.png";
+        String bulletTextureFile = "sprites/bullet.png";
        
         try {
             this.bulletTexture.loadFromFile(Paths.get(bulletTextureFile));
@@ -54,7 +54,7 @@ public class FireAction implements Action {
         
         bulletSprite.setOrigin(Vector2f.div(new Vector2f(bulletTexture.getSize()), 2));
 
-        Audio.playSound("firesound.wav", 1);
+        Audio.playSound("sounds/firesound.wav", 1);
         GameScreen.addEntity(new BulletEntity(bulletSprite)); 
         GameScreen.fireShot();
     }

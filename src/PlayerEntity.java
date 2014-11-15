@@ -28,8 +28,9 @@ public final class PlayerEntity extends Entity {
     
     private Vector2f pos;
     private Vector2f v;
-    private Vector2f target;
     private final float moveSpeed;
+    private Vector2f target;
+    
     private final float accelRate;
     private final float fConst;
     
@@ -37,7 +38,7 @@ public final class PlayerEntity extends Entity {
     
     static {
         playerTexture = new Texture();
-        String playerTextureFile = "player.png";
+        String playerTextureFile = "sprites/player.png";
        
         try {
             playerTexture.loadFromFile(Paths.get(playerTextureFile));
@@ -132,6 +133,9 @@ public final class PlayerEntity extends Entity {
         playerSprite.setRotation(90 + (float)angle);
     }
     
+    /**
+     * Resets the player's position, velocity, and health.
+     */
     public void reset() {
         playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
         pos = playerSprite.getPosition();
@@ -139,6 +143,9 @@ public final class PlayerEntity extends Entity {
         health = 3;
     }
     
+    /**
+     * Handles if the player collided with a wall.
+     */
     public void handleWallCollision() {
         int tx = -1;
         int ty = -1;
@@ -176,48 +183,23 @@ public final class PlayerEntity extends Entity {
         return false;
     }
     
+    /**
+     * Changes the player's health.
+     * @param r the health amount to be changed by.
+     */
     public void changeHealth(int r) {
         health += r;
         System.out.println("Health: " + health);
     }
-    
-    /**
-     * Sets the angle of the player.
-     * @param angle the angle for the player to be set at.
-     */
-    public void setAngle(float angle) {
-        playerSprite.setRotation(angle);
-    }
-
-    
-    /**
-     * Sets the position of the player.
-     * @param pos
-     */
+     
     @Override
     public void setPos(Vector2f pos) {
         this.pos = pos;
     }
     
-    public static Sprite getCurrentSprite() {
-        return playerSprite;
-    }
-    
-    /**
-     * Gets the player's position.
-     * @return the player's position.
-     */
     @Override
     public Vector2f getPos() {
-        return playerSprite.getPosition();
-    }
-
-    /**
-     * Gets the player's size.
-     * @return the player's size.
-     */
-    public Vector2f getSize() {
-        return new Vector2f(playerSprite.getLocalBounds().width, playerSprite.getLocalBounds().height);
+        return pos;
     }
     
     /**
@@ -228,12 +210,11 @@ public final class PlayerEntity extends Entity {
         return playerSprite.getRotation();
     }
     
+    /**
+     * Gets the player's current health.
+     * @return the health of the player.
+     */
     public int getHealth() {
         return health;
-    }
-    
-    @Override
-    public String toString() {
-        return "Player";
     }
 }

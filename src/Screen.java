@@ -24,14 +24,9 @@ public interface Screen {
      */
     public List<Button> getButtons();
     
-    public ScreenName getName();
-    
     /**
-     * Gets the String representation of the Screen.
-     * @return the String representation of the Screen.
+     * Gets the name of the screen.
+     * @return the name of the screen.
      */
-    @Override
-    public String toString();
-
-    
+    public ScreenName getName();
 }

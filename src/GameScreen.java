@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +16,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
+import org.jsfml.system.Vector2f;
 
 /**
  * The screen for the game.
@@ -24,7 +24,7 @@ import org.jsfml.system.Clock;
  */
 public final class GameScreen implements Screen {
     
-    private ScreenName name = ScreenName.GAME_SCREEN;
+    private static final ScreenName name = ScreenName.GAME_SCREEN;
 
     private static final Color bgColor;
 
@@ -50,7 +50,7 @@ public final class GameScreen implements Screen {
         // init mouse sprite
         Texture pointerTexture = new Texture();
         try {
-            pointerTexture.loadFromFile(Paths.get("pointer.png"));
+            pointerTexture.loadFromFile(Paths.get("sprites/pointer.png"));
         } catch (IOException ex) {
             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -74,11 +74,11 @@ public final class GameScreen implements Screen {
         }
         
         // health text
-        buttons.add(new Button((int)player.getPos().x - 10,
-                               (int)player.getPos().y - 10,
+        buttons.add(new Button(new Vector2f((int)player.getPos().x - 10,
+                               (int)player.getPos().y - 10),
                                20,
                                Integer.toString(player.getHealth()),
-                               "OpenSans-Regular.ttf",
+                               "fonts/OpenSans-Regular.ttf",
                                Color.BLACK,
                                null));
        
@@ -129,7 +129,7 @@ public final class GameScreen implements Screen {
         
         // show health text
         buttons.get(0).setText(Integer.toString(player.getHealth()));
-        buttons.get(0).setPosition((int)player.getPos().x + 15, (int)player.getPos().y - 15);
+        buttons.get(0).setPosition(new Vector2f((int)player.getPos().x + 15, (int)player.getPos().y - 15));
         buttons.get(0).draw();
         
         Window.getWindow().draw(pointerSprite);
@@ -138,17 +138,12 @@ public final class GameScreen implements Screen {
         lastTime = currentTime;
     }
     
+    /**
+     * Gets the current player entity on the screen.
+     * @return the current screen's player entity.
+     */
     public static PlayerEntity getCurrentPlayer() {
         return player;
-    }
-
-    /**
-     * Gets the buttons on the screen.
-     * @return the list of buttons on the screen.
-     */
-    @Override
-    public List<Button> getButtons() {
-        return Collections.unmodifiableList(buttons);
     }
     
     /**
@@ -159,22 +154,40 @@ public final class GameScreen implements Screen {
         return bgColor;
     }
     
+    /**
+     * Gets the total enemies killed.
+     * @return the total number of enemies killed.
+     */
     public static int getEnemiesKilled() {
         return enemiesKilled;
     }
     
+    /**
+     * Gets the total shots fired from the player.
+     * @return the total number of bullets fired.
+     */
     public static int getShotsFired() {
         return shotsFired;
     }
     
+    /**
+     * Gets the accuracy of the player (enemies killed / bullets shot)
+     * @return the player's shooting accuracy
+     */
     public static double getAccuracy() {
         return (float)enemiesKilled/shotsFired;
     }
     
+    /**
+     * Increments enemies killed.
+     */
     public static void killEnemy() {
         enemiesKilled++;
     }
     
+    /**
+     * Increments shots fired.
+     */
     public static void fireShot() {
         shotsFired++;
     }
@@ -188,15 +201,19 @@ public final class GameScreen implements Screen {
         System.out.format("Entity count: %s%n%n", entities.size());
     }
     
+    /**
+     * Gets the current game screen's entities
+     * @return the screen's entities as an unmodifiable list
+     */
     public static List<Entity> getEntities() {
         return Collections.unmodifiableList(entities);
     }
-
+    
     @Override
-    public String toString() {
-        return "GAME";
+    public List<Button> getButtons() {
+        return Collections.unmodifiableList(buttons);
     }
-
+    
     @Override
     public ScreenName getName() {
         return name;

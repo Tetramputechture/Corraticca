@@ -30,22 +30,20 @@ public final class Window {
     
     /**
      * Makes a window that handles screens. 
-     * @param posX the x position of the window.
-     * @param posY the y position of the window.
+     * @param pos the position of the window.
      * @param width the width of the window.
      * @param height the height of the window.
      * @param title the title of the window.
      * @throws IOException
      */
-    public static void display(int posX, 
-                               int posY, 
+    public static void display(Vector2i pos, 
                                int width, 
                                int height, 
                                String title) throws IOException {
         
         window.create(new VideoMode(width, height), title);
         
-        window.setPosition(new Vector2i(posX, posY));
+        window.setPosition(pos);
         
         window.setVerticalSyncEnabled(true);
         
@@ -117,6 +115,10 @@ public final class Window {
         return currentScreen;
     }
     
+    /**
+     * Gets the current screen name.
+     * @return the name of the current screen being displayed.
+     */
     public static ScreenName getCurrentScreenName() {
         return currentScreen.getName();
     }
@@ -148,11 +150,10 @@ public final class Window {
     
     /**
      * Sets the window's position.
-     * @param posX the x coordinate to be set.
-     * @param posY the y coordinate to be set.
+     * @param pos the position to be set.
      */
-    public static void setPos(int posX, int posY) {
-        window.setPosition(new Vector2i(posX, posY));
+    public static void setPos(Vector2i pos) {
+        window.setPosition(pos);
     }
     
     /**

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
+import org.jsfml.system.Vector2f;
 
 /**
  * The Pause Menu screen.
@@ -36,20 +37,20 @@ public class PauseMenuScreen implements Screen {
         Window.getWindow().setMouseCursorVisible(true);
         
         // add exit button
-        buttons.add(new Button(Window.getWidth()/2, 
-                                Window.getHeight()/2-100,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
+                                Window.getHeight()/2-100),
                                 24, 
                                 "Exit to Main Menu", 
-                                "OpenSans-Regular.ttf", 
+                                "fonts/OpenSans-Regular.ttf", 
                                 Color.BLACK,
                                 new ChangeToMainMenuScreenAction()));
         
         // add resume game button
-        buttons.add(new Button(Window.getWidth()/2,
-                                Window.getHeight()/2,
+        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
+                                Window.getHeight()/2),
                                 24,
                                 "Resume Game",
-                                "OpenSans-Regular.ttf",
+                                "fonts/OpenSans-Regular.ttf",
                                 Color.BLACK,
                                 new ChangeToGameScreenAction(false)));
     }
@@ -69,18 +70,9 @@ public class PauseMenuScreen implements Screen {
         Window.getWindow().display();
     }
 
-    /**
-     * Gets the Pause Screen's buttons.
-     * @return a List containing all the buttons of the Pause Screen.
-     */
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
-    }
-    
-    @Override
-    public String toString() {
-        return "PAUSE_MENU";
     }
     
     @Override
