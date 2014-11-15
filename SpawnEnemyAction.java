@@ -7,16 +7,14 @@ package coratticca;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Random;
 import java.util.logging.Logger;
-import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 /**
- *
  * @author Nick
+ * The action to spawn an enemy.
  */
 public class SpawnEnemyAction implements Action {
     

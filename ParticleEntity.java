@@ -16,9 +16,7 @@ import org.jsfml.system.Vector2f;
 public class ParticleEntity extends Entity {
     
     private final Sprite particleSprite;
-    private float x;
-    private float y;
-    private Vector2f norm;
+    private Vector2f pos;
     private Vector2f v;
     private final float decelRate;
     private final float fadeRate;
@@ -29,15 +27,15 @@ public class ParticleEntity extends Entity {
         
         decelRate = 0.5f;
         fadeRate = 300;
+        v = Vector2f.ZERO;
     }
 
     @Override
     public void update(float dt) {
         
-        x += norm.x + (norm.x * decelRate) * dt;
-        y += norm.y + (norm.y * decelRate) * dt;
+        pos = Vector2f.add(pos, new Vector2f(v.x + (v.x * decelRate) * dt, v.y + (v.y * decelRate) * dt));
         
-        particleSprite.setPosition(x, y);
+        particleSprite.setPosition(pos);
         
         int r = particleSprite.getColor().r;
         int g = particleSprite.getColor().g;
@@ -56,25 +54,20 @@ public class ParticleEntity extends Entity {
 
     @Override
     public Vector2f getPos() {
-        return particleSprite.getPosition();
+        return pos;
     }
 
     @Override
-    public void setPos(int posx, int posy) {
-        this.x = posx;
-        this.y = posy;
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
     }
     
     public void setRotation(float angle) {
         particleSprite.setRotation(angle);
     }
     
-    public void setNormalVector(Vector2f norm) {
-        this.norm = norm;
-    }
-    
     public void setVelocity(Vector2f v) {
-        this.v = new Vector2f(v.x, v.y);
+        this.v = v;
     }
     
 }

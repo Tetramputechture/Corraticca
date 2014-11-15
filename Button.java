@@ -88,6 +88,10 @@ public class Button extends Input {
     }
     
     public void handleMouseHover() {
+        select();
+    }
+    
+    public void select() {
         if (playHoverSound) {
             Audio.playSound("buttonsound1.wav", 1f);
         }

@@ -16,6 +16,8 @@ import org.jsfml.graphics.Color;
  */
 public class GameLostScreen implements Screen {
     
+    private static final ScreenName name = ScreenName.GAME_LOST_SCREEN;
+    
     private static final Color bgColor;
     
     private final List<Button> buttons;
@@ -99,6 +101,11 @@ public class GameLostScreen implements Screen {
     @Override
     public String toString() {
         return "GAME_LOST";
+    }
+
+    @Override
+    public ScreenName getName() {
+        return name;
     }
     
 }

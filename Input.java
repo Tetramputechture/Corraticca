@@ -6,7 +6,6 @@
 package coratticca;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,12 +66,12 @@ public class Input {
 
         currentKey = keyEvent.key;
 
-        switch (Window.getCurrentScreen().toString()) {
-            case "MAIN_MENU":
+        switch (Window.getCurrentScreenName()) {
+            case MAIN_MENU_SCREEN:
                 handleMainMenuKeyInput();
                 break;
 
-            case "GAME":
+            case GAME_SCREEN:
                 handleGameKeyInput();
                 break;
                 

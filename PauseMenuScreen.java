@@ -16,6 +16,8 @@ import org.jsfml.graphics.Color;
  */
 public class PauseMenuScreen implements Screen {
     
+    private static final ScreenName name = ScreenName.PAUSE_MENU_SCREEN;
+    
     private static final Color bgColor;
     
     private final List<Button> buttons;
@@ -79,6 +81,11 @@ public class PauseMenuScreen implements Screen {
     @Override
     public String toString() {
         return "PAUSE_MENU";
+    }
+    
+    @Override
+    public ScreenName getName() {
+        return name;
     }
     
 }

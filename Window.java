@@ -117,6 +117,10 @@ public final class Window {
         return currentScreen;
     }
     
+    public static ScreenName getCurrentScreenName() {
+        return currentScreen.getName();
+    }
+    
     /**
      * Sets the window's size.
      * @param width the width to be set.

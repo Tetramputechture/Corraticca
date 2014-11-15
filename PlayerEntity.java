@@ -26,12 +26,9 @@ public final class PlayerEntity extends Entity {
     
     private double angle;
     
-    private float x;
-    private float y;
-    private float vx;
-    private float vy;
-    private float targetX;
-    private float targetY;
+    private Vector2f pos;
+    private Vector2f v;
+    private Vector2f target;
     private final float moveSpeed;
     private final float accelRate;
     private final float fConst;
@@ -65,8 +62,8 @@ public final class PlayerEntity extends Entity {
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
         playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
-        x = playerSprite.getPosition().x;
-        y = playerSprite.getPosition().y;
+        pos = playerSprite.getPosition();
+        v = Vector2f.ZERO;
         
         // set movement variables
         moveSpeed = 120;
@@ -81,67 +78,47 @@ public final class PlayerEntity extends Entity {
     @Override
     public void update(float dt) {
         
-        targetX = (Keyboard.isKeyPressed(Keyboard.Key.A) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.D) ? 1 : 0);
-	targetY = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
-        
-        float desiredX = targetX;
-        float desiredY = targetY;
+        // handle key presses
+        int ttx = (Keyboard.isKeyPressed(Keyboard.Key.A) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.D) ? 1 : 0);
+	int tty = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
+        target = new Vector2f(ttx, tty);
 
         // find true velocity by getting the magnitude of the vector.
-        double length = Math.sqrt((desiredX * desiredX) + (desiredY * desiredY));   
+        double length = Math.sqrt((target.x * target.x) + (target.y * target.y));   
 
         /* 
          * normalize the vector
         */
         if (length > 0) {
-            desiredX /= length;
-            desiredY /= length;
+            target = Vector2f.div(target, (float)length);
         }
 
-        // set length to desired velocity
+        // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
-        desiredX *= accelRate;
-        desiredY *= accelRate;
+        target = Vector2f.mul(target, accelRate);
 
         // set acc variables
-        float ax = desiredX;   
-        float ay = desiredY;
+        Vector2f acc = new Vector2f(target.x, target.y);
         
         // integrate acceleration to get velocity
-        vx += ax * dt;
-        vy += ay * dt;
-        
-        // limit velocity vector to moveSpeed
-        double speed = Math.sqrt((vx * vx) + (vy * vy));
-        if (speed > moveSpeed) {
-            vx /= speed;    
-            vy /= speed;
+        v = Vector2f.add(v, new Vector2f(acc.x * dt, acc.y * dt));
 
-            vx *= moveSpeed;
-            vy *= moveSpeed;
+        // limit velocity vector to moveSpeed
+        double speed = Math.sqrt((v.x * v.x) + (v.y * v.y));
+        if (speed > moveSpeed) {
+            v = Vector2f.div(v, (float)speed);
+            v = Vector2f.mul(v, moveSpeed);
         }
 
         // set velocity
-        x += vx;
-        y += vy;
+        pos = Vector2f.add(pos, v);
         
         // apply friction
-        vx *= fConst;    
-        vy *= fConst;
+        v = Vector2f.mul(v, fConst);
         
-        // go from one side of the map to another
-        if (x > Window.getWidth()) {
-            x = 0;
-        } else if (x < 0) {
-            x = Window.getWidth();
-        }
-        if (y > Window.getHeight()) {
-            y = 0;
-        } else if (y < 0) {
-            y = Window.getHeight();
-        }
+        handleWallCollision();
         
-        playerSprite.setPosition(x, y);
+        playerSprite.setPosition(pos);
         
         // set player angle based on mouse position
         angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
@@ -153,6 +130,36 @@ public final class PlayerEntity extends Entity {
         }
         
         playerSprite.setRotation(90 + (float)angle);
+    }
+    
+    public void reset() {
+        playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
+        pos = playerSprite.getPosition();
+        v = Vector2f.ZERO;
+        health = 3;
+    }
+    
+    public void handleWallCollision() {
+        int tx = -1;
+        int ty = -1;
+        
+        if (pos.x > Window.getWidth()) {
+            tx = Window.getWidth();
+        } else if (pos.x < 0) {
+            tx = 0;
+        }
+        if (pos.y > Window.getHeight()) {
+            ty = Window.getHeight();
+        } else if (pos.y < 0) {
+            ty = 0;
+        }
+        
+        if (tx != -1) {
+            pos = new Vector2f(tx, pos.y);
+        }
+        if (ty != -1) {
+            pos = new Vector2f(pos.x, ty);
+        }
     }
     
     /**
@@ -185,12 +192,11 @@ public final class PlayerEntity extends Entity {
     
     /**
      * Sets the position of the player.
-     * @param posx the x position for the player to be set at.
-     * @param posy the y position for the player to be set at.
+     * @param pos
      */
     @Override
-    public void setPos(int posx, int posy) {
-        playerSprite.setPosition(posx, posy);
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
     }
     
     public static Sprite getCurrentSprite() {

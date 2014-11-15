@@ -18,14 +18,13 @@ import org.jsfml.system.Vector2f;
  */
 public class EnemyEntity extends Entity {
     
-    private float x;
-    private float y;
+    private Vector2f pos;
     private Vector2f norm;
     private Vector2f collidingBulletVelocity;
     private BulletEntity collidingBullet;
     private final float size;
     private final float sizeScalar;
-    private final float sizeScalarCoefficient = 3;
+    private static final float sizeScalarCoefficient = 3.5f;
     private final Sprite enemySprite;
     private int health;
 
@@ -40,26 +39,15 @@ public class EnemyEntity extends Entity {
         
         // set position at a random point on the bounds of the window
         Random rand = new Random();
-        x = rand.nextInt(Window.getWidth());
-        y = rand.nextInt(Window.getHeight());
+        int tx = rand.nextInt(Window.getWidth());
+        int ty = rand.nextInt(Window.getHeight());
         if (rand.nextDouble() < 0.5) {
-            x = 0;
+            tx = 0;
         } else {
-            y = 0;
+            ty = 0;
         }
-        enemySprite.setPosition(x, y);
-        
-        // set angle based on player position
-        double angle = Math.atan2(GameScreen.getCurrentPlayer().getPos().y - enemySprite.getPosition().y, 
-                                  GameScreen.getCurrentPlayer().getPos().x - enemySprite.getPosition().x);
-        
-        angle *= (180/Math.PI);
-        
-        if(angle < 0) {
-            angle = 360 + angle;
-        }
-        
-        enemySprite.setRotation(90 + (float)angle);
+        pos = new Vector2f(tx, ty);
+        enemySprite.setPosition(tx, ty);
         
         int r = rand.nextInt(256);
         while (r > 100) {
@@ -77,7 +65,7 @@ public class EnemyEntity extends Entity {
         size = (float)(Math.sqrt(r + 1) / 4) + 0.5f;
         enemySprite.setScale(size, size);
         
-        health = (int)(size*1.5);
+        health = (int)(size*3);
         
         sizeScalar = (1/size) * sizeScalarCoefficient;
     }
@@ -89,9 +77,21 @@ public class EnemyEntity extends Entity {
     @Override
     public void update(float dt) {
         
+        // set angle based on player position
+        double angle = Math.atan2(GameScreen.getCurrentPlayer().getPos().y - enemySprite.getPosition().y, 
+                                  GameScreen.getCurrentPlayer().getPos().x - enemySprite.getPosition().x);
+        
+        angle *= (180/Math.PI);
+        
+        if(angle < 0) {
+            angle = 360 + angle;
+        }
+        
+        enemySprite.setRotation(90 + (float)angle);
+        
         // normalize the vector betweeen the enemy and the player
-        Vector2f d = new Vector2f(GameScreen.getCurrentPlayer().getPos().x - x,
-                                    GameScreen.getCurrentPlayer().getPos().y - y);
+        // get enemy to follow the player
+        Vector2f d = Vector2f.sub(GameScreen.getCurrentPlayer().getPos(), pos);
         
         float length = (float)Math.sqrt(d.x*d.x + d.y*d.y);
         if (length > 0) {
@@ -109,10 +109,11 @@ public class EnemyEntity extends Entity {
             handleBulletIntersection(collidingBullet);
         }   
        
-        x += norm.x * sizeScalar + (collidingBulletVelocity.x * dt);
-        y += norm.y * sizeScalar + (collidingBulletVelocity.y * dt);
+        float tx = pos.x + norm.x * sizeScalar + (collidingBulletVelocity.x * dt);
+        float ty = pos.y + norm.y * sizeScalar + (collidingBulletVelocity.y * dt);
+        pos = new Vector2f(tx, ty);
         
-        enemySprite.setPosition(x, y); 
+        enemySprite.setPosition(pos); 
     }
     
     /**
@@ -121,9 +122,8 @@ public class EnemyEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        if (health == 0 || intersectsWithPlayer()) {
+        if (health == 0) {
             GameScreen.killEnemy();
-            Audio.playSound("enemydeath.wav", 1/size);
             return true;
         } else {
             return false;
@@ -133,9 +133,9 @@ public class EnemyEntity extends Entity {
     public void spawnDeathParticle() {
         Sprite t = enemySprite;
         ParticleEntity deathParticle = new ParticleEntity(t);
-        deathParticle.setPos((int)t.getPosition().x, (int)t.getPosition().y);
+        deathParticle.setPos(t.getPosition());
         deathParticle.setRotation(t.getRotation());
-        deathParticle.setNormalVector(new Vector2f(norm.x, norm.y));
+        deathParticle.setVelocity(new Vector2f(-norm.x, -norm.y));
         GameScreen.addEntity(deathParticle); 
     }
     
@@ -144,6 +144,7 @@ public class EnemyEntity extends Entity {
     }
     
     public void handlePlayerIntersection() {
+        health = 0;
         GameScreen.getCurrentPlayer().changeHealth(-1);
     }
     
@@ -160,6 +161,11 @@ public class EnemyEntity extends Entity {
     
     public void handleBulletIntersection(BulletEntity b) {
         collidingBulletVelocity = Vector2f.add(b.getVelocity(), norm);
+        if (Math.random() < 0.5) {
+            Audio.playSound("enemyHit.wav", 1/size);
+        } else {
+            Audio.playSound("enemyHit2.wav", 1/size);
+        }
         b.enemyHit(true);
         health--;
     }
@@ -170,8 +176,8 @@ public class EnemyEntity extends Entity {
     }
     
     @Override
-    public void setPos(int posx, int posy) {
-        enemySprite.setPosition(posx, posy);
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
     }
     
     @Override

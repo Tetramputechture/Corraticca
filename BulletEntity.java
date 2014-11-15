@@ -14,10 +14,8 @@ import org.jsfml.system.Vector2f;
  */
 public class BulletEntity extends Entity {
     
-    private float x;
-    private float y;
-    private final float vx;
-    private final float vy;
+    private Vector2f pos;
+    private final Vector2f v;
     private final int speed;
     private static final float force = 1000;
     private final Sprite bulletSprite;
@@ -35,12 +33,13 @@ public class BulletEntity extends Entity {
         speed = 300;
         
         // set position and angle based off current player sprite
-        x = (float) (GameScreen.getCurrentPlayer().getPos().x + Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        y = (float) (GameScreen.getCurrentPlayer().getPos().y + Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        vx = (float) (speed * Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        vy = -1 * (float) (speed * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        float tx = (float) (GameScreen.getCurrentPlayer().getPos().x + Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        float ty = (float) (GameScreen.getCurrentPlayer().getPos().y + Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        pos = new Vector2f(tx, ty);
+        float tvx = (float) (speed * Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        float tvy = -1 * (float) (speed * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
+        v = new Vector2f(tvx, tvy);
         bulletSprite.setRotation(GameScreen.getCurrentPlayer().getAngle());
-        bulletSprite.setPosition(x, y);
     }
 
     /**
@@ -49,9 +48,8 @@ public class BulletEntity extends Entity {
      */
     @Override
     public void update(float dt) {
-        x += vx * dt;   
-        y += vy * dt;
-        bulletSprite.setPosition(x, y);
+        pos = Vector2f.add(pos, new Vector2f(v.x * dt, v.y * dt));
+        bulletSprite.setPosition(pos);
     }
     
     /**
@@ -60,9 +58,16 @@ public class BulletEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        return (x > Window.getWidth() || x < 0 || 
-                y > Window.getHeight() || y < 0 ||
-                hitEnemy);
+        return isOutOfBounds() || hitEnemy;
+    }
+    
+    public boolean isOutOfBounds() {
+        return pos.x > Window.getWidth() || pos.x < 0 || 
+                pos.y > Window.getHeight() || pos.y < 0;
+    }
+    
+    public void enemyHit(boolean b) {
+        this.hitEnemy = b;
     }
     
     @Override
@@ -71,8 +76,8 @@ public class BulletEntity extends Entity {
     }
     
     @Override
-    public void setPos(int posx, int posy) {
-        bulletSprite.setPosition(posx, posy);
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
     }
     
     public static float getForce() {
@@ -80,16 +85,12 @@ public class BulletEntity extends Entity {
     }
     
     public Vector2f getVelocity() {
-        return new Vector2f(vx, vy);
+        return v;
     }
     
     @Override
     public String toString() {
         return "Bullet";
-    }
-
-    public void enemyHit(boolean b) {
-        this.hitEnemy = b;
     }
     
 }

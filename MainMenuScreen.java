@@ -16,6 +16,8 @@ import org.jsfml.graphics.Color;
  */
 public class MainMenuScreen implements Screen {
     
+    private static final ScreenName name = ScreenName.MAIN_MENU_SCREEN;
+    
     private static final Color bgColor;
     
     private final List<Button> buttons;
@@ -76,6 +78,11 @@ public class MainMenuScreen implements Screen {
     @Override
     public String toString() {
         return "MAIN_MENU";
+    }
+    
+    @Override
+    public ScreenName getName() {
+        return name;
     }
     
 }

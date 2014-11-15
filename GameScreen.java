@@ -23,6 +23,8 @@ import org.jsfml.system.Clock;
  * @author Nick
  */
 public final class GameScreen implements Screen {
+    
+    private ScreenName name = ScreenName.GAME_SCREEN;
 
     private static final Color bgColor;
 
@@ -31,9 +33,9 @@ public final class GameScreen implements Screen {
     private static final List<Entity> entities = new ArrayList<>();
     private static final List<Entity> entsToBeRemoved = new ArrayList<>();
     
-    private final Sprite pointerSprite;
+    private static final Sprite pointerSprite;
     
-    private static PlayerEntity player;
+    private static final PlayerEntity player = new PlayerEntity();
     
     private static int enemiesKilled;
     private static int shotsFired;
@@ -42,7 +44,17 @@ public final class GameScreen implements Screen {
     private float lastTime;
     
     static {
+        // set background color
         bgColor = new Color(150, 150, 150);
+        
+        // init mouse sprite
+        Texture pointerTexture = new Texture();
+        try {
+            pointerTexture.loadFromFile(Paths.get("pointer.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pointerSprite = new Sprite(pointerTexture);
     }
 
     /**
@@ -55,18 +67,9 @@ public final class GameScreen implements Screen {
             entities.clear();
         }
         buttons = new ArrayList<>();
-       
-        // init mouse sprite
-        Texture pointerTexture = new Texture();
-        try {
-            pointerTexture.loadFromFile(Paths.get("pointer.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        pointerSprite = new Sprite(pointerTexture);
         
         if (resetGame) {
-            player = new PlayerEntity();
+            player.reset();
             addEntity(player);
         }
         
@@ -117,7 +120,7 @@ public final class GameScreen implements Screen {
             entities.remove(e);
         }
         
-        if (Math.random() < 0.03) {
+        if (Math.random() < 0.02) {
             new SpawnEnemyAction().execute();
         }
         
@@ -165,7 +168,7 @@ public final class GameScreen implements Screen {
     }
     
     public static double getAccuracy() {
-        return (double)enemiesKilled/shotsFired;
+        return (float)enemiesKilled/shotsFired;
     }
     
     public static void killEnemy() {
@@ -192,5 +195,10 @@ public final class GameScreen implements Screen {
     @Override
     public String toString() {
         return "GAME";
+    }
+
+    @Override
+    public ScreenName getName() {
+        return name;
     }
 }
