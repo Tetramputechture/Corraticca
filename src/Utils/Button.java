@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils;
 
+import coratticca.Actions.Action;
+import coratticca.Utils.Screen.MainMenuScreen;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -30,6 +32,8 @@ public class Button extends Input {
     private Action action;
     private boolean shouldPlaySelectSound;
     
+    private final boolean movesWithCamera;
+    
     /**
      * Constructs a button.
      * @param pos the button's position
@@ -38,13 +42,15 @@ public class Button extends Input {
      * @param fontName the name of the text font.
      * @param color the color of the button text.
      * @param action the action assigned to the button.
+     * @param movesWithCamera if the button should move with the camera.
      */
     public Button(  Vector2f pos, 
                     int fontSize, 
                     String label, 
                     String fontName, 
                     Color color,
-                    Action action) {
+                    Action action,
+                    boolean movesWithCamera) {
         
         // set action
         this.action = action;
@@ -77,13 +83,21 @@ public class Button extends Input {
         text.setOrigin( textbounds.left + textbounds.width/2.0f,
                         textbounds.top  + textbounds.height/2.0f);
         text.setPosition(pos);
+        this.movesWithCamera = movesWithCamera;
     }
     
     /**
      * Draws the button on the screen.
      */
     public void draw() {     
-        Window.getWindow().draw(text);
+        if (movesWithCamera) {
+            Window.getWindow().setView(Camera.getView());
+            Window.getWindow().draw(text);
+            Window.getWindow().setView(Window.getWindow().getDefaultView());
+        } else {
+            Window.getWindow().setView(Window.getWindow().getDefaultView());
+            Window.getWindow().draw(text);
+        }
     }
     
     /**

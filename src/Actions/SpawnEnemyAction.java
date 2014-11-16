@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Actions;
 
+import coratticca.Entities.EnemyEntity;
+import coratticca.Utils.Screen.GameScreen;
+import coratticca.Entities.PlayerEntity;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.logging.Logger;

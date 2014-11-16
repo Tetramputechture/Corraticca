@@ -5,6 +5,7 @@
  */
 package coratticca;
 
+import coratticca.Utils.Window;
 import java.io.IOException;
 import org.jsfml.system.Vector2i;
 
@@ -21,8 +22,9 @@ public class Coratticca {
     public static void main(String[] args) throws IOException {
         
         Vector2i pos = new Vector2i(1366/4, 768/4);
+        Vector2i size = new Vector2i(640, 480);
         
-        Window.display(pos, 640, 480, "Corrattica Alpha");
+        Window.display(pos, size, "Corrattica Alpha");
         
     }
     

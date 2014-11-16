@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Entities;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;

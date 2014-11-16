@@ -3,8 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils.Screen;
 
+import coratticca.Entities.EnemyEntity;
+import coratticca.Entities.PlayerEntity;
+import coratticca.Entities.Entity;
+import coratticca.Utils.Window;
+import coratticca.Utils.Button;
+import coratticca.Utils.Camera;
+import coratticca.Utils.Input;
+import coratticca.Actions.SpawnEnemyAction;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.Image;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
@@ -25,6 +34,8 @@ import org.jsfml.system.Vector2f;
 public final class GameScreen implements Screen {
     
     private static final ScreenName name = ScreenName.GAME_SCREEN;
+    
+    private static final Vector2f bounds;
 
     private static final Color bgColor;
 
@@ -33,28 +44,29 @@ public final class GameScreen implements Screen {
     private static final List<Entity> entities = new ArrayList<>();
     private static final List<Entity> entsToBeRemoved = new ArrayList<>();
     
-    private static final Sprite pointerSprite;
+    private static Sprite pointerSprite;
+    private static Sprite backgroundSprite;
     
     private static final PlayerEntity player = new PlayerEntity();
     
     private static int enemiesKilled;
+    private static int numEnemies;
     private static int shotsFired;
+    
+    private static final int maxEnemies = 25;
     
     private final Clock clock;
     private float lastTime;
     
     static {
+        
+        // set game map bounds
+        bounds = new Vector2f(Window.getSize().x * 2, Window.getSize().y * 2);
+        
         // set background color
         bgColor = new Color(150, 150, 150);
         
-        // init mouse sprite
-        Texture pointerTexture = new Texture();
-        try {
-            pointerTexture.loadFromFile(Paths.get("sprites/pointer.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        pointerSprite = new Sprite(pointerTexture);
+        initSprites();
     }
 
     /**
@@ -79,11 +91,33 @@ public final class GameScreen implements Screen {
                                20,
                                Integer.toString(player.getHealth()),
                                "fonts/OpenSans-Regular.ttf",
-                               Color.BLACK,
-                               null));
+                               Color.WHITE,
+                               null,
+                               true));
        
         clock = new Clock();
         lastTime = 0;
+    }
+    
+    public static void initSprites() {
+        // init mouse sprite
+        Texture pointerTexture = new Texture();
+        try {
+            pointerTexture.loadFromFile(Paths.get("sprites/pointer.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pointerSprite = new Sprite(pointerTexture);
+        
+        // init background sprite
+        Texture backgroundTexture = new Texture();
+        try {
+            backgroundTexture.loadFromFile(Paths.get("sprites/starfield.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        backgroundSprite = new Sprite(backgroundTexture);
+        backgroundSprite.setOrigin(Vector2f.div(new Vector2f(backgroundTexture.getSize()), 2));
     }
 
     /**
@@ -92,6 +126,8 @@ public final class GameScreen implements Screen {
     @Override
     public void show() {
 
+        Camera.handleEdges();
+        Window.getWindow().setView(Camera.getView());
         Window.getWindow().clear(bgColor);
         
         // use the custom mouse sprite
@@ -100,6 +136,8 @@ public final class GameScreen implements Screen {
         // set delta time
         float currentTime = clock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
+          
+        Window.getWindow().draw(backgroundSprite);
         
         // reset removal list
         entsToBeRemoved.clear();
@@ -115,27 +153,35 @@ public final class GameScreen implements Screen {
         
         for (Entity e : entsToBeRemoved) {
             if (e instanceof EnemyEntity) {
+                numEnemies--;
                 ((EnemyEntity)e).spawnDeathParticle();
             }
             entities.remove(e);
         }
         
-        if (Math.random() < 0.02) {
+        if (Math.random() < 0.02 && numEnemies < maxEnemies) {
             new SpawnEnemyAction().execute();
+            numEnemies++;
         }
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
         
+
+        
         // show health text
         buttons.get(0).setText(Integer.toString(player.getHealth()));
-        buttons.get(0).setPosition(new Vector2f((int)player.getPos().x + 15, (int)player.getPos().y - 15));
+        buttons.get(0).setPosition(new Vector2f(player.getPos().x + 15, player.getPos().y - 15));
         buttons.get(0).draw();
         
         Window.getWindow().draw(pointerSprite);
         Window.getWindow().display();
         
         lastTime = currentTime;
+    }
+    
+    public static Vector2f getBounds() {
+        return bounds;
     }
     
     /**
@@ -154,6 +200,9 @@ public final class GameScreen implements Screen {
         return bgColor;
     }
     
+    public Image getBGImage() {
+        return Window.getWindow().capture();
+    }
     /**
      * Gets the total enemies killed.
      * @return the total number of enemies killed.
@@ -196,7 +245,7 @@ public final class GameScreen implements Screen {
      * Adds an entity to the screen.
      * @param e the entity to add.
      */
-    public static void addEntity(Entity e) {
+    public static void addEntity(Entity e) {  
         entities.add(e);
         System.out.format("Entity count: %s%n%n", entities.size());
     }

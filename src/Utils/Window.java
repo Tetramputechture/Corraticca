@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils;
 
+import coratticca.Utils.Screen.MainMenuScreen;
+import coratticca.Utils.Screen.PauseMenuScreen;
+import coratticca.Utils.Screen.Screen;
+import coratticca.Utils.Screen.ScreenName;
 import java.io.IOException;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2i;
@@ -31,17 +35,15 @@ public final class Window {
     /**
      * Makes a window that handles screens. 
      * @param pos the position of the window.
-     * @param width the width of the window.
-     * @param height the height of the window.
+     * @param size the size of the window.
      * @param title the title of the window.
      * @throws IOException
      */
     public static void display(Vector2i pos, 
-                               int width, 
-                               int height, 
+                               Vector2i size,
                                String title) throws IOException {
         
-        window.create(new VideoMode(width, height), title);
+        window.create(new VideoMode(size.x, size.y), title);
         
         window.setPosition(pos);
         
@@ -65,7 +67,7 @@ public final class Window {
      * @param screen the screen to change to.
      */
     public static void changeScreen(Screen screen) {
-        System.out.format("%n%s Showing!%n%n", screen);
+        System.out.format("%n%s Showing!%n%n", screen.getName());
         currentScreen = screen;
     }
     
@@ -81,7 +83,7 @@ public final class Window {
                     break;
                 
                 case LOST_FOCUS:
-                    if (currentScreen.toString().equals("GAME")) {
+                    if (getCurrentScreenName() == ScreenName.GAME_SCREEN) {
                         changeScreen(new PauseMenuScreen());
                     }
                     break;
@@ -133,19 +135,11 @@ public final class Window {
     }
     
     /**
-     * Gets the window's width.
-     * @return the width of the window.
+     * Gets the window's size.
+     * @return the size of the window.
      */
-    public static int getWidth() {
-        return window.getSize().x;
-    }
-    
-    /**
-     * Gets the window's height.
-     * @return the height of the window.
-     */
-    public static int getHeight() {
-        return window.getSize().y;
+    public static Vector2i getSize() {
+        return window.getSize();
     }
     
     /**

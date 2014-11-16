@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils.Screen;
 
+import coratticca.Utils.Button;
 import java.util.List;
 
 /**

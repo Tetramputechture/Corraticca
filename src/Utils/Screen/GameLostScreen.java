@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils.Screen;
 
+import coratticca.Utils.Window;
+import coratticca.Utils.Button;
+import coratticca.Actions.ChangeToGameScreenAction;
+import coratticca.Actions.ChangeToMainMenuScreenAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,35 +41,38 @@ public class GameLostScreen implements Screen {
         Window.getWindow().setMouseCursorVisible(true);
         
         // add game lost text
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
-                                Window.getHeight()/2 - 50),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2,
+                                Window.getSize().y/2 - 50),
                                 48,
                                 "Game Lost! :(",
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                null));
+                                null,
+                                false));
         
         // add exit button
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
-                                Window.getHeight()/2 + 50),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
+                                Window.getSize().y/2 + 50),
                                 24, 
                                 "Exit to Main Menu", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ChangeToMainMenuScreenAction()));
+                                new ChangeToMainMenuScreenAction(),
+                                false));
         
         // add new game button
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
-                                Window.getHeight()/2 + 100),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2,
+                                Window.getSize().y/2 + 100),
                                 24,
                                 "New Game",
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                new ChangeToGameScreenAction(true)));
+                                new ChangeToGameScreenAction(true),
+                                false));
         
         // add stats text
-        buttons.add(new Button( new Vector2f(Window.getWidth() - 100,
-                                Window.getHeight()/2 + 200),
+        buttons.add(new Button( new Vector2f(Window.getSize().x - 100,
+                                Window.getSize().y/2 + 200),
                                 18,
                                 String.format("Enemies killed: %s\n"
                                         + "Shots fired: %s\n"
@@ -75,7 +82,8 @@ public class GameLostScreen implements Screen {
                                         GameScreen.getAccuracy()),
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                null));
+                                null,
+                                false));
     }
 
     @Override

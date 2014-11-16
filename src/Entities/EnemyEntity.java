@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Entities;
 
+import coratticca.Utils.Screen.GameScreen;
+import coratticca.Utils.Audio;
+import coratticca.Utils.Camera;
 import java.util.Random;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
@@ -27,10 +30,15 @@ public class EnemyEntity extends Entity {
     private Vector2f collidingBulletVelocity;
     
     private final float size;
+    private final float inverseSize;
     private final float sizeScalar;
     private static final float sizeScalarCoefficient = 3.5f;
     
     private int health;
+    
+    private boolean hitPlayer;
+    
+    private Random rand = new Random();
 
     /**
      * Sets rotation and position of the enemy.
@@ -42,16 +50,17 @@ public class EnemyEntity extends Entity {
         enemySprite = s;
         
         // set position at a random point on the bounds of the window
-        Random rand = new Random();
-        int tx = rand.nextInt(Window.getWidth());
-        int ty = rand.nextInt(Window.getHeight());
+        Vector2f upperBound = Vector2f.add(Camera.getView().getCenter(), Camera.getView().getSize());
+        Vector2f lowerBound = Vector2f.sub(Camera.getView().getCenter(), Camera.getView().getSize());
+        int tx = randInt((int)lowerBound.x, (int)upperBound.x);
+        int ty = randInt((int)lowerBound.y, (int)upperBound.y);
         if (rand.nextDouble() < 0.5) {
-            tx = 0;
+            tx = (int)lowerBound.x;
         } else {
-            ty = 0;
+            ty = (int)lowerBound.y;
         }
         pos = new Vector2f(tx, ty);
-        enemySprite.setPosition(tx, ty);
+        enemySprite.setPosition(pos);
         
         int r = rand.nextInt(256);
         while (r > 100) {
@@ -67,12 +76,13 @@ public class EnemyEntity extends Entity {
         enemySprite.setColor(new Color(r, g, b));
         
         size = (float)(Math.sqrt(r + 1) / 4) + 0.5f;
+        inverseSize = 1/size;
         enemySprite.setScale(size, size);
         
         health = (int)(size*3);
         
         // how the enemy's velocity should be changed based on size
-        sizeScalar = (1/size) * sizeScalarCoefficient;
+        sizeScalar = inverseSize * sizeScalarCoefficient;
     }
 
     /**
@@ -81,6 +91,30 @@ public class EnemyEntity extends Entity {
      */
     @Override
     public void update(float dt) {
+        
+        facePlayer();
+        
+        followPlayer();
+        
+        // no bullet until one has hit
+        collidingBulletVelocity = Vector2f.ZERO;
+        
+        if (intersectsWithPlayer()) {
+            handlePlayerIntersection();
+        }
+        
+        if (intersectsWithBullet()) {
+            handleBulletIntersection(collidingBullet);
+            collidingBulletVelocity = Vector2f.mul(collidingBulletVelocity, dt);
+        }
+       
+        pos = Vector2f.add(pos, norm);
+        pos = Vector2f.add(pos, collidingBulletVelocity);
+        
+        enemySprite.setPosition(pos); 
+    }
+    
+    public void facePlayer() {
         
         // set angle based on player position
         double angle = Math.atan2(GameScreen.getCurrentPlayer().getPos().y - enemySprite.getPosition().y, 
@@ -93,32 +127,18 @@ public class EnemyEntity extends Entity {
         }
         
         enemySprite.setRotation(90 + (float)angle);
+    }
+    
+    public void followPlayer() {
         
-        // normalize the vector betweeen the enemy and the player
-        // get enemy to follow the player
+        // get vector between enemy and player
         Vector2f d = Vector2f.sub(GameScreen.getCurrentPlayer().getPos(), pos);
         
         float length = (float)Math.sqrt(d.x*d.x + d.y*d.y);
         if (length > 0) {
             norm = Vector2f.div(d, length);
         }
-        
-        // no bullet until one has hit
-        collidingBulletVelocity = Vector2f.ZERO;
-        
-        if (intersectsWithPlayer()) {
-            handlePlayerIntersection();
-        }
-        
-        if (intersectsWithBullet()) {
-            handleBulletIntersection(collidingBullet);
-        }   
-       
-        float tx = pos.x + norm.x * sizeScalar + (collidingBulletVelocity.x * dt);
-        float ty = pos.y + norm.y * sizeScalar + (collidingBulletVelocity.y * dt);
-        pos = new Vector2f(tx, ty);
-        
-        enemySprite.setPosition(pos); 
+        norm = Vector2f.mul(norm, sizeScalar);
     }
     
     /**
@@ -143,7 +163,8 @@ public class EnemyEntity extends Entity {
         ParticleEntity deathParticle = new ParticleEntity(t);
         deathParticle.setPos(t.getPosition());
         deathParticle.setRotation(t.getRotation());
-        deathParticle.setVelocity(new Vector2f(-norm.x, -norm.y));
+        norm = hitPlayer ? Vector2f.mul(norm, 0.1f) : Vector2f.neg(norm);
+        deathParticle.setVelocity(norm);
         GameScreen.addEntity(deathParticle); 
     }
     
@@ -159,6 +180,7 @@ public class EnemyEntity extends Entity {
      * Handles intersection with player.
      */
     public void handlePlayerIntersection() {
+        hitPlayer = true;
         health = 0;
         GameScreen.getCurrentPlayer().changeHealth(-1);
     }
@@ -185,9 +207,9 @@ public class EnemyEntity extends Entity {
     public void handleBulletIntersection(BulletEntity b) {
         collidingBulletVelocity = Vector2f.add(b.getVelocity(), norm);
         if (Math.random() < 0.5) {
-            Audio.playSound("sounds/enemyHit.wav", 1/size);
+            Audio.playSound("sounds/enemyHit.wav", inverseSize);
         } else {
-            Audio.playSound("sounds/enemyHit2.wav", 1/size);
+            Audio.playSound("sounds/enemyHit2.wav", inverseSize);
         }
         b.setEnemyHit(true);
         health--;
@@ -201,6 +223,16 @@ public class EnemyEntity extends Entity {
     @Override
     public void setPos(Vector2f pos) {
         this.pos = pos;
+    }
+    
+    private int randInt(int min, int max) {
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt(Math.abs((max - min) + 1)) + min;
+
+        return randomNum;
+        
     }
 }
 

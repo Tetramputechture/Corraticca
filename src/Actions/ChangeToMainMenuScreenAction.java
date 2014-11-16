@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Actions;
+
+import coratticca.Utils.Screen.MainMenuScreen;
+import coratticca.Utils.Window;
 
 /**
  * Changes the current screen to the Main Menu Screen.

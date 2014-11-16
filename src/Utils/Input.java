@@ -3,20 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils;
 
+import coratticca.Actions.FireAction;
+import coratticca.Actions.ChangeToGameScreenAction;
+import coratticca.Actions.ChangeToPauseMenuScreenAction;
+import coratticca.Actions.ChangeToMainMenuScreenAction;
+import coratticca.Actions.Action;
+import coratticca.Utils.Screen.GameScreen;
+import coratticca.Utils.Screen.PauseMenuScreen;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard;
 import org.jsfml.window.Mouse;
 import org.jsfml.window.event.KeyEvent;
@@ -106,7 +113,7 @@ public class Input {
      * @param mouseEvent the Mouse Event to be handled.
      */
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
-        currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
+        setMousePosition(mouseEvent);
         currentMouseButton = mouseEvent.button;
         System.out.format("Mouse %s clicked on position (%s, %s)%n%n", currentMouseButton, currentMousePos.x, currentMousePos.y);
 
@@ -135,10 +142,10 @@ public class Input {
      * @param mouseEvent the Mouse Event to be handled.
      */
     public static void handleMouseMoveInput(MouseEvent mouseEvent) {
-        currentMousePos = new Vector2f(mouseEvent.position.x, mouseEvent.position.y);
+        setMousePosition(mouseEvent);
         
         Window.getCurrentScreen().getButtons().stream().forEach((i) -> {
-            if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
+            if (i.getTextObject().getGlobalBounds().contains(new Vector2f(currentMousePos.x, currentMousePos.y))) {
                 if (i.getAction() != null) {
                     i.handleMouseHover();
                 }
@@ -148,6 +155,12 @@ public class Input {
                 i.shouldPlaySelectSound(true);
             }
         });
+    }
+    
+    public static void setMousePosition(MouseEvent mouseEvent) {
+        Vector2i tpos = Window.getWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position.x, mouseEvent.position.y));
+        
+        currentMousePos = new Vector2f(tpos.x, tpos.y);
     }
 
     /**

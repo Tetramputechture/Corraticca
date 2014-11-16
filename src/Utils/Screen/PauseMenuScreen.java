@@ -3,12 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils.Screen;
 
+import coratticca.Utils.Window;
+import coratticca.Utils.Button;
+import coratticca.Actions.ChangeToGameScreenAction;
+import coratticca.Actions.ChangeToMainMenuScreenAction;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.Sprite;
+import org.jsfml.graphics.Texture;
+import org.jsfml.graphics.TextureCreationException;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -19,13 +30,11 @@ public class PauseMenuScreen implements Screen {
     
     private static final ScreenName name = ScreenName.PAUSE_MENU_SCREEN;
     
-    private static final Color bgColor;
+    //private static final Color bgColor;
+    private final Sprite backgroundSprite;
     
     private final List<Button> buttons;
     
-    static {
-        bgColor = GameScreen.getBGColor();
-    }
     
     /**
      * Initializes the pause menu and all of it's buttons.
@@ -37,22 +46,34 @@ public class PauseMenuScreen implements Screen {
         Window.getWindow().setMouseCursorVisible(true);
         
         // add exit button
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
-                                Window.getHeight()/2-100),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
+                                Window.getSize().y/2-100),
                                 24, 
                                 "Exit to Main Menu", 
                                 "fonts/OpenSans-Regular.ttf", 
-                                Color.BLACK,
-                                new ChangeToMainMenuScreenAction()));
+                                Color.WHITE,
+                                new ChangeToMainMenuScreenAction(),
+                                false));
         
         // add resume game button
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2,
-                                Window.getHeight()/2),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2,
+                                Window.getSize().y/2 + 100),
                                 24,
                                 "Resume Game",
                                 "fonts/OpenSans-Regular.ttf",
-                                Color.BLACK,
-                                new ChangeToGameScreenAction(false)));
+                                Color.WHITE,
+                                new ChangeToGameScreenAction(false),
+                                false));
+        
+        // init background sprite
+        
+        Texture backgroundTexture = new Texture();
+        try {
+            backgroundTexture.loadFromImage(((GameScreen)Window.getCurrentScreen()).getBGImage());
+        } catch (TextureCreationException ex) {
+            Logger.getLogger(PauseMenuScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        backgroundSprite = new Sprite(backgroundTexture);
     }
    
     /**
@@ -61,7 +82,9 @@ public class PauseMenuScreen implements Screen {
     @Override
     public void show() {
         
-        Window.getWindow().clear(bgColor);
+        Window.getWindow().clear();
+        
+        Window.getWindow().draw(backgroundSprite);
         
         for (Button b : buttons) {
             b.draw();

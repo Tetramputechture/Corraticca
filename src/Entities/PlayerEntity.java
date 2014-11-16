@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Entities;
 
+import coratticca.Utils.Screen.GameScreen;
+import coratticca.Utils.Screen.GameLostScreen;
+import coratticca.Utils.Window;
+import coratticca.Utils.Input;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.logging.Level;
@@ -12,6 +16,7 @@ import java.util.logging.Logger;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard;
 
 /**
@@ -62,7 +67,7 @@ public final class PlayerEntity extends Entity {
         
         playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
         
-        playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
+        playerSprite.setPosition(Window.getSize().x/2.0f, Window.getSize().y/2.0f);
         pos = playerSprite.getPosition();
         v = Vector2f.ZERO;
         
@@ -122,8 +127,9 @@ public final class PlayerEntity extends Entity {
         playerSprite.setPosition(pos);
         
         // set player angle based on mouse position
-        angle = Math.atan2( Input.getMousePos().y - playerSprite.getPosition().y, 
-                            Input.getMousePos().x - playerSprite.getPosition().x);
+        Vector2i truePos = Window.getWindow().mapCoordsToPixel(pos);
+        angle = Math.atan2( Input.getMousePos().y - truePos.y, 
+                            Input.getMousePos().x - truePos.x);
         
         angle *= (180/Math.PI);
         if(angle < 0) {
@@ -137,7 +143,7 @@ public final class PlayerEntity extends Entity {
      * Resets the player's position, velocity, and health.
      */
     public void reset() {
-        playerSprite.setPosition(Window.getWidth()/2.0f, Window.getHeight()/2.0f);
+        playerSprite.setPosition(Window.getSize().x/2.0f, Window.getSize().y/2.0f);
         pos = playerSprite.getPosition();
         v = Vector2f.ZERO;
         health = 3;
@@ -147,18 +153,24 @@ public final class PlayerEntity extends Entity {
      * Handles if the player collided with a wall.
      */
     public void handleWallCollision() {
-        int tx = -1;
-        int ty = -1;
+        float tx = -1;
+        float ty = -1;
         
-        if (pos.x > Window.getWidth()) {
-            tx = Window.getWidth();
-        } else if (pos.x < 0) {
-            tx = 0;
+        float gWidth = GameScreen.getBounds().x;
+        float gHeight = GameScreen.getBounds().y;
+        
+        float pAdjustedWidth = playerSprite.getLocalBounds().width * .9f;
+        float pAdjustedHeight = playerSprite.getLocalBounds().height * .9f;
+        
+        if (pos.x > gWidth - pAdjustedWidth) {
+            tx = gWidth - pAdjustedWidth;
+        } else if (pos.x < -gWidth + pAdjustedWidth) {
+            tx = -gWidth + pAdjustedWidth;
         }
-        if (pos.y > Window.getHeight()) {
-            ty = Window.getHeight();
-        } else if (pos.y < 0) {
-            ty = 0;
+        if (pos.y > gHeight - pAdjustedHeight) {
+            ty = gHeight - pAdjustedHeight;
+        } else if (pos.y < -gHeight + pAdjustedHeight) {
+            ty = -gHeight + pAdjustedHeight;
         }
         
         if (tx != -1) {
@@ -208,6 +220,10 @@ public final class PlayerEntity extends Entity {
      */
     public float getAngle() {
         return playerSprite.getRotation();
+    }
+    
+    public Vector2f getVelocity() {
+        return v;
     }
     
     /**

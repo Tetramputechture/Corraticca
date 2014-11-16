@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Entities;
 
+import coratticca.Utils.Screen.GameScreen;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -18,9 +19,11 @@ public class BulletEntity extends Entity {
     
     private Vector2f pos;
     private final Vector2f v;
-    private static final int speed = 300;
+    private static final int speed = 500;
     
-    private boolean hitEnemy;
+    private static final float playerVelocityScalar = 40f;
+    
+    private boolean enemyHit;
 
     /**
      * Sets rotation and position of bullet.
@@ -31,13 +34,20 @@ public class BulletEntity extends Entity {
         super(s);
         bulletSprite = s;
         
+        PlayerEntity currentPlayer = GameScreen.getCurrentPlayer();
+        float angle = (float)(Math.toRadians(currentPlayer.getAngle()));
+        float sin = (float)Math.sin(angle);
+        float cos = (float)Math.cos(angle);
+        
         // set position and angle based off current player sprite
-        float tx = (float) (GameScreen.getCurrentPlayer().getPos().x + Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        float ty = (float) (GameScreen.getCurrentPlayer().getPos().y + Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        pos = new Vector2f(tx, ty);
-        float tvx = (float) (speed * Math.sin(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        float tvy = -1 * (float) (speed * Math.cos(Math.toRadians(GameScreen.getCurrentPlayer().getAngle())));
-        v = new Vector2f(tvx, tvy);
+        pos = Vector2f.add(currentPlayer.getPos(), new Vector2f(sin, cos));
+        bulletSprite.setPosition(pos);
+        
+        Vector2f forward = new Vector2f(sin, -cos);
+        forward = Vector2f.mul(forward, speed);
+        Vector2f inheritedVelocity = Vector2f.mul(GameScreen.getCurrentPlayer().getVelocity(), playerVelocityScalar);
+        v = Vector2f.add(forward, inheritedVelocity);
+        
         bulletSprite.setRotation(GameScreen.getCurrentPlayer().getAngle());
     }
     
@@ -54,8 +64,8 @@ public class BulletEntity extends Entity {
      * @return if the bullet is out of the window's bounds.
      */
     public boolean isOutOfBounds() {
-        return pos.x > Window.getWidth() || pos.x < 0 || 
-                pos.y > Window.getHeight() || pos.y < 0;
+        return pos.x > GameScreen.getBounds().x || pos.x < -GameScreen.getBounds().x || 
+               pos.y > GameScreen.getBounds().y || pos.y < -GameScreen.getBounds().y;
     }
     
     /**
@@ -63,7 +73,7 @@ public class BulletEntity extends Entity {
      * @param b if the bullet hit an enemy or not.
      */
     public void setEnemyHit(boolean b) {
-        this.hitEnemy = b;
+        this.enemyHit = b;
     }
 
     /**
@@ -72,7 +82,7 @@ public class BulletEntity extends Entity {
      */
     @Override
     public void update(float dt) {
-        pos = Vector2f.add(pos, new Vector2f(v.x * dt, v.y * dt));
+        pos = Vector2f.add(pos, Vector2f.mul(v, dt));
         bulletSprite.setPosition(pos);
     }
     
@@ -82,7 +92,7 @@ public class BulletEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        return isOutOfBounds() || hitEnemy;
+        return isOutOfBounds() || enemyHit;
     }
     
     @Override

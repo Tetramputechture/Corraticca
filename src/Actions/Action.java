@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Actions;
 
 /**
  * This interface handles every action in the game, so keys can easily be bound

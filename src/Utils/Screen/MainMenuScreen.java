@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coratticca;
+package coratticca.Utils.Screen;
 
+import coratticca.Utils.Window;
+import coratticca.Utils.Button;
+import coratticca.Actions.ExitGameAction;
+import coratticca.Actions.ChangeToGameScreenAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,21 +39,23 @@ public class MainMenuScreen implements Screen {
         
         // add play button
         Window.getWindow().setMouseCursorVisible(true);
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
-                                Window.getHeight()/2-80),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
+                                Window.getSize().y/2-80),
                                 52, 
                                 "Play!", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ChangeToGameScreenAction(true)));
+                                new ChangeToGameScreenAction(true),
+                                false));
         
-        buttons.add(new Button( new Vector2f(Window.getWidth()/2, 
-                                Window.getHeight()/2+20),
+        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
+                                Window.getSize().y/2+20),
                                 52, 
                                 "Exit!", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ExitGameAction()));
+                                new ExitGameAction(),
+                                false));
     }
    
     /**
