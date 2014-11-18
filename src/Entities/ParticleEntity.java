@@ -48,6 +48,7 @@ public class ParticleEntity extends Entity {
      * Sets the velocity of the particle.
      * @param v the velocity to be set.
      */
+    @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
     }
@@ -82,5 +83,15 @@ public class ParticleEntity extends Entity {
     @Override
     public void setPos(Vector2f pos) {
         this.pos = pos;
+    }
+
+    @Override
+    public Vector2f getVelocity() {
+        return v;
+    }
+
+    @Override
+    public float getSize() {
+        return particleSprite.getScale().x;
     }
 }

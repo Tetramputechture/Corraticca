@@ -18,12 +18,12 @@ public class BulletEntity extends Entity {
     private final Sprite bulletSprite;
     
     private Vector2f pos;
-    private final Vector2f v;
+    private Vector2f v;
     private static final int speed = 500;
     
     private static final float playerVelocityScalar = 40f;
     
-    private boolean enemyHit;
+    private boolean entityHit;
 
     /**
      * Sets rotation and position of bullet.
@@ -55,6 +55,7 @@ public class BulletEntity extends Entity {
      * Gets the velocity of the bullet
      * @return the bullet's velocity
      */
+    @Override
     public Vector2f getVelocity() {
         return v;
     }
@@ -69,11 +70,11 @@ public class BulletEntity extends Entity {
     }
     
     /**
-     * Changes the status of enemyHit.
+     * Changes the status of entityHit.
      * @param b if the bullet hit an enemy or not.
      */
-    public void setEnemyHit(boolean b) {
-        this.enemyHit = b;
+    public void setEntityHit(boolean b) {
+        this.entityHit = b;
     }
 
     /**
@@ -92,7 +93,7 @@ public class BulletEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        return isOutOfBounds() || enemyHit;
+        return isOutOfBounds() || entityHit;
     }
     
     @Override
@@ -103,5 +104,15 @@ public class BulletEntity extends Entity {
     @Override
     public void setPos(Vector2f pos) {
         this.pos = pos;
+    }
+
+    @Override
+    public float getSize() {
+        return bulletSprite.getScale().x;
+    }
+
+    @Override
+    public void setVelocity(Vector2f v) {
+        this.v = v;
     }
 }

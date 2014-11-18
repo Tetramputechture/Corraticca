@@ -90,11 +90,9 @@ public final class PlayerEntity extends Entity {
         target = new Vector2f(ttx, tty);
 
         // find true velocity by getting the magnitude of the vector.
-        double length = Math.sqrt((target.x * target.x) + (target.y * target.y));   
+        double length = Math.sqrt(target.x * target.x + target.y * target.y);   
 
-        /* 
-         * normalize the vector
-        */
+        // normalize target
         if (length > 0) {
             target = Vector2f.div(target, (float)length);
         }
@@ -110,7 +108,7 @@ public final class PlayerEntity extends Entity {
         v = Vector2f.add(v, new Vector2f(acc.x * dt, acc.y * dt));
 
         // limit velocity vector to moveSpeed
-        double speed = Math.sqrt((v.x * v.x) + (v.y * v.y));
+        double speed = Math.sqrt(v.x * v.x + v.y * v.y);
         if (speed > moveSpeed) {
             v = Vector2f.div(v, (float)speed);
             v = Vector2f.mul(v, moveSpeed);
@@ -201,7 +199,6 @@ public final class PlayerEntity extends Entity {
      */
     public void changeHealth(int r) {
         health += r;
-        System.out.println("Health: " + health);
     }
      
     @Override
@@ -222,6 +219,7 @@ public final class PlayerEntity extends Entity {
         return playerSprite.getRotation();
     }
     
+    @Override
     public Vector2f getVelocity() {
         return v;
     }
@@ -232,5 +230,15 @@ public final class PlayerEntity extends Entity {
      */
     public int getHealth() {
         return health;
+    }
+
+    @Override
+    public float getSize() {
+        return playerSprite.getScale().x;
+    }
+
+    @Override
+    public void setVelocity(Vector2f v) {
+        this.v = v;
     }
 }

@@ -24,7 +24,7 @@ public class Coratticca {
         Vector2i pos = new Vector2i(1366/4, 768/4);
         Vector2i size = new Vector2i(640, 480);
         
-        Window.display(pos, size, "Corrattica Alpha");
+        Window.display(pos, size, "Floppy Disk Laser Shooter In Space - Alpha");
         
     }
     

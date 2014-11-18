@@ -5,7 +5,7 @@
  */
 package coratticca.Actions;
 
-import coratticca.Entities.EnemyEntity;
+import coratticca.Entities.EnemyShipEntity;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Entities.PlayerEntity;
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class SpawnEnemyAction implements Action {
      */
     public static final String NAME = "SPAWN_ENEMY";
     
-    private Texture enemyTexture;
+    private final Texture enemyTexture;
     
     /**
      * Set's the enemy's texture.
@@ -53,7 +53,7 @@ public class SpawnEnemyAction implements Action {
         Sprite enemySprite = new Sprite(enemyTexture);
         enemySprite.setOrigin(Vector2f.div(new Vector2f(enemyTexture.getSize()), 2));
         
-        GameScreen.addEntity(new EnemyEntity(enemySprite));
+        GameScreen.addEntity(new EnemyShipEntity(enemySprite));
     }
     
 }

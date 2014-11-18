@@ -6,6 +6,7 @@
 package coratticca.Entities;
 
 import coratticca.Utils.Window;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -57,5 +58,15 @@ public abstract class Entity {
      * @param pos the position to be set.
      */
     public abstract void setPos(Vector2f pos);
+    
+    public FloatRect getBounds() {
+        return sprite.getGlobalBounds();
+    }
+
+    public abstract Vector2f getVelocity();
+
+    public abstract float getSize();
+
+    public abstract void setVelocity(Vector2f add);
 
 }

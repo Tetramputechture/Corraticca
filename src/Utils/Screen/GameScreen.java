@@ -5,7 +5,8 @@
  */
 package coratticca.Utils.Screen;
 
-import coratticca.Entities.EnemyEntity;
+import coratticca.Actions.SpawnAsteroidAction;
+import coratticca.Entities.EnemyShipEntity;
 import coratticca.Entities.PlayerEntity;
 import coratticca.Entities.Entity;
 import coratticca.Utils.Window;
@@ -77,13 +78,13 @@ public final class GameScreen implements Screen {
         
         if (resetGame) {
             entities.clear();
+            player.reset();
+            enemiesKilled = 0;
+            numEnemies = 0;
+            shotsFired = 0;
         }
         buttons = new ArrayList<>();
-        
-        if (resetGame) {
-            player.reset();
-            addEntity(player);
-        }
+
         
         // health text
         buttons.add(new Button(new Vector2f((int)player.getPos().x - 10,
@@ -94,6 +95,16 @@ public final class GameScreen implements Screen {
                                Color.WHITE,
                                null,
                                true));
+        
+        // score text
+        buttons.add(new Button(new Vector2f(50,
+                               25),
+                               20,
+                               String.format("Score: %s", enemiesKilled),
+                               "fonts/OpenSans-Regular.ttf",
+                               Color.WHITE,
+                               null,
+                               false));
        
         clock = new Clock();
         lastTime = 0;
@@ -151,28 +162,42 @@ public final class GameScreen implements Screen {
             }
         }
         
+        // draw player last so bullets appear to come out of player (not from center)
+        player.draw();
+        player.update(dt);
+        
+        // check if player has no health
+        player.toBeRemoved();
+        
         for (Entity e : entsToBeRemoved) {
-            if (e instanceof EnemyEntity) {
+            if (e instanceof EnemyShipEntity) {
                 numEnemies--;
-                ((EnemyEntity)e).spawnDeathParticle();
+                ((EnemyShipEntity)e).spawnDeathParticle();
             }
             entities.remove(e);
         }
         
-        if (Math.random() < 0.02 && numEnemies < maxEnemies) {
-            new SpawnEnemyAction().execute();
-            numEnemies++;
+        if (Math.random() < 0.02) {
+            new SpawnAsteroidAction().execute();
         }
+        
+//        if (Math.random() < 0.02) {
+//            new SpawnEnemyAction().execute();
+//        }
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
         
 
         
-        // show health text
+        // update health text
         buttons.get(0).setText(Integer.toString(player.getHealth()));
         buttons.get(0).setPosition(new Vector2f(player.getPos().x + 15, player.getPos().y - 15));
         buttons.get(0).draw();
+        
+        // update score text
+        buttons.get(1).setText(String.format("Score: %s", enemiesKilled));
+        buttons.get(1).draw();
         
         Window.getWindow().draw(pointerSprite);
         Window.getWindow().display();

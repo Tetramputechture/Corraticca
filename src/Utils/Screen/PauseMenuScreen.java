@@ -9,8 +9,6 @@ import coratticca.Utils.Window;
 import coratticca.Utils.Button;
 import coratticca.Actions.ChangeToGameScreenAction;
 import coratticca.Actions.ChangeToMainMenuScreenAction;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
