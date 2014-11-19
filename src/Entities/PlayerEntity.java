@@ -5,6 +5,7 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CMath;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.GameLostScreen;
 import coratticca.Utils.Window;
@@ -89,13 +90,8 @@ public final class PlayerEntity extends Entity {
 	int tty = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
         target = new Vector2f(ttx, tty);
 
-        // find true velocity by getting the magnitude of the vector.
-        double length = Math.sqrt(target.x * target.x + target.y * target.y);   
-
         // normalize target
-        if (length > 0) {
-            target = Vector2f.div(target, (float)length);
-        }
+        target = CMath.normalize(target);
 
         // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
@@ -105,12 +101,12 @@ public final class PlayerEntity extends Entity {
         Vector2f acc = new Vector2f(target.x, target.y);
         
         // integrate acceleration to get velocity
-        v = Vector2f.add(v, new Vector2f(acc.x * dt, acc.y * dt));
+        v = Vector2f.add(v, Vector2f.mul(acc, dt));
 
         // limit velocity vector to moveSpeed
-        double speed = Math.sqrt(v.x * v.x + v.y * v.y);
+        float speed = CMath.length(v);
         if (speed > moveSpeed) {
-            v = Vector2f.div(v, (float)speed);
+            v = Vector2f.div(v, speed);
             v = Vector2f.mul(v, moveSpeed);
         }
 

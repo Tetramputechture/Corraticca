@@ -24,7 +24,7 @@ public class AsteroidEntity extends Entity {
     private Vector2f pos;
     private Vector2f v;
     private final float speed;
-    private final float maxSpeed = 150;
+    private final float maxSpeed = 50;
     
     private final float size;
     private static final float sizeScalarCoefficient = 1;
@@ -36,6 +36,8 @@ public class AsteroidEntity extends Entity {
     private Vector2f collidingBulletVelocity;
     
     private AsteroidEntity collidingAsteroid;
+    
+    //private AsteroidEntity previousCollidingAsteroid;
     
     private final Random rand = new Random();
     
@@ -59,7 +61,7 @@ public class AsteroidEntity extends Entity {
         // set random angle
         asteroidSprite.setRotation(CMath.randInt(0, 360));
         
-        size = CMath.randInt(2, 5);
+        size = CMath.randInt(1, 5);
         asteroidSprite.setScale(size, size);
         
         // set speed based on size
@@ -96,11 +98,10 @@ public class AsteroidEntity extends Entity {
         v = Vector2f.add(v, collidingBulletVelocity);
         collidingBulletVelocity = Vector2f.ZERO;
         
-        // limit asteroid speed to max speed
-        // limit velocity vector to moveSpeed
-        double s = Math.sqrt(v.x * v.x + v.y * v.y);
+        // limit asteroid velocity to max speed
+        float s = CMath.length(v);
         if (s > maxSpeed) {
-            v = Vector2f.div(v, (float)s);
+            v = Vector2f.div(v, s);
             v = Vector2f.mul(v, maxSpeed);
         }
         

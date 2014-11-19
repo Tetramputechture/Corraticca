@@ -28,15 +28,21 @@ public class CMath {
         return (float)randomNum;
     }
     
+    public static float length(Vector2f v) {
+        return (float)Math.sqrt(v.x*v.x + v.y*v.y);
+    }
+    
     public static float dot(Vector2f a, Vector2f b) {
         return a.x*b.x + a.y*b.y;
     }
     
-    public static boolean intersect(FloatRect a, FloatRect b) {
-        return !(a.left <= b.left + b.width &&
-                a.left + a.width >= b.left &&
-                a.top <= b.top + b.height &&
-                a.top + a.height >= b.top);
+    public static Vector2f normalize(Vector2f v) {
+        float mag = length(v);
+        if (mag > 0) {
+            return Vector2f.div(v, mag);
+        } else {
+            return Vector2f.ZERO;
+        }
     }
     
     public static void handleElasticCollisions(Entity a, Entity b) {
@@ -50,38 +56,39 @@ public class CMath {
         float aMass = a.getSize();
         float bMass = b.getSize();
         
-        // find unit normal vector
-        Vector2f uN = Vector2f.sub(bPos, aPos);
-        float normMag = (float)Math.sqrt(uN.x*uN.x + uN.y*uN.y);
-        if (normMag > 0) {
-            uN = Vector2f.div(uN, normMag);
+        // no mass makes no sense in collisions
+        if (aMass == 0 || bMass == 0) {
+            return;
         }
+        
+        // find unit normal vector
+        Vector2f uN = normalize(Vector2f.sub(bPos, aPos));
         
         // find unit tanget vector
         Vector2f uT = new Vector2f(-uN.y, uN.x);
         
         // get normal and tangential components of both velocity vectors 
         // before the collision
-        float aVn = CMath.dot(uN, aV);
-        float aVt = CMath.dot(uT, aV);
+        float aVn = dot(uN, aV);
+        float aVt = dot(uT, aV);
         
-        float bVn = CMath.dot(uN, bV);
-        float bVt = CMath.dot(uT, bV);
+        float bVn = dot(uN, bV);
+        float bVt = dot(uT, bV);
         
         // get normal and tangential components of both velocity vectors 
         // after the collision
-        float aVN = (aVn*(aMass - bMass) + 2*bMass*bVn)/(aMass + bMass);
-        float aVT = aVt;
+        float aVnPrime = (aVn*(aMass - bMass) + 2f*bMass*bVn)/(aMass + bMass);
+        float aVtPrime = aVt;
         
-        float bVN = (bVn*(bMass - aMass) + 2*aMass*aVn)/(aMass + bMass);
-        float bVT = bVt;
+        float bVnPrime = (bVn*(bMass - aMass) + 2f*aMass*aVn)/(aMass + bMass);
+        float bVtPrime = bVt;
         
         // convert normal and tangential components into vectors
-        Vector2f avn = Vector2f.mul(uN, aVN);
-        Vector2f avt = Vector2f.mul(uT, aVT);
+        Vector2f avn = Vector2f.mul(uN, aVnPrime);
+        Vector2f avt = Vector2f.mul(uT, aVtPrime);
         
-        Vector2f bvn = Vector2f.mul(uN, bVN);
-        Vector2f bvt = Vector2f.mul(uN, bVT);
+        Vector2f bvn = Vector2f.mul(uN, bVnPrime);
+        Vector2f bvt = Vector2f.mul(uT, bVtPrime);
         
         a.setVelocity(Vector2f.add(avn, avt));
         b.setVelocity(Vector2f.add(bvn, bvt));

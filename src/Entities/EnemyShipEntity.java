@@ -131,10 +131,7 @@ public class EnemyShipEntity extends Entity {
         // get vector between enemy and player
         Vector2f d = Vector2f.sub(GameScreen.getCurrentPlayer().getPos(), pos);
         
-        float length = (float)Math.sqrt(d.x*d.x + d.y*d.y);
-        if (length > 0) {
-            v = Vector2f.div(d, length);
-        }
+        v = CMath.normalize(v);
         v = Vector2f.mul(v, sizeScalar);
     }
     

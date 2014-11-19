@@ -153,13 +153,17 @@ public final class GameScreen implements Screen {
         // reset removal list
         entsToBeRemoved.clear();
         
-        // iterate through entities
+        // update entities and check for removal
         for (Entity e : entities) {
-            e.draw();
             e.update(dt);
             if (e.toBeRemoved()) {
                 entsToBeRemoved.add(e);
             }
+        }
+        
+        // draw entities
+        for (Entity e : entities) {
+            e.draw();
         }
         
         // draw player last so bullets appear to come out of player (not from center)
@@ -177,7 +181,7 @@ public final class GameScreen implements Screen {
             entities.remove(e);
         }
         
-        if (Math.random() < 0.02) {
+        if (Math.random() < 0.05) {
             new SpawnAsteroidAction().execute();
         }
         
@@ -203,6 +207,7 @@ public final class GameScreen implements Screen {
         Window.getWindow().display();
         
         lastTime = currentTime;
+        
     }
     
     public static Vector2f getBounds() {
