@@ -64,9 +64,12 @@ public abstract class Entity {
     }
 
     public abstract Vector2f getVelocity();
-
-    public abstract float getSize();
-
+    
+    
     public abstract void setVelocity(Vector2f add);
 
+
+    public abstract float getSize();
+    
+    public abstract float getRotation();
 }

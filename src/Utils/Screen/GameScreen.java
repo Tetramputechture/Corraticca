@@ -13,7 +13,6 @@ import coratticca.Utils.Window;
 import coratticca.Utils.Button;
 import coratticca.Utils.Camera;
 import coratticca.Utils.Input;
-import coratticca.Actions.SpawnEnemyAction;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;

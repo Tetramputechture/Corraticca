@@ -17,7 +17,7 @@ import org.jsfml.system.Vector2f;
  *
  * @author Nick
  */
-public class AsteroidEntity extends Entity {
+public final class AsteroidEntity extends Entity {
     
     private final Sprite asteroidSprite;
     
@@ -46,6 +46,29 @@ public class AsteroidEntity extends Entity {
         asteroidSprite = s;
         
         // set position at a random point on the bounds of the window
+        // MAKE SURE ASTEROID DOES NOT SPAWN WITHIN ANOTHER ASTEROID
+        setRandomPos();
+        
+        // set random angle
+        asteroidSprite.setRotation(CMath.randInt(0, 360));
+        
+        size = CMath.randInt(1, 4);
+        asteroidSprite.setScale(size, size);
+        
+        // set speed based on size
+        speed = sizeScalarCoefficient * 1/size;
+        
+        // set velocity in random direction
+        setRandVelocity();
+        
+        health = (int)size;
+           
+        // no bullet until one has hit
+        collidingBulletVelocity = Vector2f.ZERO;
+                
+    }
+    
+    public void setRandomPos() {
         Vector2f upperBound = Vector2f.add(Camera.getView().getCenter(), Camera.getView().getSize());
         Vector2f lowerBound = Vector2f.sub(Camera.getView().getCenter(), Camera.getView().getSize());
         int tx = CMath.randInt((int)lowerBound.x, (int)upperBound.x);
@@ -57,24 +80,9 @@ public class AsteroidEntity extends Entity {
         }
         pos = new Vector2f(tx, ty);
         asteroidSprite.setPosition(pos);
-        
-        // set random angle
-        asteroidSprite.setRotation(CMath.randInt(0, 360));
-        
-        size = CMath.randInt(1, 5);
-        asteroidSprite.setScale(size, size);
-        
-        // set speed based on size
-        speed = sizeScalarCoefficient * 1/size;
-        
-        // set velocity in random direction
-        setRandVelocity();
-        
-        health = (int)size * 3;
-           
-        // no bullet until one has hit
-        collidingBulletVelocity = Vector2f.ZERO;
-                
+        if (intersectsWithAsteroid()) {
+            setRandomPos();
+        }
     }
 
     @Override
@@ -169,7 +177,7 @@ public class AsteroidEntity extends Entity {
     }
     
     public void handleAsteroidIntersection() {
-        CMath.handleElasticCollisions(this, collidingAsteroid);
+        CMath.handleCollision(this, collidingAsteroid);
     }
 
     @Override
@@ -198,7 +206,7 @@ public class AsteroidEntity extends Entity {
     }
     
     private void setRandVelocity() {
-        v = new Vector2f(randFloat(-2, 2), randFloat(-2, 2));
+        v = new Vector2f(CMath.randFloat(-2, 2), CMath.randFloat(-2, 2));
         v = Vector2f.mul(v, speed);
     }
     
@@ -206,5 +214,9 @@ public class AsteroidEntity extends Entity {
     public float getSize() {
         return size;
     }
-    
+
+    @Override
+    public float getRotation() {
+        return asteroidSprite.getRotation();
+    }
 }

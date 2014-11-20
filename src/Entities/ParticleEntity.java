@@ -13,7 +13,7 @@ import org.jsfml.system.Vector2f;
  * A particle entity that fades out over time. 
  * @author Nick
  */
-public class ParticleEntity extends Entity {
+public final class ParticleEntity extends Entity {
     
     private final Sprite particleSprite;
     
@@ -93,5 +93,10 @@ public class ParticleEntity extends Entity {
     @Override
     public float getSize() {
         return particleSprite.getScale().x;
+    }
+    
+    @Override
+    public float getRotation() {
+        return particleSprite.getRotation();
     }
 }

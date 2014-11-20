@@ -20,7 +20,7 @@ import org.jsfml.system.Vector2f;
  * - Dies after a certain number of bullets hit it.
  * @author Nick
  */
-public class EnemyShipEntity extends Entity {
+public final class EnemyShipEntity extends Entity {
     
     private final Sprite enemySprite;
     
@@ -241,6 +241,11 @@ public class EnemyShipEntity extends Entity {
     @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
+    }
+    
+    @Override
+    public float getRotation() {
+        return enemySprite.getRotation();
     }
 }
 

@@ -13,7 +13,7 @@ import org.jsfml.system.Vector2f;
  * An entity representing a bullet, what the player shoots.
  * @author Nick
  */
-public class BulletEntity extends Entity {
+public final class BulletEntity extends Entity {
     
     private final Sprite bulletSprite;
     
@@ -35,7 +35,7 @@ public class BulletEntity extends Entity {
         bulletSprite = s;
         
         PlayerEntity currentPlayer = GameScreen.getCurrentPlayer();
-        float angle = (float)(Math.toRadians(currentPlayer.getAngle()));
+        float angle = (float)(Math.toRadians(currentPlayer.getRotation()));
         float sin = (float)Math.sin(angle);
         float cos = (float)Math.cos(angle);
         
@@ -48,7 +48,7 @@ public class BulletEntity extends Entity {
         Vector2f inheritedVelocity = Vector2f.mul(GameScreen.getCurrentPlayer().getVelocity(), playerVelocityScalar);
         v = Vector2f.add(forward, inheritedVelocity);
         
-        bulletSprite.setRotation(GameScreen.getCurrentPlayer().getAngle());
+        bulletSprite.setRotation(GameScreen.getCurrentPlayer().getRotation());
     }
     
     /**
@@ -114,5 +114,10 @@ public class BulletEntity extends Entity {
     @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
+    }
+    
+    @Override
+    public float getRotation() {
+        return bulletSprite.getRotation();
     }
 }

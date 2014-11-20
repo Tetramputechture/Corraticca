@@ -211,7 +211,8 @@ public final class PlayerEntity extends Entity {
      * Gets the player's angle.
      * @return the player's angle.
      */
-    public float getAngle() {
+    @Override
+    public float getRotation() {
         return playerSprite.getRotation();
     }
     
