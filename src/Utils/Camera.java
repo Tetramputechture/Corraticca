@@ -24,6 +24,10 @@ public class Camera {
         handleEdges();
     }
     
+    /**
+     * Handles when the view of the camera is near an edge.
+     * When the player is near an edge, the camera stops following the player.
+     */
     public static void handleEdges() {
         Vector2f playerPos = GameScreen.getCurrentPlayer().getPos();
         
@@ -44,6 +48,10 @@ public class Camera {
         cam.setCenter(camPos);
     }
     
+    /**
+     * Gets the View of the camera.
+     * @return the camera's View.
+     */
     public static View getView() {
         return cam;
     }

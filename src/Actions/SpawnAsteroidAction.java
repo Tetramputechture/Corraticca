@@ -16,7 +16,7 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 /**
- *
+ * Spawns a new Asteroid.
  * @author Nick
  */
 public class SpawnAsteroidAction implements Action {
@@ -27,8 +27,19 @@ public class SpawnAsteroidAction implements Action {
     public static final String NAME = "SPAWN_ASTEROID";
     
     private final Texture asteroidTexture;
+    
+    private final Vector2f pos;
+    private final int size;
 
-    public SpawnAsteroidAction() {
+    /**
+     * Initializes the asteroid's sprite, and sets its position and size.
+     * @param pos the position of the asteroid.
+     * @param size the size of the asteroid.
+     */
+    public SpawnAsteroidAction(Vector2f pos, int size) {
+        
+        this.pos = pos;
+        this.size = size;
         
         asteroidTexture = new Texture();
         String asteroidTextureFile;
@@ -54,7 +65,7 @@ public class SpawnAsteroidAction implements Action {
         Sprite asteroidSprite = new Sprite(asteroidTexture);
         asteroidSprite.setOrigin(Vector2f.div(new Vector2f(asteroidTexture.getSize()), 2));
         
-        GameScreen.addEntity(new AsteroidEntity(asteroidSprite));
+        GameScreen.addEntity(new AsteroidEntity(asteroidSprite, pos, size));
     }
     
 }

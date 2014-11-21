@@ -96,6 +96,13 @@ public final class BulletEntity extends Entity {
         return isOutOfBounds() || entityHit;
     }
     
+    /**
+     *
+     */
+    @Override
+    public void handleRemoval() {
+    }
+    
     @Override
     public Vector2f getPos() {
         return bulletSprite.getPosition();
@@ -106,16 +113,28 @@ public final class BulletEntity extends Entity {
         this.pos = pos;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public float getSize() {
         return bulletSprite.getScale().x;
     }
 
+    /**
+     *
+     * @param v
+     */
     @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
     }
     
+    /**
+     *
+     * @return
+     */
     @Override
     public float getRotation() {
         return bulletSprite.getRotation();

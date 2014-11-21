@@ -76,6 +76,10 @@ public final class ParticleEntity extends Entity {
     }
 
     @Override
+    public void handleRemoval() {
+    }
+
+    @Override
     public Vector2f getPos() {
         return pos;
     }

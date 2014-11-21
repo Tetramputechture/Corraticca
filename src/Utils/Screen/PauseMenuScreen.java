@@ -28,7 +28,6 @@ public class PauseMenuScreen implements Screen {
     
     private static final ScreenName name = ScreenName.PAUSE_MENU_SCREEN;
     
-    //private static final Color bgColor;
     private final Sprite backgroundSprite;
     
     private final List<Button> buttons;
@@ -74,9 +73,6 @@ public class PauseMenuScreen implements Screen {
         backgroundSprite = new Sprite(backgroundTexture);
     }
    
-    /**
-     * Shows the Pause Screen and all it's buttons. 
-     */
     @Override
     public void show() {
         

@@ -7,7 +7,9 @@ package coratticca.Entities;
 
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Audio;
-import coratticca.Utils.CMath;
+import coratticca.Utils.CPhysics;
+import coratticca.Utils.CRandom;
+import coratticca.Utils.CVector;
 import coratticca.Utils.Camera;
 import java.util.Random;
 import org.jsfml.graphics.Color;
@@ -52,8 +54,8 @@ public final class EnemyShipEntity extends Entity {
         // set position at a random point on the bounds of the window
         Vector2f upperBound = Vector2f.add(Camera.getView().getCenter(), Camera.getView().getSize());
         Vector2f lowerBound = Vector2f.sub(Camera.getView().getCenter(), Camera.getView().getSize());
-        int tx = CMath.randInt((int)lowerBound.x, (int)upperBound.x);
-        int ty = CMath.randInt((int)lowerBound.y, (int)upperBound.y);
+        int tx = CRandom.randInt((int)lowerBound.x, (int)upperBound.x);
+        int ty = CRandom.randInt((int)lowerBound.y, (int)upperBound.y);
         if (rand.nextDouble() < 0.5) {
             tx = (int)lowerBound.x;
         } else {
@@ -111,6 +113,9 @@ public final class EnemyShipEntity extends Entity {
         enemySprite.setPosition(pos); 
     }
     
+    /**
+     *
+     */
     public void facePlayer() {
         
         // set angle based on player position
@@ -126,12 +131,15 @@ public final class EnemyShipEntity extends Entity {
         enemySprite.setRotation(90 + (float)angle);
     }
     
+    /**
+     *
+     */
     public void followPlayer() {
         
         // get vector between enemy and player
         Vector2f d = Vector2f.sub(GameScreen.getCurrentPlayer().getPos(), pos);
         
-        v = CMath.normalize(v);
+        v = CVector.normalize(v);
         v = Vector2f.mul(v, sizeScalar);
     }
     
@@ -149,6 +157,14 @@ public final class EnemyShipEntity extends Entity {
         } else {
             return false;
         }
+    }
+    
+    /**
+     *
+     */
+    @Override
+    public void handleRemoval() {
+        spawnDeathParticle();
     }
     
     /**
@@ -188,7 +204,7 @@ public final class EnemyShipEntity extends Entity {
     public boolean intersectsWithBullet() {    
         for (Entity e : GameScreen.getEntities()) {
             if (e instanceof BulletEntity &&
-                    enemySprite.getGlobalBounds().intersection(e.getBounds()) != null) { 
+                    CPhysics.boxCollisionTest(this, e)) { 
                 collidingBulletVelocity = Vector2f.add(e.getVelocity(), v);
                 ((BulletEntity)e).setEntityHit(true);
                 return true;
@@ -197,11 +213,18 @@ public final class EnemyShipEntity extends Entity {
         return false;
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean intersectsWithAsteroid() {
         return GameScreen.getEntities().stream().anyMatch((e) -> (e instanceof AsteroidEntity &&
-                enemySprite.getGlobalBounds().intersection(e.getBounds()) != null));
+                CPhysics.boxCollisionTest(this, e)));
     }
     
+    /**
+     *
+     */
     public void handleAsteroidIntersection() {
         health = 0;
     }
@@ -228,21 +251,37 @@ public final class EnemyShipEntity extends Entity {
         this.pos = pos;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2f getVelocity() {
         return v;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public float getSize() {
         return size;
     }
 
+    /**
+     *
+     * @param v
+     */
     @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
     }
     
+    /**
+     *
+     * @return
+     */
     @Override
     public float getRotation() {
         return enemySprite.getRotation();

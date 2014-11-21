@@ -11,8 +11,11 @@ import coratticca.Entities.PlayerEntity;
 import coratticca.Entities.Entity;
 import coratticca.Utils.Window;
 import coratticca.Utils.Button;
+import coratticca.Utils.CRandom;
 import coratticca.Utils.Camera;
 import coratticca.Utils.Input;
+import coratticca.Utils.QuadTree.AABB;
+import coratticca.Utils.QuadTree.QuadTree;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,7 +38,10 @@ public final class GameScreen implements Screen {
     
     private static final ScreenName name = ScreenName.GAME_SCREEN;
     
-    private static final Vector2f bounds;
+    private static final Vector2f size;
+    
+    private static final AABB bounds;
+    private static final QuadTree quadTree;
 
     private static final Color bgColor;
 
@@ -60,11 +66,17 @@ public final class GameScreen implements Screen {
     
     static {
         
-        // set game map bounds
-        bounds = new Vector2f(Window.getSize().x * 2, Window.getSize().y * 2);
+        // set game map size
+        size = new Vector2f(Window.getSize().x * 2, Window.getSize().y * 2);
         
         // set background color
         bgColor = new Color(150, 150, 150);
+        
+        // set bounds
+        bounds = new AABB(Window.getCenter(), Window.getSize());
+        
+        // generate quadtree
+        quadTree = new QuadTree(bounds);
         
         initSprites();
     }
@@ -109,6 +121,9 @@ public final class GameScreen implements Screen {
         lastTime = 0;
     }
     
+    /**
+     * initializes the various sprites used by the game screen.
+     */
     public static void initSprites() {
         // init mouse sprite
         Texture pointerTexture = new Texture();
@@ -130,9 +145,6 @@ public final class GameScreen implements Screen {
         backgroundSprite.setOrigin(Vector2f.div(new Vector2f(backgroundTexture.getSize()), 2));
     }
 
-    /**
-     * shows the screen.
-     */
     @Override
     public void show() {
 
@@ -152,17 +164,17 @@ public final class GameScreen implements Screen {
         // reset removal list
         entsToBeRemoved.clear();
         
-        // update entities and check for removal
+        // update and draw entities and check for removal
         for (Entity e : entities) {
+            e.draw();
             e.update(dt);
             if (e.toBeRemoved()) {
                 entsToBeRemoved.add(e);
             }
         }
         
-        // draw entities
-        for (Entity e : entities) {
-            e.draw();
+        if (Math.random() < 0.01) {
+            new SpawnAsteroidAction(CRandom.getRandomEdgeVector(), 2).execute();
         }
         
         // draw player last so bullets appear to come out of player (not from center)
@@ -170,18 +182,16 @@ public final class GameScreen implements Screen {
         player.update(dt);
         
         // check if player has no health
-        player.toBeRemoved();
+        if (player.toBeRemoved()) {
+            player.handleRemoval();
+        }
         
         for (Entity e : entsToBeRemoved) {
             if (e instanceof EnemyShipEntity) {
                 numEnemies--;
-                ((EnemyShipEntity)e).spawnDeathParticle();
             }
+            e.handleRemoval();
             entities.remove(e);
-        }
-        
-        if (Math.random() < 0.05) {
-            new SpawnAsteroidAction().execute();
         }
         
 //        if (Math.random() < 0.02) {
@@ -190,8 +200,6 @@ public final class GameScreen implements Screen {
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
-        
-
         
         // update health text
         buttons.get(0).setText(Integer.toString(player.getHealth()));
@@ -209,8 +217,12 @@ public final class GameScreen implements Screen {
         
     }
     
+    /**
+     *
+     * @return
+     */
     public static Vector2f getBounds() {
-        return bounds;
+        return size;
     }
     
     /**
@@ -229,6 +241,10 @@ public final class GameScreen implements Screen {
         return bgColor;
     }
     
+    /**
+     *
+     * @return
+     */
     public Image getBGImage() {
         return Window.getWindow().capture();
     }
@@ -275,6 +291,7 @@ public final class GameScreen implements Screen {
      * @param e the entity to add.
      */
     public static void addEntity(Entity e) {  
+        quadTree.insert(e.getPos());
         entities.add(e);
         System.out.format("Entity count: %s%n%n", entities.size());
     }

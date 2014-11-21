@@ -46,6 +46,11 @@ public abstract class Entity {
      */
     public abstract boolean toBeRemoved();
     
+    /**
+     * Handles the removal of an entity.
+     */
+    public abstract void handleRemoval();
+    
     
     /**
      * Gets the position of the entity relative to the current window.
@@ -59,17 +64,35 @@ public abstract class Entity {
      */
     public abstract void setPos(Vector2f pos);
     
+    /**
+     * Gets the bounds of an entity.
+     * @return
+     */
     public FloatRect getBounds() {
         return sprite.getGlobalBounds();
     }
 
+    /**
+     * Gets the velocity of an entity. 
+     * @return
+     */
     public abstract Vector2f getVelocity();
     
-    
-    public abstract void setVelocity(Vector2f add);
+    /**
+     * Sets the velocity of an entity.
+     * @param v the velocity to be set.
+     */
+    public abstract void setVelocity(Vector2f v);
 
-
+    /**
+     * Gets the size of an entity.
+     * @return the entitiy's size.
+     */
     public abstract float getSize();
     
+    /**
+     * Gets the rotation of an entity.
+     * @return the entity's rotation.
+     */
     public abstract float getRotation();
 }

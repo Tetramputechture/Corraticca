@@ -11,6 +11,7 @@ import coratticca.Utils.Screen.Screen;
 import coratticca.Utils.Screen.ScreenName;
 import java.io.IOException;
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
@@ -138,8 +139,16 @@ public final class Window {
      * Gets the window's size.
      * @return the size of the window.
      */
-    public static Vector2i getSize() {
-        return window.getSize();
+    public static Vector2f getSize() {
+        return new Vector2f(window.getSize().x, window.getSize().y);
+    }
+    
+    /**
+     * Gets the center of the window.
+     * @return the window's center.
+     */
+    public static Vector2f getCenter() {
+        return new Vector2f(window.getSize().x/2, window.getSize().y/2);
     }
     
     /**

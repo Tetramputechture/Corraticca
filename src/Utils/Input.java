@@ -157,6 +157,10 @@ public class Input {
         });
     }
     
+    /**
+     * Sets the mouse position for a specified mouse event.
+     * @param mouseEvent the mouse event to get position from.
+     */
     public static void setMousePosition(MouseEvent mouseEvent) {
         Vector2i tpos = Window.getWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position.x, mouseEvent.position.y));
         

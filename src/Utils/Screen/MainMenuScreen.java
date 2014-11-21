@@ -58,9 +58,6 @@ public class MainMenuScreen implements Screen {
                                 false));
     }
    
-    /**
-     * Shows the Main Menu screen and all it's buttons.
-     */
     @Override
     public void show() {
         

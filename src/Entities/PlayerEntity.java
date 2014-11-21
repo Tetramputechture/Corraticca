@@ -5,7 +5,7 @@
  */
 package coratticca.Entities;
 
-import coratticca.Utils.CMath;
+import coratticca.Utils.CVector;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.GameLostScreen;
 import coratticca.Utils.Window;
@@ -91,7 +91,7 @@ public final class PlayerEntity extends Entity {
         target = new Vector2f(ttx, tty);
 
         // normalize target
-        target = CMath.normalize(target);
+        target = CVector.normalize(target);
 
         // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
@@ -104,7 +104,7 @@ public final class PlayerEntity extends Entity {
         v = Vector2f.add(v, Vector2f.mul(acc, dt));
 
         // limit velocity vector to moveSpeed
-        float speed = CMath.length(v);
+        float speed = CVector.length(v);
         if (speed > moveSpeed) {
             v = Vector2f.div(v, speed);
             v = Vector2f.mul(v, moveSpeed);
@@ -181,12 +181,13 @@ public final class PlayerEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        if (health <= 0) {
-            System.out.println("Game lost!");
-            Window.changeScreen(new GameLostScreen());
-            return true;
-        }
-        return false;
+        return health <= 0;
+    }
+    
+    @Override
+    public void handleRemoval() {
+        System.out.println("Game lost!");
+        Window.changeScreen(new GameLostScreen());
     }
     
     /**
@@ -215,7 +216,7 @@ public final class PlayerEntity extends Entity {
     public float getRotation() {
         return playerSprite.getRotation();
     }
-    
+
     @Override
     public Vector2f getVelocity() {
         return v;
