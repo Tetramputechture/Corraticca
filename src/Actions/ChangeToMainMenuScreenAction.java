@@ -24,7 +24,6 @@ public class ChangeToMainMenuScreenAction implements Action {
      */
     @Override
     public void execute() {
-        System.out.println("Changing screen to Main Menu Sreen!");
         Window.changeScreen(new MainMenuScreen());
     }
     

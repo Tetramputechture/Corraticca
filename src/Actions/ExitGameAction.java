@@ -23,7 +23,6 @@ public class ExitGameAction implements Action {
      */
     @Override
     public void execute() {
-        System.out.println("Exiting game!");
         Window.getWindow().close();
     }
     

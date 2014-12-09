@@ -5,8 +5,9 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CSprite;
+import coratticca.Utils.AABB;
 import coratticca.Utils.Window;
-import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -31,6 +32,8 @@ public abstract class Entity {
      * Draws the sprite to the window.
      */
     public void draw() {
+        // only draw if in the current view
+        
         Window.getWindow().draw(sprite);
     }
 
@@ -39,6 +42,12 @@ public abstract class Entity {
      * @param dt the difference in frametime from last update.
      */
     public abstract void update(float dt);
+    
+    /**
+     * Detects collisions with any other entities on the screen.
+     * @param dt the difference in frametime from last update.
+     */
+    public abstract void detectCollisions(float dt);
 
     /**
      * Gets if the entity should be removed.
@@ -65,11 +74,11 @@ public abstract class Entity {
     public abstract void setPos(Vector2f pos);
     
     /**
-     * Gets the bounds of an entity.
+     * Gets the bounds of an entity, as an AABB.
      * @return
      */
-    public FloatRect getBounds() {
-        return sprite.getGlobalBounds();
+    public AABB getBounds() {
+        return CSprite.globalBoundsToAABB(sprite);
     }
 
     /**
@@ -86,7 +95,7 @@ public abstract class Entity {
 
     /**
      * Gets the size of an entity.
-     * @return the entitiy's size.
+     * @return the entitity's size.
      */
     public abstract float getSize();
     

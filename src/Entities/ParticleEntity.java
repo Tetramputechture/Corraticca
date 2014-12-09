@@ -69,6 +69,11 @@ public final class ParticleEntity extends Entity {
         
         particleSprite.setColor(new Color(r, g, b, a));
     }
+    
+    @Override
+    public void detectCollisions(float dt) {
+        // particles do not collide with other entities
+    }
 
     @Override
     public boolean toBeRemoved() {

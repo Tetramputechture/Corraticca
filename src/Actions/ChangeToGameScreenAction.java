@@ -34,8 +34,8 @@ public class ChangeToGameScreenAction implements Action {
      */
     @Override
     public void execute() {
-        System.out.println("Changing screen to Game Sreen!");
         Window.changeScreen(new GameScreen(resetGame));
+        GameScreen.resumeGame();
     }
     
     @Override

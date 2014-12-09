@@ -58,18 +58,7 @@ public class Button extends Input {
         defaultColor = color;
         
         // set text
-        Font font = new Font();
-        
-        Path f = FileSystems.getDefault().getPath(fontName);
-                
-        try {
-            font.loadFromFile(f);
-        } catch (IOException ex) {
-            Logger.getLogger(MainMenuScreen.class.getName()).log(Level.SEVERE, 
-                    String.format("File %s not found!", f), 
-                    ex);
-        }
-        
+        Font font = CPrecache.getOpenSansFont();
         text = new Text();
         
         text.setFont(font);

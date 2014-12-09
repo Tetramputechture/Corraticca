@@ -5,6 +5,7 @@
  */
 package coratticca.Actions;
 
+import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.PauseMenuScreen;
 import coratticca.Utils.Window;
 
@@ -24,8 +25,8 @@ public class ChangeToPauseMenuScreenAction implements Action {
      */
     @Override
     public void execute() {
-        System.out.println("Changing screen to Pause Menu Sreen!");
         Window.changeScreen(new PauseMenuScreen());
+        GameScreen.pauseGame();
     }
     
     @Override

@@ -6,6 +6,7 @@
 package coratticca.Utils;
 
 import coratticca.Utils.Screen.GameScreen;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.View;
 import org.jsfml.system.Vector2f;
 
@@ -46,6 +47,15 @@ public class Camera {
             camPos = new Vector2f(camPos.x, GameScreen.getCurrentPlayer().getPos().y);
         } 
         cam.setCenter(camPos);
+    }
+    
+    public static Vector2f camPos() {
+        return camPos;
+    }
+    
+    public static FloatRect getBounds() {
+        return new FloatRect(camPos.x - Window.getSize().x/2f-100, camPos.y - Window.getSize().y/2f-100,
+                                Window.getSize().x + 200, Window.getSize().y + 200);
     }
     
     /**

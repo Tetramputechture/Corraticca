@@ -56,13 +56,13 @@ public class Input {
     
     static {
         // init keyActions
-        
+        mouseActions.put(FireAction.NAME, FireAction.class);
         keyActions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
         keyActions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
         keyActions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
         
         // int mouseActions
-        mouseActions.put(FireAction.NAME, FireAction.class);
+        //mouseActions.put(FireAction.NAME, FireAction.class);
     }
 
     /**
@@ -102,7 +102,7 @@ public class Input {
      */
     public static void handleGameKeyInput() {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            Window.changeScreen(new PauseMenuScreen());     
+            new ChangeToPauseMenuScreenAction().execute();
         } else if (gameKeys.containsKey(currentKey)) {
             gameKeys.get(currentKey).execute();
         }
@@ -115,7 +115,6 @@ public class Input {
     public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
         setMousePosition(mouseEvent);
         currentMouseButton = mouseEvent.button;
-        System.out.format("Mouse %s clicked on position (%s, %s)%n%n", currentMouseButton, currentMousePos.x, currentMousePos.y);
 
         if (currentMouseButton == Mouse.Button.LEFT) {
             for (Button i : Window.getCurrentScreen().getButtons()) {

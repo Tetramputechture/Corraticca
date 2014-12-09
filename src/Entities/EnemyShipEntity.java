@@ -41,6 +41,8 @@ public final class EnemyShipEntity extends Entity {
     private boolean hitPlayer;
     
     private final Random rand = new Random();
+    
+    private Entity nearestEntity;
 
     /**
      * Sets rotation and position of the enemy.
@@ -93,24 +95,31 @@ public final class EnemyShipEntity extends Entity {
         
         // no bullet until one has hit
         collidingBulletVelocity = Vector2f.ZERO;
-        
-        if (intersectsWithPlayer()) {
-            handlePlayerIntersection();
-        }
-        
-        if (intersectsWithBullet()) {
-            handleBulletIntersection();
-            collidingBulletVelocity = Vector2f.mul(collidingBulletVelocity, dt);
-        }
-        
-        if (intersectsWithAsteroid()) {
-            handleAsteroidIntersection();
-        }
        
         pos = Vector2f.add(pos, v);
         pos = Vector2f.add(pos, collidingBulletVelocity);
         
         enemySprite.setPosition(pos); 
+    }
+    
+    @Override
+    public void detectCollisions(float dt) {
+        
+        // get nearest entity
+        nearestEntity = GameScreen.getGrid().getNearest(this);
+        
+        if (intersectsWithPlayer()) {
+            handlePlayerIntersection();
+        }
+        
+        if (nearestEntity instanceof BulletEntity) {
+            handleBulletIntersection();
+            collidingBulletVelocity = Vector2f.mul(collidingBulletVelocity, dt);
+        }
+        
+        if (nearestEntity instanceof AsteroidEntity) {
+            handleAsteroidIntersection();
+        }
     }
     
     /**
@@ -139,7 +148,7 @@ public final class EnemyShipEntity extends Entity {
         // get vector between enemy and player
         Vector2f d = Vector2f.sub(GameScreen.getCurrentPlayer().getPos(), pos);
         
-        v = CVector.normalize(v);
+        v = CVector.normalize(d);
         v = Vector2f.mul(v, sizeScalar);
     }
     
@@ -202,13 +211,9 @@ public final class EnemyShipEntity extends Entity {
      * @return true if enemy intersects with player, false otherwise.
      */
     public boolean intersectsWithBullet() {    
-        for (Entity e : GameScreen.getEntities()) {
-            if (e instanceof BulletEntity &&
-                    CPhysics.boxCollisionTest(this, e)) { 
-                collidingBulletVelocity = Vector2f.add(e.getVelocity(), v);
-                ((BulletEntity)e).setEntityHit(true);
-                return true;
-            }
+        if (CPhysics.boxCollisionTest(nearestEntity, this)) { 
+            collidingBulletVelocity = Vector2f.add(nearestEntity.getVelocity(), v);
+            return true;
         }
         return false;
     }
@@ -218,8 +223,7 @@ public final class EnemyShipEntity extends Entity {
      * @return
      */
     public boolean intersectsWithAsteroid() {
-        return GameScreen.getEntities().stream().anyMatch((e) -> (e instanceof AsteroidEntity &&
-                CPhysics.boxCollisionTest(this, e)));
+        return (CPhysics.boxCollisionTest(nearestEntity, this));
     }
     
     /**

@@ -74,10 +74,10 @@ public class GameLostScreen implements Screen {
         buttons.add(new Button( new Vector2f(Window.getSize().x - 100,
                                 Window.getSize().y/2 + 200),
                                 18,
-                                String.format("Enemies killed: %s\n"
+                                String.format("Asteroids blasted: %s\n"
                                         + "Shots fired: %s\n"
                                         + "Accuracy: %.4f", 
-                                        GameScreen.getEnemiesKilled(), 
+                                        GameScreen.getAsteroidsBlasted(), 
                                         GameScreen.getShotsFired(), 
                                         GameScreen.getAccuracy()),
                                 "fonts/OpenSans-Regular.ttf",

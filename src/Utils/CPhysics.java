@@ -6,7 +6,6 @@
 package coratticca.Utils;
 
 import coratticca.Entities.Entity;
-import coratticca.Utils.QuadTree.AABB;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -22,25 +21,7 @@ public class CPhysics {
      * @return if the two entities intersect or not.
      */
     public static boolean boxCollisionTest(Entity a, Entity b) {
-        
-        // make new bounding boxes, a little smaller than the sprites bounding boxes
-        // this stops objects from colliding before intersecting
-        
-        // convert bounds to aabb
-        Vector2f aCenter = new Vector2f((a.getBounds().left + a.getBounds().width/2), 
-                                            a.getBounds().top + a.getBounds().height/2);
-        
-        Vector2f aHalfSize = new Vector2f(a.getBounds().width/3, a.getBounds().height/3);
-                
-        Vector2f bCenter = new Vector2f((b.getBounds().left + b.getBounds().width/2), 
-                                            b.getBounds().top + b.getBounds().height/2);
-        
-        Vector2f bHalfSize = new Vector2f(b.getBounds().width/3, b.getBounds().height/3);
-        
-        AABB aBounds = new AABB(aCenter, aHalfSize);
-        AABB bBounds = new AABB(bCenter, bHalfSize);
-
-        return aBounds.intersectsAABB(bBounds);
+        return a.getBounds().intersectsAABB(b.getBounds());
     }
 
     /**

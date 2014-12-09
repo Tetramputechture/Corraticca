@@ -9,9 +9,7 @@ import coratticca.Actions.SpawnAsteroidAction;
 import coratticca.Utils.CPhysics;
 import coratticca.Utils.CRandom;
 import coratticca.Utils.CVector;
-import coratticca.Utils.Camera;
 import coratticca.Utils.Screen.GameScreen;
-import java.util.Random;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -42,9 +40,7 @@ public final class AsteroidEntity extends Entity {
     
     private AsteroidEntity collidingAsteroid;
     
-    //private AsteroidEntity previousCollidingAsteroid;
-    
-    private final Random rand = new Random();
+    private Entity nearestEntity;
     
     /**
      * Sets the sprite, position, and size of the asteroid.
@@ -82,23 +78,6 @@ public final class AsteroidEntity extends Entity {
     @Override
     public void update(float dt) {
         
-        if (isOutOfBounds()) {
-            handleOutOfBounds();
-        }
-        
-        if (intersectsWithPlayer()) {
-            handlePlayerIntersection();
-        }
-        
-        if (intersectsWithBullet()) {
-            handleBulletIntersection();
-            collidingBulletVelocity = Vector2f.mul(collidingBulletVelocity, dt);
-        }
-        
-        if (intersectsWithAsteroid()) {
-            handleAsteroidIntersection();
-        }
-        
         v = Vector2f.add(v, collidingBulletVelocity);
         collidingBulletVelocity = Vector2f.ZERO;
         
@@ -114,23 +93,48 @@ public final class AsteroidEntity extends Entity {
         asteroidSprite.setPosition(pos);
     }
     
+    @Override
+    public void detectCollisions(float dt) {
+        
+        // get nearest entity
+        nearestEntity = GameScreen.getGrid().getNearest(this);
+        
+        if (nearestEntity instanceof PlayerEntity) {
+            if (intersectsWithPlayer()) {
+                handlePlayerIntersection();
+            }
+        } else if (nearestEntity instanceof BulletEntity) {
+            if (intersectsWithBullet()) {
+                handleBulletIntersection();
+                collidingBulletVelocity = Vector2f.mul(collidingBulletVelocity, dt);
+            }
+        } else if (nearestEntity instanceof AsteroidEntity) {
+            if (intersectsWithAsteroid()) {
+                handleAsteroidIntersection();
+            }
+        } else if (isOutOfBounds()) {
+            handleOutOfBounds();
+        }
+        
+    }
+    
     /**
      * Checks if the asteroid is out of bounds of the map. 
      * @return
      */
     public boolean isOutOfBounds() {
-        return (pos.x > GameScreen.getBounds().x || pos.x < -GameScreen.getBounds().x ||
-                pos.y > GameScreen.getBounds().y || pos.y < -GameScreen.getBounds().y);
+        return (pos.x > GameScreen.getBounds().x - 10 || pos.x < -GameScreen.getBounds().x + 10 ||
+                pos.y > GameScreen.getBounds().y - 10 || pos.y < -GameScreen.getBounds().y + 10);
     }
     
     /**
      * Handles out of bounds collision. 
      */
     public void handleOutOfBounds() {
-        if (pos.x > GameScreen.getBounds().x || pos.x < -GameScreen.getBounds().x) {
+        if (pos.x > GameScreen.getBounds().x - 10 || pos.x < -GameScreen.getBounds().x + 10) {
             v = new Vector2f(-v.x, v.y);
         }
-        if (pos.y > GameScreen.getBounds().y || pos.y < -GameScreen.getBounds().y) {
+        if (pos.y > GameScreen.getBounds().y - 10 || pos.y < -GameScreen.getBounds().y + 10) {
             v = new Vector2f(v.x, -v.y);
         }
     }
@@ -157,15 +161,12 @@ public final class AsteroidEntity extends Entity {
      * @return true if enemy intersects with player, false otherwise.
      */
     public boolean intersectsWithBullet() {    
-        for (Entity e : GameScreen.getEntities()) {
-            if (e instanceof BulletEntity &&
-                    CPhysics.boxCollisionTest(this, e)) { 
-                collidingBulletVelocity = Vector2f.div(e.getVelocity(), size*3);
-                collidingBulletVelocity = Vector2f.add(collidingBulletVelocity, v);
-                ((BulletEntity)e).setEntityHit(true);
-                return true;
-            }
+        if (CPhysics.boxCollisionTest(this, nearestEntity)) { 
+            collidingBulletVelocity = Vector2f.div(nearestEntity.getVelocity(), size*3);
+            collidingBulletVelocity = Vector2f.add(collidingBulletVelocity, v);
+            return true;
         }
+        
         return false;
     }
     
@@ -181,14 +182,13 @@ public final class AsteroidEntity extends Entity {
      * @return true, if the asteroid intersects with another asteroid.
      */
     public boolean intersectsWithAsteroid() {
-        for (Entity e : GameScreen.getEntities()) {
-            if (e instanceof AsteroidEntity &&
-                    CPhysics.boxCollisionTest(this, e) &&
-                    !this.equals(e)) {
-                collidingAsteroid = (AsteroidEntity)e;
-                return true;
-            }
+        
+        if (CPhysics.boxCollisionTest(this, nearestEntity) &&
+                !this.equals(nearestEntity)) {
+            collidingAsteroid = (AsteroidEntity)nearestEntity;
+            return true;
         }
+        
         return false;
     }
     
@@ -201,22 +201,25 @@ public final class AsteroidEntity extends Entity {
 
     @Override
     public boolean toBeRemoved() {
-        // if size is 1: disappear (particle effect?)
-        // if size is 2: explode into 2 size 1 asteroids
-        // if size is 3: explode into 3 size 2 asteroids
-        // if size is 4: explode into 4 size 3 asteroids
-        return health == 0;
+        if (health == 0) {
+            GameScreen.scorePoint();
+            return true;
+        }
+        return false;
     }
    
     @Override 
     public void handleRemoval() {
+        // if size is 1: disappear (particle effect?)
+        // if size is 2: explode into 2 size 1 asteroids
+        // if size is 3: explode into 3 size 2 asteroids
+        // if size is 4: explode into 4 size 3 asteroids
         if (size == 1) {
             // display death particle
-        } else if (size == 2) {
-            new SpawnAsteroidAction(new Vector2f(pos.x+4, pos.y+4), size - 1).execute();
-            new SpawnAsteroidAction(new Vector2f(pos.x-4, pos.y-4), size - 1).execute();
         } else {
-            
+            for (int i = 0; i < size; i++) {
+                new SpawnAsteroidAction(new Vector2f(pos.x+20+i*5, pos.y+20+i*5), size - 1).execute();
+            }  
         } 
     }
 
@@ -276,5 +279,10 @@ public final class AsteroidEntity extends Entity {
     @Override
     public float getRotation() {
         return asteroidSprite.getRotation();
+    }
+    
+    @Override
+    public String toString() {
+        return "Asteroid";
     }
 }

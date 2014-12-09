@@ -12,17 +12,13 @@ import coratticca.Entities.Entity;
 import coratticca.Utils.Window;
 import coratticca.Utils.Button;
 import coratticca.Utils.CRandom;
+import coratticca.Utils.CPrecache;
 import coratticca.Utils.Camera;
 import coratticca.Utils.Input;
-import coratticca.Utils.QuadTree.AABB;
-import coratticca.Utils.QuadTree.QuadTree;
-import java.io.IOException;
-import java.nio.file.Paths;
+import coratticca.Utils.Grid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Image;
 import org.jsfml.graphics.Sprite;
@@ -40,12 +36,11 @@ public final class GameScreen implements Screen {
     
     private static final Vector2f size;
     
-    private static final AABB bounds;
-    private static final QuadTree quadTree;
+    private static final Grid grid;
 
     private static final Color bgColor;
 
-    private final List<Button> buttons;
+    private static final List<Button> buttons = new ArrayList<>();
     
     private static final List<Entity> entities = new ArrayList<>();
     private static final List<Entity> entsToBeRemoved = new ArrayList<>();
@@ -57,12 +52,16 @@ public final class GameScreen implements Screen {
     
     private static int enemiesKilled;
     private static int numEnemies;
+    private static int asteroidsBlasted;
     private static int shotsFired;
     
     private static final int maxEnemies = 25;
     
-    private final Clock clock;
-    private float lastTime;
+    private static final Clock gameClock = new Clock();
+    private static Clock pauseClock;
+    private static float lastTime;
+    private static float pauseTime;
+    private static boolean isPaused;
     
     static {
         
@@ -72,11 +71,7 @@ public final class GameScreen implements Screen {
         // set background color
         bgColor = new Color(150, 150, 150);
         
-        // set bounds
-        bounds = new AABB(Window.getCenter(), Window.getSize());
-        
-        // generate quadtree
-        quadTree = new QuadTree(bounds);
+        grid = new Grid(size);
         
         initSprites();
     }
@@ -86,20 +81,36 @@ public final class GameScreen implements Screen {
      * @param resetGame if the game is to be reset or not.
      */
     public GameScreen(boolean resetGame) {
-        
         if (resetGame) {
-            entities.clear();
-            player.reset();
-            enemiesKilled = 0;
-            numEnemies = 0;
-            shotsFired = 0;
+            resetGame();
         }
-        buttons = new ArrayList<>();
-
+    }
+    
+    private static void resetGame() {
+        player.reset();
+        player.setPos(new Vector2f(0, 0));
         
+        entities.clear();
+        entities.add(player);
+        
+        buttons.clear();
+        addButtons();
+        
+        grid.clear();
+        
+        enemiesKilled = 0;
+        asteroidsBlasted = 0;
+        numEnemies = 0;
+        shotsFired = 0;
+               
+        gameClock.restart();
+        lastTime = 0;
+    }
+    
+    private static void addButtons() {
         // health text
-        buttons.add(new Button(new Vector2f((int)player.getPos().x - 10,
-                               (int)player.getPos().y - 10),
+        buttons.add(new Button(new Vector2f((int)player.getPos().x + 15,
+                               (int)player.getPos().y - 15),
                                20,
                                Integer.toString(player.getHealth()),
                                "fonts/OpenSans-Regular.ttf",
@@ -116,33 +127,60 @@ public final class GameScreen implements Screen {
                                Color.WHITE,
                                null,
                                false));
-       
-        clock = new Clock();
-        lastTime = 0;
+        
+        // player position debug text
+        buttons.add(new Button(new Vector2f(80,
+                                400),
+                                20,
+                                String.format("Postion: (%s, %s)", player.getPos().x, player.getPos().y),
+                                "fonts/OpenSans-Regular.ttf",
+                                Color.WHITE,
+                                null,
+                                false));
+        
+        // entiy count debug text
+        buttons.add(new Button(new Vector2f(67,
+                                450),
+                                20,
+                                String.format("Entity count: %s", entities.size()),
+                                "fonts/OpenSans-Regular.ttf",
+                                Color.WHITE,
+                                null,
+                                false));
+    }
+    
+    private static void updateAndDrawButtons() {
+        // update health text
+        buttons.get(0).setText(Integer.toString(player.getHealth()));
+        buttons.get(0).setPosition(new Vector2f(player.getPos().x + 15, player.getPos().y - 15));
+        
+        // update score text
+        buttons.get(1).setText(String.format("Score: %s", asteroidsBlasted));
+        
+        // update player position text
+        buttons.get(2).setText(String.format("Position: (%.0f, %.0f)", player.getPos().x, player.getPos().y));     
+        
+        // update entity count text
+        buttons.get(3).setText(String.format("Entity count: %s", entities.size()));
+        
+        for (Button b : buttons) {
+            b.draw();
+        }
+        
     }
     
     /**
      * initializes the various sprites used by the game screen.
      */
     public static void initSprites() {
-        // init mouse sprite
-        Texture pointerTexture = new Texture();
-        try {
-            pointerTexture.loadFromFile(Paths.get("sprites/pointer.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        pointerSprite = new Sprite(pointerTexture);
+        Texture pT = CPrecache.getPointerTexture();
+        pointerSprite = new Sprite(pT);
+        pointerSprite.setOrigin(Vector2f.div(new Vector2f(pT.getSize()), 2));
         
         // init background sprite
-        Texture backgroundTexture = new Texture();
-        try {
-            backgroundTexture.loadFromFile(Paths.get("sprites/starfield.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        backgroundSprite = new Sprite(backgroundTexture);
-        backgroundSprite.setOrigin(Vector2f.div(new Vector2f(backgroundTexture.getSize()), 2));
+        Texture bT = CPrecache.getStarfieldTexture();
+        backgroundSprite = new Sprite(bT);
+        backgroundSprite.setOrigin(Vector2f.div(new Vector2f(bT.getSize()), 2));
     }
 
     @Override
@@ -154,67 +192,92 @@ public final class GameScreen implements Screen {
         
         // use the custom mouse sprite
         Window.getWindow().setMouseCursorVisible(false);
-
+        
         // set delta time
-        float currentTime = clock.getElapsedTime().asSeconds();
+        float currentTime = gameClock.getElapsedTime().asSeconds();
         float dt = currentTime - lastTime;
-          
+        
+        // if game was paused, subtract the time paused from dt only on the first
+        // frame out of pause
+        if (pauseTime != 0) {
+            dt -= pauseTime;
+            pauseTime = 0;
+        }
         Window.getWindow().draw(backgroundSprite);
         
-        // reset removal list
-        entsToBeRemoved.clear();
+        // clear grid
+        grid.clear();
         
-        // update and draw entities and check for removal
-        for (Entity e : entities) {
-            e.draw();
-            e.update(dt);
-            if (e.toBeRemoved()) {
-                entsToBeRemoved.add(e);
-            }
-        }
+        checkAndRemoveEntities();
+        
+        updateEntitiesAndFillGrid(dt);
+        
+        detectEntityCollisions(dt);
+        
+        drawEntities();
         
         if (Math.random() < 0.01) {
-            new SpawnAsteroidAction(CRandom.getRandomEdgeVector(), 2).execute();
+            new SpawnAsteroidAction(CRandom.getRandomEdgeVector(), CRandom.randInt(1, 4)).execute();
         }
         
-        // draw player last so bullets appear to come out of player (not from center)
-        player.draw();
-        player.update(dt);
-        
-        // check if player has no health
-        if (player.toBeRemoved()) {
-            player.handleRemoval();
-        }
-        
-        for (Entity e : entsToBeRemoved) {
-            if (e instanceof EnemyShipEntity) {
-                numEnemies--;
-            }
-            e.handleRemoval();
-            entities.remove(e);
-        }
-        
-//        if (Math.random() < 0.02) {
-//            new SpawnEnemyAction().execute();
-//        }
+        updateAndDrawButtons();
         
         // set pointer position
         pointerSprite.setPosition(Input.getMousePos());
-        
-        // update health text
-        buttons.get(0).setText(Integer.toString(player.getHealth()));
-        buttons.get(0).setPosition(new Vector2f(player.getPos().x + 15, player.getPos().y - 15));
-        buttons.get(0).draw();
-        
-        // update score text
-        buttons.get(1).setText(String.format("Score: %s", enemiesKilled));
-        buttons.get(1).draw();
         
         Window.getWindow().draw(pointerSprite);
         Window.getWindow().display();
         
         lastTime = currentTime;
         
+    }
+    
+    private static void checkAndRemoveEntities() {
+        // reset removal list
+        
+        entsToBeRemoved.clear();
+        for (Entity e : entities) {
+            if (e.toBeRemoved()) {
+                entsToBeRemoved.add(e);
+            }
+        }
+        
+        for (Entity e : entsToBeRemoved) {
+            e.handleRemoval();
+            entities.remove(e);
+        }
+    }
+    
+    private static void updateEntitiesAndFillGrid(float dt) {
+        for (Entity e : entities) {
+            e.update(dt);
+            grid.addEntity(e);
+        }
+    }
+    
+    private static void detectEntityCollisions(float dt) {
+        for (Entity e : entities) {
+            e.detectCollisions(dt);
+        }
+    }
+    
+    private static void drawEntities() {
+        for (Entity e : entities) {
+            e.draw();
+        }
+    }
+    
+    public static void pauseGame() {
+        pauseClock = new Clock();
+        pauseTime = 0;
+    }
+    
+    public static void resumeGame() {
+        if (pauseClock != null) {
+            pauseTime = pauseClock.getElapsedTime().asSeconds();
+        } else {
+            pauseTime = 0;
+        }
     }
     
     /**
@@ -256,6 +319,10 @@ public final class GameScreen implements Screen {
         return enemiesKilled;
     }
     
+    public static int getAsteroidsBlasted() {
+        return asteroidsBlasted;
+    }
+    
     /**
      * Gets the total shots fired from the player.
      * @return the total number of bullets fired.
@@ -269,7 +336,7 @@ public final class GameScreen implements Screen {
      * @return the player's shooting accuracy
      */
     public static double getAccuracy() {
-        return (float)enemiesKilled/shotsFired;
+        return (float)asteroidsBlasted/shotsFired;
     }
     
     /**
@@ -277,6 +344,10 @@ public final class GameScreen implements Screen {
      */
     public static void killEnemy() {
         enemiesKilled++;
+    }
+    
+    public static void scorePoint() {
+        asteroidsBlasted++;
     }
     
     /**
@@ -291,9 +362,11 @@ public final class GameScreen implements Screen {
      * @param e the entity to add.
      */
     public static void addEntity(Entity e) {  
-        quadTree.insert(e.getPos());
         entities.add(e);
-        System.out.format("Entity count: %s%n%n", entities.size());
+    }
+    
+    public static void addEntityToGrid(Entity e) {
+        grid.addEntity(e);
     }
     
     /**
@@ -307,6 +380,10 @@ public final class GameScreen implements Screen {
     @Override
     public List<Button> getButtons() {
         return Collections.unmodifiableList(buttons);
+    }
+    
+    public static Grid getGrid() {
+        return grid;
     }
     
     @Override

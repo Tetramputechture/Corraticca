@@ -80,6 +80,7 @@ public class PauseMenuScreen implements Screen {
         
         Window.getWindow().draw(backgroundSprite);
         
+        
         for (Button b : buttons) {
             b.draw();
         }

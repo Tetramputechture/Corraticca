@@ -5,6 +5,7 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CPhysics;
 import coratticca.Utils.Screen.GameScreen;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
@@ -23,7 +24,9 @@ public final class BulletEntity extends Entity {
     
     private static final float playerVelocityScalar = 40f;
     
-    private boolean entityHit;
+    private Entity nearestEntity;
+    
+    private boolean hitEntity;
 
     /**
      * Sets rotation and position of bullet.
@@ -52,6 +55,24 @@ public final class BulletEntity extends Entity {
     }
     
     /**
+     * Updates the bullet's position based on frametime.
+     * @param dt the difference in time to be updated by.
+     */
+    @Override
+    public void update(float dt) {   
+        pos = Vector2f.add(pos, Vector2f.mul(v, dt));
+        bulletSprite.setPosition(pos);
+    }
+    
+    @Override
+    public void detectCollisions(float dt) {
+        nearestEntity = GameScreen.getGrid().getNearest(this);
+        if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (CPhysics.boxCollisionTest(nearestEntity, this))) {
+            hitEntity = true;
+        }
+    }
+    
+    /**
      * Gets the velocity of the bullet
      * @return the bullet's velocity
      */
@@ -70,30 +91,12 @@ public final class BulletEntity extends Entity {
     }
     
     /**
-     * Changes the status of entityHit.
-     * @param b if the bullet hit an enemy or not.
-     */
-    public void setEntityHit(boolean b) {
-        this.entityHit = b;
-    }
-
-    /**
-     * Updates the bullet's position based on frametime.
-     * @param dt the difference in time to be updated by.
-     */
-    @Override
-    public void update(float dt) {
-        pos = Vector2f.add(pos, Vector2f.mul(v, dt));
-        bulletSprite.setPosition(pos);
-    }
-    
-    /**
      * If bullet should be removed.
      * @return if the bullet is out of bounds or hit an enemy
      */
     @Override
     public boolean toBeRemoved() {
-        return isOutOfBounds() || entityHit;
+        return isOutOfBounds() || hitEntity;
     }
     
     /**
@@ -138,5 +141,10 @@ public final class BulletEntity extends Entity {
     @Override
     public float getRotation() {
         return bulletSprite.getRotation();
+    }
+    
+    @Override
+    public String toString() {
+        return "Bullet";
     }
 }

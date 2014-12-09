@@ -68,7 +68,6 @@ public final class Window {
      * @param screen the screen to change to.
      */
     public static void changeScreen(Screen screen) {
-        System.out.format("%n%s Showing!%n%n", screen.getName());
         currentScreen = screen;
     }
     

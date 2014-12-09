@@ -6,11 +6,9 @@
 package coratticca.Actions;
 
 import coratticca.Entities.AsteroidEntity;
-import coratticca.Entities.PlayerEntity;
+import coratticca.Utils.CSprite;
+import coratticca.Utils.CPrecache;
 import coratticca.Utils.Screen.GameScreen;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.logging.Logger;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -26,8 +24,6 @@ public class SpawnAsteroidAction implements Action {
      */
     public static final String NAME = "SPAWN_ASTEROID";
     
-    private final Texture asteroidTexture;
-    
     private final Vector2f pos;
     private final int size;
 
@@ -37,35 +33,22 @@ public class SpawnAsteroidAction implements Action {
      * @param size the size of the asteroid.
      */
     public SpawnAsteroidAction(Vector2f pos, int size) {
-        
         this.pos = pos;
         this.size = size;
-        
-        asteroidTexture = new Texture();
-        String asteroidTextureFile;
-        if (Math.random() < 0.5) {
-            asteroidTextureFile = "sprites/asteroid1.png";
-        } else {
-            asteroidTextureFile = "sprites/asteroid2.png";
-        }
-       
-        try {
-            this.asteroidTexture.loadFromFile(Paths.get(asteroidTextureFile));
-        } catch (IOException ex) {
-            Logger.getLogger(PlayerEntity.class.getName()).log(java.util.logging.Level.SEVERE, 
-                    String.format("Unable to load file %s!%n", asteroidTextureFile), 
-                    ex);
-        }
-        
-        asteroidTexture.setSmooth(true);
     }
     
     @Override
     public void execute() {
-        Sprite asteroidSprite = new Sprite(asteroidTexture);
-        asteroidSprite.setOrigin(Vector2f.div(new Vector2f(asteroidTexture.getSize()), 2));
+        Texture t;
+        if (Math.random() < 0.5) {
+            t = CPrecache.getAsteroidTextureA();
+        } else {
+            t = CPrecache.getAsteroidTextureB();
+        }
+        Sprite s = new Sprite(t);
+        CSprite.setOriginAtCenter(s, t);
         
-        GameScreen.addEntity(new AsteroidEntity(asteroidSprite, pos, size));
+        GameScreen.addEntity(new AsteroidEntity(s, pos, size));
     }
     
 }

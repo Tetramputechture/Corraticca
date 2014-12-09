@@ -5,15 +5,13 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CSprite;
+import coratticca.Utils.CPrecache;
 import coratticca.Utils.CVector;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.GameLostScreen;
 import coratticca.Utils.Window;
 import coratticca.Utils.Input;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -26,15 +24,13 @@ import org.jsfml.window.Keyboard;
  */
 public final class PlayerEntity extends Entity {
     
-    private static final Texture playerTexture;
-    
     private static final Sprite playerSprite;
     
     private double angle;
     
     private Vector2f pos;
     private Vector2f v;
-    private final float moveSpeed;
+    private final float maxMoveSpeed;
     private Vector2f target;
     
     private final float accelRate;
@@ -42,21 +38,10 @@ public final class PlayerEntity extends Entity {
     
     private int health;
     
-    static {
-        playerTexture = new Texture();
-        String playerTextureFile = "sprites/player.png";
-       
-        try {
-            playerTexture.loadFromFile(Paths.get(playerTextureFile));
-        } catch (IOException ex) {
-            Logger.getLogger(PlayerEntity.class.getName()).log(Level.SEVERE, 
-                    String.format("Unable to load file %s!%n", playerTextureFile), 
-                    ex);
-        }
-        
-        playerTexture.setSmooth(true);
-        
-        playerSprite = new Sprite(playerTexture);
+    static { 
+        Texture t = CPrecache.getPlayerTexture();
+        playerSprite = new Sprite(t);
+        CSprite.setOriginAtCenter(playerSprite, t);
     }
     
     /**
@@ -66,14 +51,10 @@ public final class PlayerEntity extends Entity {
         super(playerSprite);
         health = 3;
         
-        playerSprite.setOrigin(Vector2f.div(new Vector2f(playerTexture.getSize()), 2));
-        
-        playerSprite.setPosition(Window.getSize().x/2.0f, Window.getSize().y/2.0f);
-        pos = playerSprite.getPosition();
         v = Vector2f.ZERO;
         
         // set movement variables
-        moveSpeed = 120;
+        maxMoveSpeed = 120;
         accelRate = 20;
         fConst = 0.95f;
     }
@@ -90,24 +71,24 @@ public final class PlayerEntity extends Entity {
 	int tty = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
         target = new Vector2f(ttx, tty);
 
-        // normalize target
+        // normalize target direction
         target = CVector.normalize(target);
 
         // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
         target = Vector2f.mul(target, accelRate);
 
-        // set acc variables
-        Vector2f acc = new Vector2f(target.x, target.y);
+        // target is now acceleration
+        Vector2f acc = target;
         
         // integrate acceleration to get velocity
         v = Vector2f.add(v, Vector2f.mul(acc, dt));
 
-        // limit velocity vector to moveSpeed
+        // limit velocity vector to maxMoveSpeed
         float speed = CVector.length(v);
-        if (speed > moveSpeed) {
+        if (speed > maxMoveSpeed) {
             v = Vector2f.div(v, speed);
-            v = Vector2f.mul(v, moveSpeed);
+            v = Vector2f.mul(v, maxMoveSpeed);
         }
 
         // set velocity
@@ -127,18 +108,21 @@ public final class PlayerEntity extends Entity {
         
         angle *= (180/Math.PI);
         if(angle < 0) {
-            angle = 360 + angle;
+            angle += 360;
         }
         
         playerSprite.setRotation(90 + (float)angle);
+    }
+    
+    @Override
+    public void detectCollisions(float dt) {
+        handleWallCollision();
     }
     
     /**
      * Resets the player's position, velocity, and health.
      */
     public void reset() {
-        playerSprite.setPosition(Window.getSize().x/2.0f, Window.getSize().y/2.0f);
-        pos = playerSprite.getPosition();
         v = Vector2f.ZERO;
         health = 3;
     }
@@ -238,5 +222,10 @@ public final class PlayerEntity extends Entity {
     @Override
     public void setVelocity(Vector2f v) {
         this.v = v;
+    }
+    
+    @Override
+    public String toString() {
+        return "Player";
     }
 }
