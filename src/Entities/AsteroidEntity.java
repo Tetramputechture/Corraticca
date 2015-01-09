@@ -32,6 +32,9 @@ public final class AsteroidEntity extends Entity {
     private int size;
     private static final float sizeScalarCoefficient = 1;
     
+    // to make collisions feel more natural, add a little to the bounds
+    private int boundOffset = 10;
+    
     private int health;
     
     private boolean hitPlayer;
@@ -123,18 +126,22 @@ public final class AsteroidEntity extends Entity {
      * @return
      */
     public boolean isOutOfBounds() {
-        return (pos.x > GameScreen.getBounds().x - 10 || pos.x < -GameScreen.getBounds().x + 10 ||
-                pos.y > GameScreen.getBounds().y - 10 || pos.y < -GameScreen.getBounds().y + 10);
+        float gx = GameScreen.getBounds().x;
+        float gy = GameScreen.getBounds().y;
+        return (pos.x > gx - boundOffset || pos.x < -gx + boundOffset ||
+                pos.y > gy - boundOffset || pos.y < -gy + boundOffset);
     }
     
     /**
      * Handles out of bounds collision. 
      */
     public void handleOutOfBounds() {
-        if (pos.x > GameScreen.getBounds().x - 10 || pos.x < -GameScreen.getBounds().x + 10) {
+        float gx = GameScreen.getBounds().x;
+        float gy = GameScreen.getBounds().y;
+        if (pos.x > gx - boundOffset || pos.x < -gx + boundOffset) {
             v = new Vector2f(-v.x, v.y);
         }
-        if (pos.y > GameScreen.getBounds().y - 10 || pos.y < -GameScreen.getBounds().y + 10) {
+        if (pos.y > gy - boundOffset || pos.y < -gy + boundOffset) {
             v = new Vector2f(v.x, -v.y);
         }
     }

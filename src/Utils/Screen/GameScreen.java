@@ -6,7 +6,6 @@
 package coratticca.Utils.Screen;
 
 import coratticca.Actions.SpawnAsteroidAction;
-import coratticca.Entities.EnemyShipEntity;
 import coratticca.Entities.PlayerEntity;
 import coratticca.Entities.Entity;
 import coratticca.Utils.Window;
@@ -18,6 +17,7 @@ import coratticca.Utils.Input;
 import coratticca.Utils.Grid;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Image;
@@ -42,13 +42,14 @@ public final class GameScreen implements Screen {
 
     private static final List<Button> buttons = new ArrayList<>();
     
-    private static final List<Entity> entities = new ArrayList<>();
-    private static final List<Entity> entsToBeRemoved = new ArrayList<>();
+    private static final List<Entity> entities = new LinkedList<>();
+    private static final List<Entity> entsToBeRemoved = new LinkedList<>();
     
     private static Sprite pointerSprite;
     private static Sprite backgroundSprite;
     
     private static final PlayerEntity player = new PlayerEntity();
+    private static final int playerHealthIconOffset = 15;
     
     private static int enemiesKilled;
     private static int numEnemies;
@@ -64,7 +65,6 @@ public final class GameScreen implements Screen {
     private static boolean isPaused;
     
     static {
-        
         // set game map size
         size = new Vector2f(Window.getSize().x * 2, Window.getSize().y * 2);
         
@@ -109,8 +109,8 @@ public final class GameScreen implements Screen {
     
     private static void addButtons() {
         // health text
-        buttons.add(new Button(new Vector2f((int)player.getPos().x + 15,
-                               (int)player.getPos().y - 15),
+        buttons.add(new Button(new Vector2f((int)player.getPos().x + playerHealthIconOffset,
+                               (int)player.getPos().y - playerHealthIconOffset),
                                20,
                                Integer.toString(player.getHealth()),
                                "fonts/OpenSans-Regular.ttf",
@@ -130,7 +130,7 @@ public final class GameScreen implements Screen {
         
         // player position debug text
         buttons.add(new Button(new Vector2f(80,
-                                400),
+                                425),
                                 20,
                                 String.format("Postion: (%s, %s)", player.getPos().x, player.getPos().y),
                                 "fonts/OpenSans-Regular.ttf",
@@ -140,33 +140,13 @@ public final class GameScreen implements Screen {
         
         // entiy count debug text
         buttons.add(new Button(new Vector2f(67,
-                                450),
+                                460),
                                 20,
                                 String.format("Entity count: %s", entities.size()),
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
                                 null,
                                 false));
-    }
-    
-    private static void updateAndDrawButtons() {
-        // update health text
-        buttons.get(0).setText(Integer.toString(player.getHealth()));
-        buttons.get(0).setPosition(new Vector2f(player.getPos().x + 15, player.getPos().y - 15));
-        
-        // update score text
-        buttons.get(1).setText(String.format("Score: %s", asteroidsBlasted));
-        
-        // update player position text
-        buttons.get(2).setText(String.format("Position: (%.0f, %.0f)", player.getPos().x, player.getPos().y));     
-        
-        // update entity count text
-        buttons.get(3).setText(String.format("Entity count: %s", entities.size()));
-        
-        for (Button b : buttons) {
-            b.draw();
-        }
-        
     }
     
     /**
@@ -203,6 +183,7 @@ public final class GameScreen implements Screen {
             dt -= pauseTime;
             pauseTime = 0;
         }
+        
         Window.getWindow().draw(backgroundSprite);
         
         // clear grid
@@ -217,7 +198,7 @@ public final class GameScreen implements Screen {
         drawEntities();
         
         if (Math.random() < 0.01) {
-            new SpawnAsteroidAction(CRandom.getRandomEdgeVector(), CRandom.randInt(1, 4)).execute();
+            new SpawnAsteroidAction(CRandom.getRandomEdgeVector(), CRandom.randInt(1, 3)).execute();
         }
         
         updateAndDrawButtons();
@@ -229,13 +210,12 @@ public final class GameScreen implements Screen {
         Window.getWindow().display();
         
         lastTime = currentTime;
-        
     }
     
     private static void checkAndRemoveEntities() {
-        // reset removal list
         
         entsToBeRemoved.clear();
+        
         for (Entity e : entities) {
             if (e.toBeRemoved()) {
                 entsToBeRemoved.add(e);
@@ -265,6 +245,26 @@ public final class GameScreen implements Screen {
         for (Entity e : entities) {
             e.draw();
         }
+    }
+    
+    private static void updateAndDrawButtons() {
+        // update health text
+        buttons.get(0).setText(Integer.toString(player.getHealth()));
+        buttons.get(0).setPosition(new Vector2f(player.getPos().x + playerHealthIconOffset, player.getPos().y - playerHealthIconOffset));
+        
+        // update score text
+        buttons.get(1).setText(String.format("Score: %s", asteroidsBlasted));
+        
+        // update player position text
+        buttons.get(2).setText(String.format("Position: (%.0f, %.0f)", player.getPos().x, player.getPos().y));     
+        
+        // update entity count text
+        buttons.get(3).setText(String.format("Entity count: %s", entities.size()));
+        
+        for (Button b : buttons) {
+            b.draw();
+        }
+        
     }
     
     public static void pauseGame() {

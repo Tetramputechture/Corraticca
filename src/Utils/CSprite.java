@@ -25,7 +25,7 @@ public class CSprite {
         // make new bounding boxes, s little smaller than the sprites bounding boxes
         // this stops objects from colliding before intersecting
         
-        float adjustmentScalar = 2.7f;
+        float adjustmentScalar = 2.5f;
         
         FloatRect bounds = s.getGlobalBounds();
         

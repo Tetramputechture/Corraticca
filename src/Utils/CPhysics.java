@@ -30,6 +30,7 @@ public class CPhysics {
      * @param b the second entity to simulate.
      */
     public static void handleCollision(Entity a, Entity b) {
+        
         // make a few variables to make equations easier to read
         Vector2f aPos = a.getPos();
         Vector2f bPos = b.getPos();

@@ -7,8 +7,8 @@ package coratticca.Utils;
 
 import coratticca.Entities.Entity;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -19,19 +19,25 @@ import org.jsfml.system.Vector2f;
  */
 public class Grid {
     
-    private final float gridSize;
-    
     // size of each cell in the grid
     private final float gridCellSize;
     
     // rows and columns in the grid
     private final int rows;
     private final int cols;
+    
+    // size of cells in relation to grid
+    // must be below 1
+    private final float cellSizeMultipler = 1/32f;
+    
+    // offsets to handle negative position coordinates in grid
+    private final int gridXOffset;
+    private final int gridYOffset;
 
     // data
     private final List<Entity>[][] grid;
     
-    private final List<Entity> retrieveList = new ArrayList<>();
+    private final List<Entity> retrieveList = new LinkedList<>();
     
     /**
      * Constructs a gridBounds with the specified boundary.
@@ -39,16 +45,21 @@ public class Grid {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Grid(Vector2f gridBounds) {
-        this.gridSize = gridBounds.x;
-        gridCellSize = gridBounds.x / 32;
-        cols = (int)((gridBounds.x + gridCellSize - 1) / gridCellSize) + 32;
-        rows = (int)((gridBounds.y + gridCellSize - 1) / gridCellSize) + 24;;
-        grid = new ArrayList[cols][rows];
+        gridCellSize = gridBounds.x * cellSizeMultipler;
+        gridXOffset = (int)((gridBounds.x + gridCellSize - 1) / gridCellSize);
+        gridYOffset = (int)((gridBounds.y + gridCellSize - 1) / gridCellSize);
+        
+        // need enough columns and rows
+        // so multiply the offset by 2 to account for negative values
+        cols = gridXOffset * 2;
+        rows = gridYOffset * 2;
+        
+        grid = new LinkedList[cols][rows];
         
         // initialize gridBounds indices
         for (int c = 0; c < cols; c++) {
             for (int r = 0; r < rows; r++) {
-                grid[c][r] = new ArrayList<>();
+                grid[c][r] = new LinkedList<>();
             }
         }
     }
@@ -68,18 +79,18 @@ public class Grid {
         
         Vector2f ePos = e.getPos();
         
-        float topLeftX = Math.max(0, (ePos.x / gridCellSize) + 32);
-        float topLeftY = Math.max(0, (ePos.y / gridCellSize) + 24);
+        float topLeftX = Math.max(0, (ePos.x / gridCellSize) + gridXOffset);
+        float topLeftY = Math.max(0, (ePos.y / gridCellSize) + gridYOffset);
         
         float edgeLength = e.getBounds().getRadius().x * 2;
-        float bottomRightX = Math.min(cols - 1, ((ePos.x + edgeLength - 1) / gridCellSize) + 32);
-        float bottomRightY = Math.min(rows - 1, ((ePos.y + edgeLength - 1) / gridCellSize) + 24);
+        float bottomRightX = Math.min(cols - 1, ((ePos.x + edgeLength - 1) / gridCellSize) + gridXOffset);
+        float bottomRightY = Math.min(rows - 1, ((ePos.y + edgeLength - 1) / gridCellSize) + gridYOffset);
         
         for (int x = (int) topLeftX; x <= bottomRightX; x++) {
             for (int y = (int) topLeftY; y <= bottomRightY; y++) {
                 grid[x][y].add(e);
             }
-        }    
+        }
     }
     
     public Entity getNearest(Entity e) {
@@ -104,12 +115,12 @@ public class Grid {
         
         Vector2f ePos = e.getPos();
         
-        float topLeftX = Math.max(0, (ePos.x / gridCellSize) + 32);
-        float topLeftY = Math.max(0, (ePos.y / gridCellSize) + 24);
+        float topLeftX = Math.max(0, (ePos.x / gridCellSize) + gridXOffset);
+        float topLeftY = Math.max(0, (ePos.y / gridCellSize) + gridYOffset);
         
         float edgeLength = e.getBounds().getRadius().x * 2;
-        float bottomRightX = Math.min(cols - 1, ((ePos.x + edgeLength - 1) / gridCellSize) + 32);
-        float bottomRightY = Math.min(rows - 1, ((ePos.y + edgeLength - 1) / gridCellSize) + 24);
+        float bottomRightX = Math.min(cols - 1, ((ePos.x + edgeLength - 1) / gridCellSize) + gridXOffset);
+        float bottomRightY = Math.min(rows - 1, ((ePos.y + edgeLength - 1) / gridCellSize) + gridYOffset);
         
         for (int x = (int)topLeftX; x <= bottomRightX; x++) {
             for (int y = (int)topLeftY; y <= bottomRightY; y++) {
