@@ -48,8 +48,10 @@ public class AABB {
      * @return if this AABB intersects the specified AABB
      */
     public boolean intersectsAABB(AABB other) {
-        boolean a = Math.abs(center.x - other.getCenter().x) <= (radius.x + other.getRadius().x);
-        boolean b = Math.abs(center.y - other.getCenter().y) <= (radius.y + other.getRadius().y);
+        Vector2f otherCenter = other.center;
+        Vector2f otherRadius = other.radius;
+        boolean a = Math.abs(center.x - otherCenter.x) <= (radius.x + otherRadius.x);
+        boolean b = Math.abs(center.y - otherCenter.y) <= (radius.y + otherRadius.y);
 
         return a && b;
     }

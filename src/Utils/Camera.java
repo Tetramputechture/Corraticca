@@ -16,53 +16,66 @@ import org.jsfml.system.Vector2f;
  */
 public class Camera {
     
-    private static final View cam = new View();
+    private final Window window;
     
-    private static Vector2f camPos = GameScreen.getCurrentPlayer().getPos();
+    private final View cam;
     
-    static {
-        cam.setSize(Window.getSize().x, Window.getSize().y);
-        handleEdges();
+    private Vector2f pos;
+    
+    public Camera(Window window) {
+        this.window = window;
+        cam = new View();
+        cam.setSize(window.getSize().x, window.getSize().y);
+    }
+    
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
     }
     
     /**
      * Handles when the view of the camera is near an edge.
      * When the player is near an edge, the camera stops following the player.
+     * @param game the game that specifies the edges
      */
-    public static void handleEdges() {
-        Vector2f playerPos = GameScreen.getCurrentPlayer().getPos();
+    public void handleEdges(GameScreen game) {
         
-        float gWidth = GameScreen.getBounds().x;
-        float gHeight = GameScreen.getBounds().y;
+        if (game.getCurrentPlayer() == null) {
+            return;
+        }
+        
+        Vector2f playerPos = game.getCurrentPlayer().getPos();
+        
+        float gWidth = game.getBounds().x;
+        float gHeight = game.getBounds().y;
         
         float cHalfWidth = cam.getSize().x / 2;
         float cHalfHeight = cam.getSize().y / 2;
         
         if (playerPos.x > -gWidth + cHalfWidth && 
                 playerPos.x < gWidth - cHalfWidth) {
-            camPos = new Vector2f(GameScreen.getCurrentPlayer().getPos().x, camPos.y);
+            pos = new Vector2f(playerPos.x, pos.y);
         } 
         if (playerPos.y > -gHeight + cHalfHeight && 
                 playerPos.y < gHeight - cHalfHeight) {
-            camPos = new Vector2f(camPos.x, GameScreen.getCurrentPlayer().getPos().y);
+            pos = new Vector2f(pos.x, playerPos.y);
         } 
-        cam.setCenter(camPos);
+        cam.setCenter(pos);
     }
     
-    public static Vector2f camPos() {
-        return camPos;
+    public Vector2f camPos() {
+        return pos;
     }
     
-    public static FloatRect getBounds() {
-        return new FloatRect(camPos.x - Window.getSize().x/2f-100, camPos.y - Window.getSize().y/2f-100,
-                                Window.getSize().x + 200, Window.getSize().y + 200);
+    public FloatRect getBounds() {
+        return new FloatRect(pos.x - window.getSize().x/2f-100, pos.y - window.getSize().y/2f-100,
+                                window.getSize().x + 200, window.getSize().y + 200);
     }
     
     /**
      * Gets the View of the camera.
      * @return the camera's View.
      */
-    public static View getView() {
+    public View getView() {
         return cam;
     }
 }

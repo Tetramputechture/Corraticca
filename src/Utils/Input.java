@@ -6,12 +6,10 @@
 package coratticca.Utils;
 
 import coratticca.Actions.FireAction;
-import coratticca.Actions.ChangeToGameScreenAction;
 import coratticca.Actions.ChangeToPauseMenuScreenAction;
 import coratticca.Actions.ChangeToMainMenuScreenAction;
 import coratticca.Actions.Action;
 import coratticca.Utils.Screen.GameScreen;
-import coratticca.Utils.Screen.PauseMenuScreen;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,8 +18,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard;
@@ -31,49 +27,48 @@ import org.jsfml.window.event.MouseButtonEvent;
 import org.jsfml.window.event.MouseEvent;
 
 /**
- * Handles all input. 
+ * Handles all input.
+ *
  * @author Nick
  */
 public class Input {
+    
+    // Window that accepts the output.
+    private final Window window;
 
     // To read the game keyboard keys.
-    private static final Map<Keyboard.Key, Action> gameKeys = new HashMap<>();
-    
+    private final Map<Keyboard.Key, Action> gameKeys = new HashMap<>();
+
     // To read the game mouse buttons.
-    private static final Map<Mouse.Button, Action> gameMouseButtons = new HashMap<>();
+    private final Map<Mouse.Button, Action> gameMouseButtons = new HashMap<>();
 
     // To assign the keyboard key actions.
-    private static final Map<String, Class<? extends Action>> keyActions = new HashMap<>();
-    
-    // To assign the mouse button actions.
-    private static final Map<String, Class<? extends Action>> mouseActions = new HashMap<>();
-    
-    private static Keyboard.Key currentKey;
-    
-    private static Mouse.Button currentMouseButton;
+    private final Map<String, Action> keyActions = new HashMap<>();
 
-    private static Vector2f currentMousePos;
+    // To assign the mouse button actions.
+    private final Map<String, Action> mouseActions = new HashMap<>();
+
+    private Keyboard.Key currentKey;
+
+    private Mouse.Button currentMouseButton;
+
+    private Vector2f currentMousePos;
     
-    static {
-        // init keyActions
-        mouseActions.put(FireAction.NAME, FireAction.class);
-        keyActions.put(ChangeToMainMenuScreenAction.NAME, ChangeToMainMenuScreenAction.class);
-        keyActions.put(ChangeToPauseMenuScreenAction.NAME, ChangeToPauseMenuScreenAction.class);
-        keyActions.put(ChangeToGameScreenAction.NAME, ChangeToGameScreenAction.class);
-        
-        // int mouseActions
-        //mouseActions.put(FireAction.NAME, FireAction.class);
+    public Input(Window w) {
+        this.window = w;
+        mouseActions.put(FireAction.NAME, new FireAction());
     }
 
     /**
      * Handles all key input.
+     *
      * @param keyEvent the keyEvent to be handled.
      */
-    public static void handleKeyInput(KeyEvent keyEvent) {
+    public void handleKeyInput(KeyEvent keyEvent) {
 
         currentKey = keyEvent.key;
 
-        switch (Window.getCurrentScreenName()) {
+        switch (window.getCurrentScreenName()) {
             case MAIN_MENU_SCREEN:
                 handleMainMenuKeyInput();
                 break;
@@ -81,7 +76,7 @@ public class Input {
             case GAME_SCREEN:
                 handleGameKeyInput();
                 break;
-                
+
             default:
                 break;
         }
@@ -90,7 +85,7 @@ public class Input {
     /**
      * handles Main Menu key input.
      */
-    public static void handleMainMenuKeyInput() {
+    public void handleMainMenuKeyInput() {
 
         switch (currentKey) {
             // TO DO
@@ -100,24 +95,25 @@ public class Input {
     /**
      * handles Game key input.
      */
-    public static void handleGameKeyInput() {
+    public void handleGameKeyInput() {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            new ChangeToPauseMenuScreenAction().execute();
+            new ChangeToPauseMenuScreenAction((GameScreen)window.getCurrentScreen()).execute(window);
         } else if (gameKeys.containsKey(currentKey)) {
-            gameKeys.get(currentKey).execute();
+            gameKeys.get(currentKey).execute(window);
         }
     }
 
     /**
      * Handles mouse click input.
+     *
      * @param mouseEvent the Mouse Event to be handled.
      */
-    public static void handleMouseClickInput(MouseButtonEvent mouseEvent) {
+    public void handleMouseClickInput(MouseButtonEvent mouseEvent) {
         setMousePosition(mouseEvent);
         currentMouseButton = mouseEvent.button;
 
         if (currentMouseButton == Mouse.Button.LEFT) {
-            for (Button i : Window.getCurrentScreen().getButtons()) {
+            for (Button i : window.getCurrentScreen().getButtons()) {
                 if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
                     if (i.getAction() != null) {
                         i.executeAction();
@@ -126,24 +122,25 @@ public class Input {
                 }
             }
         }
-        
+
         // If a Button isn't pressed, then execute the associated action on the game screen
-        if (Window.getCurrentScreen() instanceof GameScreen) {
+        if (window.getCurrentScreen() instanceof GameScreen) {
             if (gameMouseButtons.containsKey(currentMouseButton)) {
-                gameMouseButtons.get(currentMouseButton).execute();
+                gameMouseButtons.get(currentMouseButton).execute(window);
             }
         }
-        
+
     }
-    
+
     /**
      * Handles mouse move input.
+     *
      * @param mouseEvent the Mouse Event to be handled.
      */
-    public static void handleMouseMoveInput(MouseEvent mouseEvent) {
+    public void handleMouseMoveInput(MouseEvent mouseEvent) {
         setMousePosition(mouseEvent);
-        
-        Window.getCurrentScreen().getButtons().stream().forEach((i) -> {
+
+        window.getCurrentScreen().getButtons().stream().forEach((i) -> {
             if (i.getTextObject().getGlobalBounds().contains(new Vector2f(currentMousePos.x, currentMousePos.y))) {
                 if (i.getAction() != null) {
                     i.handleMouseHover();
@@ -155,23 +152,25 @@ public class Input {
             }
         });
     }
-    
+
     /**
      * Sets the mouse position for a specified mouse event.
+     *
      * @param mouseEvent the mouse event to get position from.
      */
-    public static void setMousePosition(MouseEvent mouseEvent) {
-        Vector2i tpos = Window.getWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position.x, mouseEvent.position.y));
-        
+    public void setMousePosition(MouseEvent mouseEvent) {
+        Vector2i tpos = window.getRenderWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position.x, mouseEvent.position.y));
+
         currentMousePos = new Vector2f(tpos.x, tpos.y);
     }
 
     /**
      * Sets the inputs from a file.
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
-        public static void setInputs() throws FileNotFoundException, IOException {  
+    public void setInputs() throws FileNotFoundException, IOException {
         // gets the config file   
         Reader reader = new InputStreamReader(new FileInputStream("inputconfig.cfg"), "utf-8");
 
@@ -183,31 +182,21 @@ public class Input {
 
                 // format: key/button: action
                 String[] l = line.split("\\: ");
-                
+
                 int suffixIndex = l[0].indexOf('_') + 1;
                 String suffix = l[0].substring(suffixIndex);
-                
+
                 String action = l[1];
-                
+
                 // keyboard input specified
-                if(l[0].startsWith("KEYBOARD_")) {
+                if (l[0].startsWith("KEYBOARD_")) {
                     if (keyActions.containsKey(l[1])) {
-                        try {
-                            gameKeys.put(Keyboard.Key.valueOf(suffix), keyActions.get(action).newInstance());
-                        } catch (InstantiationException | IllegalAccessException ex) {
-                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, 
-                                    String.format("Error in input.cfg at %s!", l[0] + l[1]), ex);
-                        }
+                        gameKeys.put(Keyboard.Key.valueOf(suffix), keyActions.get(action));
                     }
-                // mouse input specified
+                    // mouse input specified
                 } else if (l[0].startsWith("MOUSE_")) {
                     if (mouseActions.containsKey(l[1])) {
-                        try {
-                            gameMouseButtons.put(Mouse.Button.valueOf(suffix), mouseActions.get(action).newInstance());
-                        } catch (InstantiationException | IllegalAccessException ex) {
-                            Logger.getLogger(Input.class.getName()).log(Level.SEVERE, 
-                                    String.format("Error in input.cfg at %s!", l[0] + l[1]), ex);
-                        }
+                        gameMouseButtons.put(Mouse.Button.valueOf(suffix), mouseActions.get(action));
                     }
                 }
             }
@@ -216,17 +205,19 @@ public class Input {
 
     /**
      * Gets the current key pressed.
+     *
      * @return the current key being pressed.
      */
-    public static Keyboard.Key getCurrentKey() {
+    public Keyboard.Key getCurrentKey() {
         return currentKey;
     }
 
     /**
      * Gets the current mouse position.
+     *
      * @return the current mouse position.
      */
-    public static Vector2f getMousePos() {
+    public Vector2f getMousePos() {
         return currentMousePos;
     }
 

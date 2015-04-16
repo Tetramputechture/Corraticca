@@ -20,7 +20,7 @@ public class CPhysics {
      * @param b the second entity to compare.
      * @return if the two entities intersect or not.
      */
-    public static boolean boxCollisionTest(Entity a, Entity b) {
+    public boolean boxCollisionTest(Entity a, Entity b) {
         return a.getBounds().intersectsAABB(b.getBounds());
     }
 
@@ -29,7 +29,7 @@ public class CPhysics {
      * @param a the first entity to simulate.
      * @param b the second entity to simulate.
      */
-    public static void handleCollision(Entity a, Entity b) {
+    public void handleCollision(Entity a, Entity b) {
         
         // make a few variables to make equations easier to read
         Vector2f aPos = a.getPos();

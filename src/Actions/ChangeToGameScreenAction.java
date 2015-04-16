@@ -14,28 +14,32 @@ import coratticca.Utils.Window;
  */
 public class ChangeToGameScreenAction implements Action {
     
+    private final GameScreen game;
+    
     /**
      * The name of the action.
      */
     public static final String NAME = "CHANGE_TO_GAME_SCREEN";
     
-    private final boolean resetGame;
+    public ChangeToGameScreenAction() {
+        game = null;
+    }
     
-    /**
-     * Sets if the game screen is to be reset or not.
-     * @param resetGame if the game is to be reset.
-     */
-    public ChangeToGameScreenAction(boolean resetGame) {
-        this.resetGame = resetGame;
+    public ChangeToGameScreenAction(GameScreen game) {
+        this.game = game;
     }
 
-    /**
-     * Changes the screen to the game screen.
-     */
     @Override
-    public void execute() {
-        Window.changeScreen(new GameScreen(resetGame));
-        GameScreen.resumeGame();
+    public void execute(Window w) {
+        if (game != null) {
+            w.changeScreen(game);
+            game.resume();
+        } else {
+            GameScreen g = new GameScreen(w);
+            g.initPlayer();
+            g.initButtons();
+            w.changeScreen(g);
+        }
     }
     
     @Override

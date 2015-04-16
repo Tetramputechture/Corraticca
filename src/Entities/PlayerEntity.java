@@ -10,8 +10,6 @@ import coratticca.Utils.CPrecache;
 import coratticca.Utils.CVector;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.GameLostScreen;
-import coratticca.Utils.Window;
-import coratticca.Utils.Input;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -24,39 +22,28 @@ import org.jsfml.window.Keyboard;
  */
 public final class PlayerEntity extends Entity {
     
-    private static final Sprite playerSprite;
-    
     private double angle;
     
-    private Vector2f pos;
-    private Vector2f v;
     private final float maxMoveSpeed;
     private Vector2f target;
     
     private final float accelRate;
     private final float fConst;
     
-    private int health;
+    private final int maxHealth;
+    private int currentHealth;
     
-    static { 
-        Texture t = CPrecache.getPlayerTexture();
-        playerSprite = new Sprite(t);
-        CSprite.setOriginAtCenter(playerSprite, t);
-    }
-    
-    /**
-     * Sets the player entity's sprite.
-     */
-    public PlayerEntity() {
-        super(playerSprite);
-        health = 3;
+    public PlayerEntity(GameScreen g, Vector2f pos) {
+        super(g, pos);
         
-        v = Vector2f.ZERO;
+        super.velocity = Vector2f.ZERO;
         
         // set movement variables
         maxMoveSpeed = 120;
         accelRate = 20;
         fConst = 0.95f;
+        maxHealth = 3;
+        currentHealth = maxHealth;
     }
     
     /**
@@ -82,63 +69,72 @@ public final class PlayerEntity extends Entity {
         Vector2f acc = target;
         
         // integrate acceleration to get velocity
-        v = Vector2f.add(v, Vector2f.mul(acc, dt));
+        super.velocity = Vector2f.add(super.velocity, Vector2f.mul(acc, dt));
 
         // limit velocity vector to maxMoveSpeed
-        float speed = CVector.length(v);
+        float speed = CVector.length(super.velocity);
         if (speed > maxMoveSpeed) {
-            v = Vector2f.div(v, speed);
-            v = Vector2f.mul(v, maxMoveSpeed);
+            super.velocity = Vector2f.div(super.velocity, speed);
+            super.velocity = Vector2f.mul(super.velocity, maxMoveSpeed);
         }
 
         // set velocity
-        pos = Vector2f.add(pos, v);
+        pos = Vector2f.add(pos, super.velocity);
         
         // apply friction
-        v = Vector2f.mul(v, fConst);
+        super.velocity = Vector2f.mul(super.velocity, fConst);
         
-        handleWallCollision();
-        
-        playerSprite.setPosition(pos);
+        super.sprite.setPosition(pos);
         
         // set player angle based on mouse position
-        Vector2i truePos = Window.getWindow().mapCoordsToPixel(pos);
-        angle = Math.atan2( Input.getMousePos().y - truePos.y, 
-                            Input.getMousePos().x - truePos.x);
+        Vector2f mousePos = game.getWindow().getInputHandler().getMousePos();
+        Vector2i truePos = game.getWindow().getRenderWindow().mapCoordsToPixel(pos);
+        angle = Math.atan2( mousePos.y - truePos.y, 
+                            mousePos.x - truePos.x);
         
         angle *= (180/Math.PI);
         if(angle < 0) {
             angle += 360;
         }
         
-        playerSprite.setRotation(90 + (float)angle);
+        super.sprite.setRotation(90 + (float)angle);
+    }
+    
+    @Override
+    public Sprite initSprite() {
+        Texture t = CPrecache.getPlayerTexture();
+        Sprite s = new Sprite(t);
+        CSprite.setOriginAtCenter(s, t);
+        return s;
     }
     
     @Override
     public void detectCollisions(float dt) {
-        handleWallCollision();
+        if (isOutOfBounds()) {
+            handleOutOfBounds();
+        }
     }
     
     /**
      * Resets the player's position, velocity, and health.
      */
     public void reset() {
-        v = Vector2f.ZERO;
-        health = 3;
+        super.velocity = Vector2f.ZERO;
+        currentHealth = maxHealth;
     }
     
     /**
      * Handles if the player collided with a wall.
      */
-    public void handleWallCollision() {
+    public void handleOutOfBounds() {
         float tx = -1;
         float ty = -1;
         
-        float gWidth = GameScreen.getBounds().x;
-        float gHeight = GameScreen.getBounds().y;
+        float gWidth = game.getBounds().x;
+        float gHeight = game.getBounds().y;
         
-        float pAdjustedWidth = playerSprite.getLocalBounds().width * .9f;
-        float pAdjustedHeight = playerSprite.getLocalBounds().height * .9f;
+        float pAdjustedWidth = super.sprite.getLocalBounds().width * .9f;
+        float pAdjustedHeight = super.sprite.getLocalBounds().height * .9f;
         
         if (pos.x > gWidth - pAdjustedWidth) {
             tx = gWidth - pAdjustedWidth;
@@ -165,13 +161,12 @@ public final class PlayerEntity extends Entity {
      */
     @Override
     public boolean toBeRemoved() {
-        return health <= 0;
+        return currentHealth <= 0;
     }
     
     @Override
     public void handleRemoval() {
-        System.out.println("Game lost!");
-        Window.changeScreen(new GameLostScreen());
+        getWindow().changeScreen(new GameLostScreen(game));
     }
     
     /**
@@ -179,31 +174,7 @@ public final class PlayerEntity extends Entity {
      * @param r the health amount to be changed by.
      */
     public void changeHealth(int r) {
-        health += r;
-    }
-     
-    @Override
-    public void setPos(Vector2f pos) {
-        this.pos = pos;
-    }
-    
-    @Override
-    public Vector2f getPos() {
-        return pos;
-    }
-    
-    /**
-     * Gets the player's angle.
-     * @return the player's angle.
-     */
-    @Override
-    public float getRotation() {
-        return playerSprite.getRotation();
-    }
-
-    @Override
-    public Vector2f getVelocity() {
-        return v;
+        currentHealth += r;
     }
     
     /**
@@ -211,17 +182,7 @@ public final class PlayerEntity extends Entity {
      * @return the health of the player.
      */
     public int getHealth() {
-        return health;
-    }
-
-    @Override
-    public float getSize() {
-        return playerSprite.getScale().x;
-    }
-
-    @Override
-    public void setVelocity(Vector2f v) {
-        this.v = v;
+        return currentHealth;
     }
     
     @Override

@@ -9,7 +9,6 @@ import coratticca.Utils.Window;
 import coratticca.Utils.Button;
 import coratticca.Actions.ExitGameAction;
 import coratticca.Actions.ChangeToGameScreenAction;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
@@ -19,55 +18,42 @@ import org.jsfml.system.Vector2f;
  * The Main Menu screen.
  * @author Nick
  */
-public class MainMenuScreen implements Screen {
-    
-    private static final ScreenName name = ScreenName.MAIN_MENU_SCREEN;
-    
-    private static final Color bgColor;
-    
-    private final List<Button> buttons;
-    
-    static {
-        bgColor = Color.BLACK;
-    }
-    
-    /**
-     * Initializes the screen, and adds the buttons.
-     */
-    public MainMenuScreen() {
-        buttons = new ArrayList<>();
+public class MainMenuScreen extends Screen {
+
+    public MainMenuScreen(Window w) {
+        super(w);
+        super.setBgColor(Color.BLACK);
         
         // add play button
-        Window.getWindow().setMouseCursorVisible(true);
-        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
-                                Window.getSize().y/2-80),
+        super.window.getRenderWindow().setMouseCursorVisible(true);
+        buttons.add(new Button( super.window,
+                                new Vector2f(super.window.getSize().x/2, 
+                                super.window.getSize().y/2-80),
                                 52, 
                                 "Play!", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ChangeToGameScreenAction(true),
-                                false));
+                                new ChangeToGameScreenAction()));
         
-        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
-                                Window.getSize().y/2+20),
+        buttons.add(new Button( super.window,
+                                new Vector2f(super.window.getSize().x/2, 
+                                super.window.getSize().y/2+20),
                                 52, 
                                 "Exit!", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ExitGameAction(),
-                                false));
+                                new ExitGameAction()));
     }
    
     @Override
     public void show() {
-        
-        Window.getWindow().clear(bgColor);
+        super.window.getRenderWindow().clear(super.getBgColor());
         
         for (Button b : buttons) {
             b.draw();
         }
 
-        Window.getWindow().display();
+        super.window.getRenderWindow().display();
     }
     
     @Override
@@ -77,6 +63,6 @@ public class MainMenuScreen implements Screen {
     
     @Override
     public ScreenName getName() {
-        return name;
+        return ScreenName.MAIN_MENU_SCREEN;
     }  
 }

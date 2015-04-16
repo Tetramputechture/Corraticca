@@ -5,6 +5,8 @@
  */
 package coratticca.Actions;
 
+import coratticca.Utils.Window;
+
 /**
  * This interface handles every action in the game, so keys can easily be bound
  * to any action. Uses the Command design pattern.
@@ -14,8 +16,10 @@ public interface Action {
     
     /**
      * executes the action.
+     * 
+     * @param window the window to handle the action
      */
-    void execute();
+    void execute(Window window);
     
     /**
      * @return the string representation of the action

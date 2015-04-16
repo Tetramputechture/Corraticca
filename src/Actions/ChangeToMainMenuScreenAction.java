@@ -19,12 +19,9 @@ public class ChangeToMainMenuScreenAction implements Action {
      */
     public static final String NAME = "CHANGE_TO_MAIN_MENU_SCREEN";
 
-    /**
-     * Changes the current screen to the Main Menu screen.
-     */
     @Override
-    public void execute() {
-        Window.changeScreen(new MainMenuScreen());
+    public void execute(Window w) {
+        w.changeScreen(new MainMenuScreen(w));
     }
     
     @Override

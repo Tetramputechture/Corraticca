@@ -5,9 +5,11 @@
  */
 package coratticca.Entities;
 
-import coratticca.Utils.CPhysics;
+import coratticca.Utils.CPrecache;
+import coratticca.Utils.CSprite;
 import coratticca.Utils.Screen.GameScreen;
 import org.jsfml.graphics.Sprite;
+import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -16,42 +18,21 @@ import org.jsfml.system.Vector2f;
  */
 public final class BulletEntity extends Entity {
     
-    private final Sprite bulletSprite;
-    
-    private Vector2f pos;
-    private Vector2f v;
-    private static final int speed = 500;
-    
-    private static final float playerVelocityScalar = 40f;
-    
     private Entity nearestEntity;
     
     private boolean hitEntity;
 
-    /**
-     * Sets rotation and position of bullet.
-     * @param s the sprite of the bullet.
-     */
-    public BulletEntity(Sprite s) {
-        // init sprite
-        super(s);
-        bulletSprite = s;
+    public BulletEntity(GameScreen g, Vector2f pos) {
+        super(g, pos);
+    }
+    
+    @Override
+    public Sprite initSprite() {
+        Texture t = CPrecache.getBulletTexture();
+        Sprite s = new Sprite(t);
+        CSprite.setOriginAtCenter(s, t);
         
-        PlayerEntity currentPlayer = GameScreen.getCurrentPlayer();
-        float angle = (float)(Math.toRadians(currentPlayer.getRotation()));
-        float sin = (float)Math.sin(angle);
-        float cos = (float)Math.cos(angle);
-        
-        // set position and angle based off current player sprite
-        pos = Vector2f.add(currentPlayer.getPos(), new Vector2f(sin, cos));
-        bulletSprite.setPosition(pos);
-        
-        Vector2f forward = new Vector2f(sin, -cos);
-        forward = Vector2f.mul(forward, speed);
-        Vector2f inheritedVelocity = Vector2f.mul(GameScreen.getCurrentPlayer().getVelocity(), playerVelocityScalar);
-        v = Vector2f.add(forward, inheritedVelocity);
-        
-        bulletSprite.setRotation(GameScreen.getCurrentPlayer().getRotation());
+        return s;
     }
     
     /**
@@ -60,34 +41,16 @@ public final class BulletEntity extends Entity {
      */
     @Override
     public void update(float dt) {   
-        pos = Vector2f.add(pos, Vector2f.mul(v, dt));
-        bulletSprite.setPosition(pos);
+        pos = Vector2f.add(pos, Vector2f.mul(super.velocity, dt));
+        super.sprite.setPosition(pos);
     }
     
     @Override
     public void detectCollisions(float dt) {
-        nearestEntity = GameScreen.getGrid().getNearest(this);
-        if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (CPhysics.boxCollisionTest(nearestEntity, this))) {
+        nearestEntity = game.getGrid().getNearest(this);
+        if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (game.getPhysicsHandler().boxCollisionTest(nearestEntity, this))) {
             hitEntity = true;
         }
-    }
-    
-    /**
-     * Gets the velocity of the bullet
-     * @return the bullet's velocity
-     */
-    @Override
-    public Vector2f getVelocity() {
-        return v;
-    }
-    
-    /**
-     * Checks if the bullet is out of the window's bounds.
-     * @return if the bullet is out of the window's bounds.
-     */
-    public boolean isOutOfBounds() {
-        return pos.x > GameScreen.getBounds().x || pos.x < -GameScreen.getBounds().x || 
-               pos.y > GameScreen.getBounds().y || pos.y < -GameScreen.getBounds().y;
     }
     
     /**
@@ -97,50 +60,6 @@ public final class BulletEntity extends Entity {
     @Override
     public boolean toBeRemoved() {
         return isOutOfBounds() || hitEntity;
-    }
-    
-    /**
-     *
-     */
-    @Override
-    public void handleRemoval() {
-    }
-    
-    @Override
-    public Vector2f getPos() {
-        return bulletSprite.getPosition();
-    }
-    
-    @Override
-    public void setPos(Vector2f pos) {
-        this.pos = pos;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public float getSize() {
-        return bulletSprite.getScale().x;
-    }
-
-    /**
-     *
-     * @param v
-     */
-    @Override
-    public void setVelocity(Vector2f v) {
-        this.v = v;
-    }
-    
-    /**
-     *
-     * @return
-     */
-    @Override
-    public float getRotation() {
-        return bulletSprite.getRotation();
     }
     
     @Override

@@ -5,13 +5,9 @@
  */
 package coratticca.Utils.Screen;
 
-import coratticca.Utils.Window;
 import coratticca.Utils.Button;
 import coratticca.Actions.ChangeToGameScreenAction;
 import coratticca.Actions.ChangeToMainMenuScreenAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Vector2f;
 
@@ -19,92 +15,77 @@ import org.jsfml.system.Vector2f;
  *
  * @author Nick
  */
-public class GameLostScreen implements Screen {
+public class GameLostScreen extends Screen {
     
-    private static final ScreenName name = ScreenName.GAME_LOST_SCREEN;
-    
-    private static final Color bgColor;
-    
-    private final List<Button> buttons;
-    
-    static {
-        bgColor = Color.BLACK;
-    }
-    
-    /**
-     * Initializes the pause menu and all of it's buttons.
-     */
-    public GameLostScreen() {
-        buttons = new ArrayList<>();
+    public GameLostScreen(GameScreen g) {
+        
+        super(g.getWindow());
+        
+        super.setBgColor(Color.BLACK);
         
         // cursor must be visible
-        Window.getWindow().setMouseCursorVisible(true);
+        super.window.getRenderWindow().setMouseCursorVisible(true);
         
         // add game lost text
-        buttons.add(new Button( new Vector2f(Window.getSize().x/2,
-                                Window.getSize().y/2 - 50),
+        buttons.add(new Button( super.window,
+                                new Vector2f(super.window.getSize().x/2,
+                                super.window.getSize().y/2 - 50),
                                 48,
                                 "Game Lost! :(",
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                null,
-                                false));
+                                null));
         
         // add exit button
-        buttons.add(new Button( new Vector2f(Window.getSize().x/2, 
-                                Window.getSize().y/2 + 50),
+        buttons.add(new Button( window,
+                                new Vector2f(super.window.getSize().x/2, 
+                                super.window.getSize().y/2 + 50),
                                 24, 
                                 "Exit to Main Menu", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
-                                new ChangeToMainMenuScreenAction(),
-                                false));
+                                new ChangeToMainMenuScreenAction()));
         
         // add new game button
-        buttons.add(new Button( new Vector2f(Window.getSize().x/2,
-                                Window.getSize().y/2 + 100),
+        buttons.add(new Button( window,
+                                new Vector2f(super.window.getSize().x/2,
+                                super.window.getSize().y/2 + 100),
                                 24,
                                 "New Game",
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                new ChangeToGameScreenAction(true),
-                                false));
+                                new ChangeToGameScreenAction()));
         
         // add stats text
-        buttons.add(new Button( new Vector2f(Window.getSize().x - 100,
-                                Window.getSize().y/2 + 200),
+        buttons.add(new Button( window,
+                                new Vector2f(super.window.getSize().x - 100,
+                                super.window.getSize().y/2 + 200),
                                 18,
                                 String.format("Asteroids blasted: %s\n"
                                         + "Shots fired: %s\n"
                                         + "Accuracy: %.4f", 
-                                        GameScreen.getAsteroidsBlasted(), 
-                                        GameScreen.getShotsFired(), 
-                                        GameScreen.getAccuracy()),
+                                        g.getAsteroidsBlasted(), 
+                                        g.getShotsFired(), 
+                                        g.getAccuracy()),
                                 "fonts/OpenSans-Regular.ttf",
                                 Color.WHITE,
-                                null,
-                                false));
+                                null));
     }
 
     @Override
     public void show() {
         
-        Window.getWindow().clear(bgColor);
+        super.window.getRenderWindow().clear(super.getBgColor());
         
         for (Button i : buttons) {
             i.draw();
         }
 
-        Window.getWindow().display();
+        super.window.getRenderWindow().display();
     }
-
-    @Override
-    public List<Button> getButtons() {
-        return Collections.unmodifiableList(buttons);
-    }
-
+    
     @Override
     public ScreenName getName() {
-        return name;
-    } 
+        return ScreenName.GAME_LOST_SCREEN;
+    }
 }

@@ -18,12 +18,9 @@ public class ExitGameAction implements Action {
      */
     public static final String NAME = "EXIT_GAME";
 
-    /**
-     * Changes the screen to the game screen.
-     */
     @Override
-    public void execute() {
-        Window.getWindow().close();
+    public void execute(Window w) {
+        w.getRenderWindow().close();
     }
     
     @Override

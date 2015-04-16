@@ -6,11 +6,8 @@
 package coratticca.Actions;
 
 import coratticca.Entities.AsteroidEntity;
-import coratticca.Utils.CSprite;
-import coratticca.Utils.CPrecache;
 import coratticca.Utils.Screen.GameScreen;
-import org.jsfml.graphics.Sprite;
-import org.jsfml.graphics.Texture;
+import coratticca.Utils.Window;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -38,17 +35,16 @@ public class SpawnAsteroidAction implements Action {
     }
     
     @Override
-    public void execute() {
-        Texture t;
-        if (Math.random() < 0.5) {
-            t = CPrecache.getAsteroidTextureA();
+    public void execute(Window w) {
+        GameScreen g;
+        // double check if the current screen is a gamescreen
+        if (w.getCurrentScreen() instanceof GameScreen) {
+            g = (GameScreen) w.getCurrentScreen();
         } else {
-            t = CPrecache.getAsteroidTextureB();
+            return;
         }
-        Sprite s = new Sprite(t);
-        CSprite.setOriginAtCenter(s, t);
         
-        GameScreen.addEntity(new AsteroidEntity(s, pos, size));
+        g.addEntity(new AsteroidEntity(g, pos, size));
     }
     
 }

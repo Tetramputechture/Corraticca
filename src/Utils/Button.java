@@ -6,12 +6,6 @@
 package coratticca.Utils;
 
 import coratticca.Actions.Action;
-import coratticca.Utils.Screen.MainMenuScreen;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Font;
@@ -24,7 +18,9 @@ import org.jsfml.system.Vector2f;
  * If you just want to make a simple text object, leave the action as null.
  * @author Nick
  */
-public class Button extends Input {
+public class Button {
+    
+    private final Window window;
     
     private final Text text;
     private final Color defaultColor;
@@ -32,25 +28,28 @@ public class Button extends Input {
     private Action action;
     private boolean shouldPlaySelectSound;
     
-    private final boolean movesWithCamera;
+    private boolean movesWithCamera;
+    private final Camera camera;
     
     /**
      * Constructs a button.
+     * @param window the window this Button is parented to.
      * @param pos the button's position
      * @param fontSize the button text's font size.
      * @param label the button's label.
      * @param fontName the name of the text font.
      * @param color the color of the button text.
      * @param action the action assigned to the button.
-     * @param movesWithCamera if the button should move with the camera.
      */
-    public Button(  Vector2f pos, 
+    public Button(  Window window,
+                    Vector2f pos, 
                     int fontSize, 
                     String label, 
                     String fontName, 
                     Color color,
-                    Action action,
-                    boolean movesWithCamera) {
+                    Action action) {
+        
+        this.window = window;
         
         // set action
         this.action = action;
@@ -72,20 +71,65 @@ public class Button extends Input {
         text.setOrigin( textbounds.left + textbounds.width/2.0f,
                         textbounds.top  + textbounds.height/2.0f);
         text.setPosition(pos);
-        this.movesWithCamera = movesWithCamera;
+        camera = null;
+    }
+    
+    /**
+     * Constructs a button.
+     * @param window the window this Button is parented to.
+     * @param pos the button's position
+     * @param fontSize the button text's font size.
+     * @param label the button's label.
+     * @param fontName the name of the text font.
+     * @param color the color of the button text.
+     * @param action the action assigned to the button.
+     * @param camera the Camera for this Button to be parented to.
+     */
+    public Button(  Window window,
+                    Vector2f pos, 
+                    int fontSize, 
+                    String label, 
+                    String fontName, 
+                    Color color,
+                    Action action,
+                    Camera camera) {
+        
+        this.window = window;
+        
+        // set action
+        this.action = action;
+        
+        defaultColor = color;
+        
+        // set text
+        Font font = CPrecache.getOpenSansFont();
+        text = new Text();
+        
+        text.setFont(font);
+        text.setCharacterSize(fontSize);
+        text.setString(label);
+        
+        // set bounds for clicking
+        FloatRect textbounds = text.getLocalBounds();
+        
+        text.setColor(color);
+        text.setOrigin( textbounds.left + textbounds.width/2.0f,
+                        textbounds.top  + textbounds.height/2.0f);
+        text.setPosition(pos);
+        this.camera = camera;
     }
     
     /**
      * Draws the button on the screen.
      */
     public void draw() {     
-        if (movesWithCamera) {
-            Window.getWindow().setView(Camera.getView());
-            Window.getWindow().draw(text);
-            Window.getWindow().setView(Window.getWindow().getDefaultView());
+        if (camera != null) {
+            window.getRenderWindow().setView(camera.getView());
+            window.getRenderWindow().draw(text);
+            window.getRenderWindow().setView(window.getRenderWindow().getDefaultView());
         } else {
-            Window.getWindow().setView(Window.getWindow().getDefaultView());
-            Window.getWindow().draw(text);
+            window.getRenderWindow().setView(window.getRenderWindow().getDefaultView());
+            window.getRenderWindow().draw(text);
         }
     }
     
@@ -104,7 +148,7 @@ public class Button extends Input {
             Audio.playSound("sounds/buttonsound1.wav", 1f);
         }
         text.setColor(Color.RED);
-        Window.getWindow().draw(text);
+        window.getRenderWindow().draw(text);
     }
     
     /**
@@ -142,7 +186,7 @@ public class Button extends Input {
      * Executes the button's action.
      */
     public void executeAction() {
-        this.action.execute();
+        this.action.execute(window);
     }
     
     /**

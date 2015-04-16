@@ -7,6 +7,7 @@ package coratticca.Entities;
 
 import coratticca.Utils.CSprite;
 import coratticca.Utils.AABB;
+import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Window;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
@@ -18,23 +19,50 @@ import org.jsfml.system.Vector2f;
  */
 public abstract class Entity {
     
-    private final Sprite sprite;
+    /**
+     * This Entity's sprite.
+     */
+    protected Sprite sprite;
+    
+    /**
+     * The position of this Entity.
+     */
+    protected Vector2f pos;
+    
+    /**
+     * The velocity of this Entity.
+     */
+    protected Vector2f velocity;
+    
+    /**
+     * The game screen for this Entity to be drawn on.
+     */
+    protected final GameScreen game;
 
     /**
      * Sets the entity's sprite.
-     * @param s the sprite to be set to.
+     * 
+     * @param game the game for this Entity to be drawn on.
+     * @param pos the position of this Entity.
      */
-    public Entity(Sprite s) {
-        sprite = s;
+    public Entity(GameScreen game, Vector2f pos) {
+        this.game = game;
+        this.pos = pos;
+        sprite = initSprite();
+        sprite.setPosition(pos);
     }
+    
+    /**
+     * Gets the Sprite of the current Entity.
+     * @return the Entity's sprite.
+     */
+    public abstract Sprite initSprite();
 
     /**
      * Draws the sprite to the window.
      */
     public void draw() {
-        // only draw if in the current view
-        
-        Window.getWindow().draw(sprite);
+        game.getWindow().getRenderWindow().draw(sprite);
     }
 
     /**
@@ -55,23 +83,41 @@ public abstract class Entity {
      */
     public abstract boolean toBeRemoved();
     
-    /**
-     * Handles the removal of an entity.
-     */
-    public abstract void handleRemoval();
+    public void handleRemoval() {
+        
+    }
     
+    /**
+     * Gets the window that this Entity is parented to.
+     * @return the Window this entity is drawn on.
+     */
+    public Window getWindow() {
+        return game.getWindow();
+    }
+    
+    /**
+     * Gets the sprite of this Entity.
+     * @return this Entity's sprite.
+     */
+    public Sprite getSprite() {
+        return sprite;
+    }
     
     /**
      * Gets the position of the entity relative to the current window.
      * @return the position of the entity as a float vector
      */
-    public abstract Vector2f getPos();
+    public Vector2f getPos() {
+        return pos;
+    }
     
     /**
      * Sets the position of the entity.
      * @param pos the position to be set.
      */
-    public abstract void setPos(Vector2f pos);
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
+    }
     
     /**
      * Gets the bounds of an entity, as an AABB.
@@ -80,28 +126,54 @@ public abstract class Entity {
     public AABB getBounds() {
         return CSprite.globalBoundsToAABB(sprite);
     }
+    
+    /**
+     * If this Entity is out of window bounds or not.
+     * @return if this Entity is out of the game bounds.
+     */
+    public boolean isOutOfBounds() {
+        Vector2f bounds = game.getBounds();
+        return pos.x > bounds.x || pos.x < -bounds.x || 
+               pos.y > bounds.y || pos.y < -bounds.y;
+    }
 
     /**
      * Gets the velocity of an entity. 
      * @return
      */
-    public abstract Vector2f getVelocity();
+    public Vector2f getVelocity() {
+        return velocity;
+    }
     
     /**
      * Sets the velocity of an entity.
      * @param v the velocity to be set.
      */
-    public abstract void setVelocity(Vector2f v);
+    public void setVelocity(Vector2f v) {
+        this.velocity = v;
+    }
 
     /**
      * Gets the size of an entity.
      * @return the entitity's size.
      */
-    public abstract float getSize();
+    public float getSize() {
+        return sprite.getScale().x;
+    }
     
     /**
-     * Gets the rotation of an entity.
-     * @return the entity's rotation.
+     * Sets the rotation of an entity.
+     * 
+     * @param degrees the angle to rotate, in degrees
      */
-    public abstract float getRotation();
+    public void setRotation(float degrees) {
+        sprite.rotate(degrees);
+    }
+    /**
+     * Gets the rotation of an entity.
+     * @return the entity's rotation, in degrees
+     */
+    public float getRotation() {
+        return sprite.getRotation();
+    }
 }

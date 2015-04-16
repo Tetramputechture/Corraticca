@@ -14,7 +14,11 @@ import org.jsfml.system.Vector2f;
  */
 public class CRandom {
     
-    private static final Random rand = new Random();
+    private final Random rand;
+    
+    public CRandom() {
+        rand = new Random();
+    }
 
     /**
      * Returns a random integer between two bounds.
@@ -22,7 +26,7 @@ public class CRandom {
      * @param max the upper bound.
      * @return a random integer between min and max.
      */
-    public static int randInt(int min, int max) {
+    public int randInt(int min, int max) {
         int randomNum = rand.nextInt(java.lang.Math.abs((max - min) + 1)) + min;
         return randomNum;
     }
@@ -33,7 +37,7 @@ public class CRandom {
      * @param max the upper bound.
      * @return a random float between min and max.
      */
-    public static float randFloat(float min, float max) {
+    public float randFloat(float min, float max) {
         double randomNum = min + (max - min) * rand.nextDouble();
         return (float) randomNum;
     }
@@ -46,20 +50,23 @@ public class CRandom {
      * @param yUpperBound the upper bound of the y component.
      * @return a random vector with components between the specified bounds.
      */
-    public static Vector2f randVector(float xLowerBound, float xUpperBound,
+    public Vector2f randVector(float xLowerBound, float xUpperBound,
                                       float yLowerBound, float yUpperBound) {
         return new Vector2f(randFloat(xLowerBound, xUpperBound), randFloat(yLowerBound, yUpperBound));
     }
     
     /**
      * Returns a random vector on the edge of the view.
+     * 
+     * @param c the Camera that specifies the view.
+     * 
      * @return a random vector on the edge of the game view.
      */
-    public static Vector2f getRandomEdgeVector() {
-        Vector2f upperBound = Vector2f.add(Camera.getView().getCenter(), Camera.getView().getSize());
-        Vector2f lowerBound = Vector2f.sub(Camera.getView().getCenter(), Camera.getView().getSize());
-        int tx = CRandom.randInt((int)lowerBound.x+20, (int)upperBound.x-20);
-        int ty = CRandom.randInt((int)lowerBound.y+20, (int)upperBound.y-20);
+    public Vector2f getRandomEdgeVector(Camera c) {
+        Vector2f upperBound = Vector2f.add(c.getView().getCenter(), c.getView().getSize());
+        Vector2f lowerBound = Vector2f.sub(c.getView().getCenter(), c.getView().getSize());
+        int tx = randInt((int)lowerBound.x+20, (int)upperBound.x-20);
+        int ty = randInt((int)lowerBound.y+20, (int)upperBound.y-20);
         if (rand.nextDouble() < 0.5) {
             tx = (int)lowerBound.x;
         } else {

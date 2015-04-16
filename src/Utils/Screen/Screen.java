@@ -6,28 +6,60 @@
 package coratticca.Utils.Screen;
 
 import coratticca.Utils.Button;
+import coratticca.Utils.Window;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import org.jsfml.graphics.Color;
 
 /**
- * A Screen interface to handle all Screens.
+ * A Screen abstract class.
  * @author Nick
  */
-public interface Screen {
+public abstract class Screen {
+    
+    protected final Window window;
+    
+    protected final ArrayList<Button> buttons;
+    
+    private Color bgColor;
+    
+    public Screen(Window window) {
+        this.window = window;
+        buttons = new ArrayList<>();
+    }
     
     /**
      * Shows the screen.
      */
-    void show();
+    public abstract void show();
+    
+    public Window getWindow() {
+        return window;
+    }
     
     /**
      * Gets the buttons of the screen.
      * @return a List containing the screen's buttons.
      */
-    public List<Button> getButtons();
-    
+    public List<Button> getButtons() {
+        return Collections.unmodifiableList(buttons);
+    }
+
     /**
-     * Gets the name of the screen.
-     * @return the name of the screen.
+     * @return the bgColor
      */
-    public ScreenName getName();
+    public Color getBgColor() {
+        return bgColor;
+    }
+    
+    public abstract ScreenName getName();
+        
+    /**
+     * @param bgColor the bgColor to set
+     */
+    public void setBgColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
+    
 }
