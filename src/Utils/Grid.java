@@ -7,7 +7,6 @@ package coratticca.Utils;
 
 import coratticca.Entities.Entity;
 import java.util.List;
-import java.util.Collections;
 import java.util.LinkedList;
 import org.jsfml.system.Vector2f;
 
@@ -136,6 +135,6 @@ public class Grid {
         // entity should not collide with itself
         retrieveList.remove(e);
         
-        return Collections.unmodifiableList(retrieveList);
+        return retrieveList;
     }
 }

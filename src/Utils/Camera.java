@@ -18,14 +18,14 @@ public class Camera {
     
     private final Window window;
     
-    private final View cam;
+    private final View view;
     
     private Vector2f pos;
     
     public Camera(Window window) {
         this.window = window;
-        cam = new View();
-        cam.setSize(window.getSize().x, window.getSize().y);
+        view = new View();
+        view.setSize(window.getSize());
     }
     
     public void setPos(Vector2f pos) {
@@ -45,11 +45,15 @@ public class Camera {
         
         Vector2f playerPos = game.getCurrentPlayer().getPos();
         
-        float gWidth = game.getBounds().x;
-        float gHeight = game.getBounds().y;
+        Vector2f gameBounds = game.getBounds();
         
-        float cHalfWidth = cam.getSize().x / 2;
-        float cHalfHeight = cam.getSize().y / 2;
+        Vector2f viewSize = view.getSize();
+        
+        float gWidth = gameBounds.x;
+        float gHeight = gameBounds.y;
+        
+        float cHalfWidth = viewSize.x / 2;
+        float cHalfHeight = viewSize.y / 2;
         
         if (playerPos.x > -gWidth + cHalfWidth && 
                 playerPos.x < gWidth - cHalfWidth) {
@@ -59,7 +63,7 @@ public class Camera {
                 playerPos.y < gHeight - cHalfHeight) {
             pos = new Vector2f(pos.x, playerPos.y);
         } 
-        cam.setCenter(pos);
+        view.setCenter(pos);
     }
     
     public Vector2f camPos() {
@@ -67,8 +71,9 @@ public class Camera {
     }
     
     public FloatRect getBounds() {
-        return new FloatRect(pos.x - window.getSize().x/2f-100, pos.y - window.getSize().y/2f-100,
-                                window.getSize().x + 200, window.getSize().y + 200);
+        Vector2f wSize = window.getSize();
+        return new FloatRect(pos.x - wSize.x/2f-100, pos.y - wSize.y/2f-100,
+                                wSize.x + 200, wSize.y + 200);
     }
     
     /**
@@ -76,6 +81,6 @@ public class Camera {
      * @return the camera's View.
      */
     public View getView() {
-        return cam;
+        return view;
     }
 }

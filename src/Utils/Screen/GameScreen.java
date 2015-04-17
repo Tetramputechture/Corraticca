@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Image;
+import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
@@ -110,7 +111,7 @@ public final class GameScreen extends Screen {
                 Color.WHITE,
                 null));
 
-        // entiy count debug text
+        // entity count debug text
         buttons.add(new Button(window,
                 new Vector2f(67,
                         460),
@@ -137,13 +138,15 @@ public final class GameScreen extends Screen {
 
     @Override
     public void show() {
+        
+        RenderWindow rw = window.getRenderWindow();
 
         camera.handleEdges(this);
-        window.getRenderWindow().setView(camera.getView());
-        window.getRenderWindow().clear(super.getBgColor());
+        rw.setView(camera.getView());
+        rw.clear(super.getBgColor());
 
         // use the custom mouse sprite
-        window.getRenderWindow().setMouseCursorVisible(false);
+        rw.setMouseCursorVisible(false);
 
         // set delta time
         float currentTime = gameClock.getElapsedTime().asSeconds();
@@ -152,12 +155,11 @@ public final class GameScreen extends Screen {
         // if game was paused, subtract the time paused from dt only on the first
         // frame out of pause
         if (pauseTime != 0) {
-            System.out.println("what");
             dt -= pauseTime;
             pauseTime = 0;
         }
-
-        window.getRenderWindow().draw(backgroundSprite);
+        
+        rw.draw(backgroundSprite);
 
         // clear grid
         grid.clear();
@@ -166,9 +168,7 @@ public final class GameScreen extends Screen {
 
         updateEntitiesAndFillGrid(dt);
 
-        detectEntityCollisions(dt);
-
-        drawEntities();
+        detectEntityCollisionsAndDraw(dt);
 
         if (Math.random() < 0.01) {
             new SpawnAsteroidAction(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)).execute(window);
@@ -178,9 +178,9 @@ public final class GameScreen extends Screen {
 
         // set pointer position
         pointerSprite.setPosition(window.getInputHandler().getMousePos());
-
-        window.getRenderWindow().draw(pointerSprite);
-        window.getRenderWindow().display();
+        rw.draw(pointerSprite);
+        
+        rw.display();
 
         lastTime = currentTime;
     }
@@ -212,28 +212,25 @@ public final class GameScreen extends Screen {
         }
     }
 
-    private void detectEntityCollisions(float dt) {
+    private void detectEntityCollisionsAndDraw(float dt) {
         for (Entity e : entities) {
             e.detectCollisions(dt);
-        }
-    }
-
-    private void drawEntities() {
-        for (Entity e : entities) {
             e.draw();
         }
     }
 
     private void updateAndDrawButtons() {
+        
+        Vector2f playerPos = player.getPos();
         // update health text
-        buttons.get(0).setText(Integer.toString(player.getHealth()));
-        buttons.get(0).setPosition(new Vector2f(player.getPos().x + playerHealthIconOffset, player.getPos().y - playerHealthIconOffset));
+        buttons.get(0).setText(String.valueOf(player.getHealth()));
+        buttons.get(0).setPosition(new Vector2f(playerPos.x + playerHealthIconOffset, playerPos.y - playerHealthIconOffset));
 
         // update score text
         buttons.get(1).setText(String.format("Score: %s", asteroidsBlasted));
 
         // update player position text
-        buttons.get(2).setText(String.format("Position: (%.0f, %.0f)", player.getPos().x, player.getPos().y));
+        buttons.get(2).setText(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
 
         // update entity count text
         buttons.get(3).setText(String.format("Entity count: %s", entities.size()));
@@ -241,7 +238,6 @@ public final class GameScreen extends Screen {
         for (Button b : buttons) {
             b.draw();
         }
-
     }
 
     public void pause() {

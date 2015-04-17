@@ -31,6 +31,8 @@ public final class Window {
     
     private final Input inputHandler;
     
+    private final Audio audioHandler;
+    
     private Screen currentScreen;
     
     public Window(Vector2i pos, Vector2i size, String title) throws IOException {
@@ -45,6 +47,8 @@ public final class Window {
         changeScreen(new MainMenuScreen(this));
         
         inputHandler = new Input(this);
+        
+        audioHandler = new Audio();
         
         // set the inputs
         inputHandler.setInputs();
@@ -111,6 +115,10 @@ public final class Window {
     
     public Input getInputHandler() {
         return inputHandler;
+    }
+    
+    public Audio getAudioHandler() {
+        return audioHandler;
     }
    
     /**

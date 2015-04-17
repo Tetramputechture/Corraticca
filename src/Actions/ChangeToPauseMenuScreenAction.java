@@ -13,14 +13,9 @@ import coratticca.Utils.Window;
  * Changes the current screen to the Pause Menu Screen.
  * @author Nick
  */
-public class ChangeToPauseMenuScreenAction implements Action {
+public class ChangeToPauseMenuScreenAction extends Action {
     
     private final GameScreen game;
-    
-    /**
-     * The name of the action.
-     */
-    public static final String NAME = "CHANGE_TO_PAUSE_MENU_SCREEN";
     
     public ChangeToPauseMenuScreenAction(GameScreen game) {
         this.game = game;
@@ -42,8 +37,7 @@ public class ChangeToPauseMenuScreenAction implements Action {
     }
     
     @Override
-    public String toString() {
-        return NAME;
+    public String getName() {
+        return "CHANGE_TO_PAUSE_MENU_SCREEN";
     }
-    
 }

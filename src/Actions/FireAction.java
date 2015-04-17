@@ -5,7 +5,6 @@
  */
 package coratticca.Actions;
 
-import coratticca.Utils.Audio;
 import coratticca.Entities.BulletEntity;
 import coratticca.Entities.PlayerEntity;
 import coratticca.Utils.Screen.GameScreen;
@@ -16,7 +15,7 @@ import org.jsfml.system.Vector2f;
  * Action to create a bullet entity.
  * @author Nick
  */
-public class FireAction implements Action {
+public class FireAction extends Action {
     
     private final int fireSpeed;
     
@@ -26,11 +25,6 @@ public class FireAction implements Action {
         fireSpeed = 500;
         playerVelocityScalar = 40;
     }
-    
-    /**
-     * The name of the action.
-     */
-    public static final String NAME = "FIRE";
     
     @Override
     public void execute(Window w) {
@@ -43,28 +37,31 @@ public class FireAction implements Action {
             return;
         }
 
-        Audio.playSound("sounds/firesound.wav", 1);
-        PlayerEntity currentPlayer = g.getCurrentPlayer();
-        float angle = (float)(Math.toRadians(currentPlayer.getRotation()));
+        w.getAudioHandler().playSound("sounds/firesound.wav", 1);
+        
+        PlayerEntity player = g.getCurrentPlayer();
+        float playerRotation = player.getRotation();
+        
+        float angle = (float)(Math.toRadians(playerRotation));
         float sin = (float)Math.sin(angle);
         float cos = (float)Math.cos(angle);
         
         // set position and angle based off current player sprite
-        Vector2f pos = Vector2f.add(currentPlayer.getPos(), new Vector2f(sin, cos));
+        Vector2f pos = Vector2f.add(player.getPos(), new Vector2f(sin, cos));
         BulletEntity b = new BulletEntity(g, pos);
         
         Vector2f forward = new Vector2f(sin, -cos);
         forward = Vector2f.mul(forward, fireSpeed);
-        Vector2f inheritedVelocity = Vector2f.mul(g.getCurrentPlayer().getVelocity(), playerVelocityScalar);
+        Vector2f inheritedVelocity = Vector2f.mul(player.getVelocity(), playerVelocityScalar);
         b.setVelocity(Vector2f.add(forward, inheritedVelocity));
         
-        b.setRotation(g.getCurrentPlayer().getRotation());
+        b.setRotation(playerRotation);
         g.addEntity(b); 
         g.fireShot();
     }
 
     @Override
-    public String toString() {
-        return NAME;
+    public String getName() {
+        return "FIRE";
     }
 }

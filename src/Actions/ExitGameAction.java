@@ -11,12 +11,7 @@ import coratticca.Utils.Window;
  *
  * @author Nick
  */
-public class ExitGameAction implements Action {
-    
-    /**
-     * The name of the action.
-     */
-    public static final String NAME = "EXIT_GAME";
+public class ExitGameAction extends Action {
 
     @Override
     public void execute(Window w) {
@@ -24,8 +19,7 @@ public class ExitGameAction implements Action {
     }
     
     @Override
-    public String toString() {
-        return NAME;
+    public String getName() {
+        return "EXIT_GAME";
     }
-    
 }

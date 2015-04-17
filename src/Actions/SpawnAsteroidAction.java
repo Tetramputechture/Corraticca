@@ -14,12 +14,7 @@ import org.jsfml.system.Vector2f;
  * Spawns a new Asteroid.
  * @author Nick
  */
-public class SpawnAsteroidAction implements Action {
-    
-    /**
-     * The name of the action.
-     */
-    public static final String NAME = "SPAWN_ASTEROID";
+public class SpawnAsteroidAction extends Action {
     
     private final Vector2f pos;
     private final int size;
@@ -47,4 +42,8 @@ public class SpawnAsteroidAction implements Action {
         g.addEntity(new AsteroidEntity(g, pos, size));
     }
     
+    @Override
+    public String getName() {
+        return "SPAWN_ASTEROID";
+    }
 }

@@ -63,15 +63,21 @@ public class CRandom {
      * @return a random vector on the edge of the game view.
      */
     public Vector2f getRandomEdgeVector(Camera c) {
-        Vector2f upperBound = Vector2f.add(c.getView().getCenter(), c.getView().getSize());
-        Vector2f lowerBound = Vector2f.sub(c.getView().getCenter(), c.getView().getSize());
+        Vector2f cCenter = c.getView().getCenter();
+        Vector2f cSize = c.getView().getSize();
+        
+        Vector2f upperBound = Vector2f.add(cCenter, cSize);
+        Vector2f lowerBound = Vector2f.sub(cCenter, cSize);
+        
         int tx = randInt((int)lowerBound.x+20, (int)upperBound.x-20);
         int ty = randInt((int)lowerBound.y+20, (int)upperBound.y-20);
+        
         if (rand.nextDouble() < 0.5) {
             tx = (int)lowerBound.x;
         } else {
             ty = (int)lowerBound.y;
         }
+        
         return new Vector2f(tx, ty);
     }
 }

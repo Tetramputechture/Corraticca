@@ -12,12 +12,7 @@ import coratticca.Utils.Window;
  * Changes the current screen to the Main Menu Screen.
  * @author Nick
  */
-public class ChangeToMainMenuScreenAction implements Action {
-    
-    /**
-     * The name of the action.
-     */
-    public static final String NAME = "CHANGE_TO_MAIN_MENU_SCREEN";
+public class ChangeToMainMenuScreenAction extends Action {
 
     @Override
     public void execute(Window w) {
@@ -25,8 +20,7 @@ public class ChangeToMainMenuScreenAction implements Action {
     }
     
     @Override
-    public String toString() {
-        return NAME;
+    public String getName() {
+        return "CHANGE_TO_MAIN_MENU_SCREEN";
     }
-    
 }

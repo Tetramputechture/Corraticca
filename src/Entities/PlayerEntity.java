@@ -103,6 +103,7 @@ public final class PlayerEntity extends Entity {
     @Override
     public Sprite initSprite() {
         Texture t = CPrecache.getPlayerTexture();
+        t.setSmooth(true);
         Sprite s = new Sprite(t);
         CSprite.setOriginAtCenter(s, t);
         return s;
@@ -113,6 +114,20 @@ public final class PlayerEntity extends Entity {
         if (isOutOfBounds()) {
             handleOutOfBounds();
         }
+    }
+    
+    @Override
+    public boolean isOutOfBounds() {
+        float gWidth = game.getBounds().x;
+        float gHeight = game.getBounds().y;
+        
+        float pAdjustedWidth = super.sprite.getLocalBounds().width * .9f;
+        float pAdjustedHeight = super.sprite.getLocalBounds().height * .9f;
+        
+        return (pos.x > gWidth - pAdjustedWidth ||
+                pos.x < -gWidth + pAdjustedWidth ||
+                pos.y > gHeight - pAdjustedHeight ||
+                pos.y < -gHeight + pAdjustedHeight);
     }
     
     /**

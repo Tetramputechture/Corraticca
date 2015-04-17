@@ -12,19 +12,21 @@ import coratticca.Utils.Window;
  * Changes the current screen to the Game Screen.
  * @author Nick
  */
-public class ChangeToGameScreenAction implements Action {
+public class ChangeToGameScreenAction extends Action {
     
     private final GameScreen game;
     
     /**
-     * The name of the action.
+     * Changes the screen to a new instance of a gameScreen.
      */
-    public static final String NAME = "CHANGE_TO_GAME_SCREEN";
-    
     public ChangeToGameScreenAction() {
         game = null;
     }
     
+    /**
+     * Changes the screen to the gameScreen specified.
+     * @param game the gameScreen to be changed to.
+     */
     public ChangeToGameScreenAction(GameScreen game) {
         this.game = game;
     }
@@ -43,8 +45,7 @@ public class ChangeToGameScreenAction implements Action {
     }
     
     @Override
-    public String toString() {
-        return NAME;
+    public String getName() {
+        return "CHANGE_TO_GAME_SCREEN";
     }
-    
 }

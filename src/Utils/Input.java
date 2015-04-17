@@ -32,7 +32,7 @@ import org.jsfml.window.event.MouseEvent;
  * @author Nick
  */
 public class Input {
-    
+
     // Window that accepts the output.
     private final Window window;
 
@@ -53,10 +53,11 @@ public class Input {
     private Mouse.Button currentMouseButton;
 
     private Vector2f currentMousePos;
-    
+
     public Input(Window w) {
         this.window = w;
-        mouseActions.put(FireAction.NAME, new FireAction());
+        FireAction f = new FireAction();
+        mouseActions.put(f.getName(), f);
     }
 
     /**
@@ -97,7 +98,7 @@ public class Input {
      */
     public void handleGameKeyInput() {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            new ChangeToPauseMenuScreenAction((GameScreen)window.getCurrentScreen()).execute(window);
+            new ChangeToPauseMenuScreenAction((GameScreen) window.getCurrentScreen()).execute(window);
         } else if (gameKeys.containsKey(currentKey)) {
             gameKeys.get(currentKey).execute(window);
         }
@@ -109,24 +110,25 @@ public class Input {
      * @param mouseEvent the Mouse Event to be handled.
      */
     public void handleMouseClickInput(MouseButtonEvent mouseEvent) {
+        
         setMousePosition(mouseEvent);
         currentMouseButton = mouseEvent.button;
 
-        if (currentMouseButton == Mouse.Button.LEFT) {
-            for (Button i : window.getCurrentScreen().getButtons()) {
-                if (i.getTextObject().getGlobalBounds().contains(currentMousePos)) {
-                    if (i.getAction() != null) {
-                        i.executeAction();
-                    }
-                    return;
-                }
-            }
-        }
-
-        // If a Button isn't pressed, then execute the associated action on the game screen
         if (window.getCurrentScreen() instanceof GameScreen) {
             if (gameMouseButtons.containsKey(currentMouseButton)) {
                 gameMouseButtons.get(currentMouseButton).execute(window);
+            }
+            return;
+        }
+        
+        if (currentMouseButton == Mouse.Button.LEFT) {
+            for (Button b : window.getCurrentScreen().getButtons()) {
+                if (b.contains(currentMousePos)) {
+                    if (b.getAction() != null) {
+                        b.executeAction();
+                    }
+                    return;
+                }
             }
         }
 
@@ -140,17 +142,16 @@ public class Input {
     public void handleMouseMoveInput(MouseEvent mouseEvent) {
         setMousePosition(mouseEvent);
 
-        window.getCurrentScreen().getButtons().stream().forEach((i) -> {
-            if (i.getTextObject().getGlobalBounds().contains(new Vector2f(currentMousePos.x, currentMousePos.y))) {
-                if (i.getAction() != null) {
-                    i.handleMouseHover();
+        for (Button b : window.getCurrentScreen().getButtons()) {
+            if (b.contains(currentMousePos)) {
+                if (b.getAction() != null) {
+                    b.select();
                 }
-                i.shouldPlaySelectSound(false);
+                return;
             } else {
-                i.setToDefaultColor();
-                i.shouldPlaySelectSound(true);
+                b.setToDefaultColor();
             }
-        });
+        }
     }
 
     /**
@@ -158,10 +159,9 @@ public class Input {
      *
      * @param mouseEvent the mouse event to get position from.
      */
-    public void setMousePosition(MouseEvent mouseEvent) {
-        Vector2i tpos = window.getRenderWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position.x, mouseEvent.position.y));
-
-        currentMousePos = new Vector2f(tpos.x, tpos.y);
+    private void setMousePosition(MouseEvent mouseEvent) {
+        Vector2i tpos = window.getRenderWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position));
+        currentMousePos = new Vector2f(tpos);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Input {
      */
     public void setInputs() throws FileNotFoundException, IOException {
         // gets the config file   
-        Reader reader = new InputStreamReader(new FileInputStream("inputconfig.cfg"), "utf-8");
+        Reader reader = new InputStreamReader(new FileInputStream("inputconfig.cfg"));
 
         try (BufferedReader br = new BufferedReader(reader)) {
 
