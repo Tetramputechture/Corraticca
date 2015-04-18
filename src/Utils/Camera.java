@@ -28,21 +28,12 @@ public class Camera {
         view.setSize(window.getSize());
     }
     
-    public void setPos(Vector2f pos) {
-        this.pos = pos;
-    }
-    
     /**
      * Handles when the view of the camera is near an edge.
      * When the player is near an edge, the camera stops following the player.
      * @param game the game that specifies the edges
      */
     public void handleEdges(GameScreen game) {
-        
-        if (game.getCurrentPlayer() == null) {
-            return;
-        }
-        
         Vector2f playerPos = game.getCurrentPlayer().getPos();
         
         Vector2f gameBounds = game.getBounds();
@@ -65,8 +56,12 @@ public class Camera {
         } 
         view.setCenter(pos);
     }
+       
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
+    }
     
-    public Vector2f camPos() {
+    public Vector2f getPos() {
         return pos;
     }
     

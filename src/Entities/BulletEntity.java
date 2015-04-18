@@ -5,9 +5,10 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CPhysics;
 import coratticca.Utils.CPrecache;
 import coratticca.Utils.CSprite;
-import coratticca.Utils.Screen.GameScreen;
+import coratticca.Utils.Grid;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -22,17 +23,19 @@ public final class BulletEntity extends Entity {
     
     private boolean hitEntity;
 
-    public BulletEntity(GameScreen g, Vector2f pos) {
-        super(g, pos);
+    public BulletEntity(Vector2f pos) {
+        super(pos);       
+        initSprite();
     }
     
     @Override
-    public Sprite initSprite() {
+    public void initSprite() {
         Texture t = CPrecache.getBulletTexture();
         Sprite s = new Sprite(t);
         CSprite.setOriginAtCenter(s, t);
         
-        return s;
+        sprite = s;
+        sprite.setPosition(pos);
     }
     
     /**
@@ -41,25 +44,21 @@ public final class BulletEntity extends Entity {
      */
     @Override
     public void update(float dt) {   
-        pos = Vector2f.add(pos, Vector2f.mul(super.velocity, dt));
-        super.sprite.setPosition(pos);
+        pos = Vector2f.add(pos, Vector2f.mul(velocity, dt));
+       sprite.setPosition(pos);
     }
     
     @Override
-    public void detectCollisions(float dt) {
-        nearestEntity = game.getGrid().getNearest(this);
-        if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (game.getPhysicsHandler().boxCollisionTest(nearestEntity, this))) {
+    public void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt) {
+        nearestEntity = grid.getNearest(this);
+        if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (physics.boxCollisionTest(nearestEntity, this))) {
             hitEntity = true;
         }
     }
     
-    /**
-     * If bullet should be removed.
-     * @return if the bullet is out of bounds or hit an enemy
-     */
     @Override
-    public boolean toBeRemoved() {
-        return isOutOfBounds() || hitEntity;
+    public boolean toBeRemoved(Grid grid) {
+        return isOutOfBounds(grid) || hitEntity;
     }
     
     @Override

@@ -59,7 +59,6 @@ public class CRandom {
      * Returns a random vector on the edge of the view.
      * 
      * @param c the Camera that specifies the view.
-     * 
      * @return a random vector on the edge of the game view.
      */
     public Vector2f getRandomEdgeVector(Camera c) {

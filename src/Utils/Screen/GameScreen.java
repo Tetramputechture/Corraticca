@@ -5,7 +5,8 @@
  */
 package coratticca.Utils.Screen;
 
-import coratticca.Actions.SpawnAsteroidAction;
+import coratticca.Entities.AsteroidEntity;
+import coratticca.Entities.BulletEntity;
 import coratticca.Entities.PlayerEntity;
 import coratticca.Entities.Entity;
 import coratticca.Utils.Button;
@@ -39,17 +40,17 @@ public final class GameScreen extends Screen {
 
     private final CRandom rand;
 
-    private final Vector2f size;
+    private final Vector2f gridSize;
 
     private final Grid grid;
 
-    private final List<Entity> entities = new LinkedList<>();
-    private final List<Entity> entsToBeRemoved = new LinkedList<>();
+    private final List<Entity> entities;
+    private final List<Entity> entsToBeRemoved;
 
     private Sprite pointerSprite;
     private Sprite backgroundSprite;
 
-    private PlayerEntity player;
+    private final PlayerEntity player;
     private final int playerHealthIconOffset = 15;
 
     private int enemiesKilled;
@@ -63,20 +64,30 @@ public final class GameScreen extends Screen {
 
     public GameScreen(Window w) {
         super(w);
+        
         physicsHandler = new CPhysics();
-        camera = new Camera(super.window);
+        
+        camera = new Camera(window);
+        
         rand = new CRandom();
+        
         gameClock = new Clock();
-        size = new Vector2f(super.window.getSize().x * 2, super.window.getSize().y * 2);
-        super.setBgColor(new Color(150, 150, 150));
-        grid = new Grid(size);
-        initSprites();
-    }
-
-    public void initPlayer() {
-        player = new PlayerEntity(this, Vector2f.ZERO);
+        
+        gridSize = Vector2f.mul(window.getSize(), 2);
+        
+        setBgColor(new Color(150, 150, 150));
+        
+        grid = new Grid(gridSize);
+        
+        entities = new LinkedList<>();
+        entsToBeRemoved = new LinkedList<>();
+        
+        player = new PlayerEntity(w, Vector2f.ZERO);
         entities.add(player);
         camera.setPos(player.getPos());
+        
+        initSprites();
+        initButtons();
     }
 
     public void initButtons() {
@@ -143,7 +154,7 @@ public final class GameScreen extends Screen {
 
         camera.handleEdges(this);
         rw.setView(camera.getView());
-        rw.clear(super.getBgColor());
+        rw.clear(getBgColor());
 
         // use the custom mouse sprite
         rw.setMouseCursorVisible(false);
@@ -171,7 +182,7 @@ public final class GameScreen extends Screen {
         detectEntityCollisionsAndDraw(dt);
 
         if (Math.random() < 0.01) {
-            new SpawnAsteroidAction(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)).execute(window);
+            addEntity(new AsteroidEntity(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)));
         }
 
         updateAndDrawButtons();
@@ -194,13 +205,16 @@ public final class GameScreen extends Screen {
         entsToBeRemoved.clear();
 
         for (Entity e : entities) {
-            if (e.toBeRemoved()) {
+            if (e.toBeRemoved(grid)) {
+                if (e instanceof AsteroidEntity) {
+                    asteroidsBlasted++;
+                }
                 entsToBeRemoved.add(e);
             }
         }
 
         for (Entity e : entsToBeRemoved) {
-            e.handleRemoval();
+            e.handleRemoval(this);
             entities.remove(e);
         }
     }
@@ -214,8 +228,8 @@ public final class GameScreen extends Screen {
 
     private void detectEntityCollisionsAndDraw(float dt) {
         for (Entity e : entities) {
-            e.detectCollisions(dt);
-            e.draw();
+            e.detectAndHandleCollisions(grid, physicsHandler, dt);
+            window.getRenderWindow().draw(e);
         }
     }
 
@@ -253,12 +267,8 @@ public final class GameScreen extends Screen {
         }
     }
 
-    /**
-     *
-     * @return
-     */
     public Vector2f getBounds() {
-        return size;
+        return gridSize;
     }
 
     /**
@@ -270,21 +280,8 @@ public final class GameScreen extends Screen {
         return player;
     }
 
-    /**
-     *
-     * @return
-     */
     public Image getBGImage() {
         return window.getRenderWindow().capture();
-    }
-
-    /**
-     * Gets the total enemies killed.
-     *
-     * @return the total number of enemies killed.
-     */
-    public int getEnemiesKilled() {
-        return enemiesKilled;
     }
 
     public int getAsteroidsBlasted() {
@@ -310,47 +307,15 @@ public final class GameScreen extends Screen {
     }
 
     /**
-     * Increments enemies killed.
-     */
-    public void killEnemy() {
-        enemiesKilled++;
-    }
-
-    public void scorePoint() {
-        asteroidsBlasted++;
-    }
-
-    /**
-     * Increments shots fired.
-     */
-    public void fireShot() {
-        shotsFired++;
-    }
-
-    /**
      * Adds an entity to the screen.
      *
      * @param e the entity to add.
      */
     public void addEntity(Entity e) {
+        if (e instanceof BulletEntity) {
+            shotsFired++;
+        }
         entities.add(e);
-    }
-
-    public void addEntityToGrid(Entity e) {
-        grid.addEntity(e);
-    }
-
-    /**
-     * Gets the current game screen's entities
-     *
-     * @return the screen's entities as an unmodifiable list
-     */
-    public List<Entity> getEntities() {
-        return Collections.unmodifiableList(entities);
-    }
-
-    public Grid getGrid() {
-        return grid;
     }
 
     @Override

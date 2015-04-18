@@ -25,16 +25,22 @@ public class PauseMenuScreen extends Screen {
     
     private final Sprite backgroundSprite;
     
+    private final GameScreen previousGameScreen;
+    
     public PauseMenuScreen(GameScreen game) {
         super(game.getWindow());
         
+        previousGameScreen = game;
+        
         // cursor must be visible
-        super.window.getRenderWindow().setMouseCursorVisible(true);
+        window.getRenderWindow().setMouseCursorVisible(true);
+        
+        Vector2f winSize = window.getSize();
         
         // add exit button
-        buttons.add(new Button( super.window,
-                                new Vector2f(super.window.getSize().x/2, 
-                                super.window.getSize().y/2-100),
+        buttons.add(new Button( window,
+                                new Vector2f(winSize.x/2, 
+                                winSize.y/2-100),
                                 24, 
                                 "Exit to Main Menu", 
                                 "fonts/OpenSans-Regular.ttf", 
@@ -42,9 +48,9 @@ public class PauseMenuScreen extends Screen {
                                 new ChangeToMainMenuScreenAction()));
         
         // add resume game button
-        buttons.add(new Button( super.window,
-                                new Vector2f(super.window.getSize().x/2,
-                                super.window.getSize().y/2 + 100),
+        buttons.add(new Button( window,
+                                new Vector2f(winSize.x/2,
+                                winSize.y/2 + 100),
                                 24,
                                 "Resume Game",
                                 "fonts/OpenSans-Regular.ttf",
@@ -55,24 +61,28 @@ public class PauseMenuScreen extends Screen {
         
         Texture backgroundTexture = new Texture();
         try {
-            backgroundTexture.loadFromImage(((GameScreen)super.window.getCurrentScreen()).getBGImage());
+            backgroundTexture.loadFromImage(game.getBGImage());
         } catch (TextureCreationException ex) {
             Logger.getLogger(PauseMenuScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
         backgroundSprite = new Sprite(backgroundTexture);
     }
+    
+    public GameScreen getPreviousGameScreen() {
+        return previousGameScreen;
+    }
    
     @Override
     public void show() {
-        super.window.getRenderWindow().clear();
+        window.getRenderWindow().clear();
         
-        super.window.getRenderWindow().draw(backgroundSprite);
+        window.getRenderWindow().draw(backgroundSprite);
         
         for (Button b : buttons) {
             b.draw();
         }
 
-        super.window.getRenderWindow().display();
+        window.getRenderWindow().display();
     }  
     
     @Override

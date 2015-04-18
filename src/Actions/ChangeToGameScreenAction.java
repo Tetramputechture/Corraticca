@@ -12,7 +12,7 @@ import coratticca.Utils.Window;
  * Changes the current screen to the Game Screen.
  * @author Nick
  */
-public class ChangeToGameScreenAction extends Action {
+public class ChangeToGameScreenAction implements Action {
     
     private final GameScreen game;
     
@@ -38,8 +38,6 @@ public class ChangeToGameScreenAction extends Action {
             game.resume();
         } else {
             GameScreen g = new GameScreen(w);
-            g.initPlayer();
-            g.initButtons();
             w.changeScreen(g);
         }
     }

@@ -36,7 +36,6 @@ public class CPrecache {
     private static Font openSansFont;
     
     public static void precacheTextures() {
-        
         precacheStarfieldTexture();
         
         precachePointerTexture();
@@ -48,7 +47,6 @@ public class CPrecache {
         precacheAsteroidTextures();
         
         precacheEnemyTexture();
-        
     }
     
     public static void precacheFonts() {

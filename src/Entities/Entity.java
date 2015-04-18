@@ -7,8 +7,12 @@ package coratticca.Entities;
 
 import coratticca.Utils.CSprite;
 import coratticca.Utils.AABB;
+import coratticca.Utils.CPhysics;
+import coratticca.Utils.Grid;
 import coratticca.Utils.Screen.GameScreen;
-import coratticca.Utils.Window;
+import org.jsfml.graphics.Drawable;
+import org.jsfml.graphics.RenderStates;
+import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.system.Vector2f;
 
@@ -17,7 +21,7 @@ import org.jsfml.system.Vector2f;
  * Entities are glorified sprites that are easy to handle.
  * @author Nick
  */
-public abstract class Entity {
+public abstract class Entity implements Drawable {
     
     /**
      * This Entity's sprite.
@@ -33,37 +37,20 @@ public abstract class Entity {
      * The velocity of this Entity.
      */
     protected Vector2f velocity;
-    
-    /**
-     * The game screen for this Entity to be drawn on.
-     */
-    protected final GameScreen game;
 
     /**
      * Sets the entity's sprite.
      * 
-     * @param game the game for this Entity to be drawn on.
      * @param pos the position of this Entity.
      */
-    public Entity(GameScreen game, Vector2f pos) {
-        this.game = game;
+    public Entity(Vector2f pos) {
         this.pos = pos;
-        sprite = initSprite();
-        sprite.setPosition(pos);
     }
     
     /**
-     * Gets the Sprite of the current Entity.
-     * @return the Entity's sprite.
+     * Initializes the Sprite of the current Entity.
      */
-    public abstract Sprite initSprite();
-
-    /**
-     * Draws the sprite to the window.
-     */
-    public void draw() {
-        game.getWindow().getRenderWindow().draw(sprite);
-    }
+    public abstract void initSprite();
 
     /**
      * Updates the entity based on time.
@@ -73,26 +60,25 @@ public abstract class Entity {
     
     /**
      * Detects collisions with any other entities on the screen.
+     * @param grid the grid to check collision against.
+     * @param physics the physics handler to handle the collisions.
      * @param dt the difference in frametime from last update.
      */
-    public abstract void detectCollisions(float dt);
+    public abstract void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt);
 
     /**
-     * Gets if the entity should be removed.
-     * @return if the entity needs to be removed from the game's entity list.
+     * If bullet should be removed from the grid.
+     * @param grid the grid for the entity to be removed from.
+     * @return if the bullet is out of bounds or hit an enemy
      */
-    public abstract boolean toBeRemoved();
-    
-    public void handleRemoval() {
-        
-    }
+    public abstract boolean toBeRemoved(Grid grid);
     
     /**
-     * Gets the window that this Entity is parented to.
-     * @return the Window this entity is drawn on.
+     * Handles this entity's removal from a game.
+     * @param g the game for the entity to be removed from.
      */
-    public Window getWindow() {
-        return game.getWindow();
+    public void handleRemoval(GameScreen g) {
+        
     }
     
     /**
@@ -128,13 +114,22 @@ public abstract class Entity {
     }
     
     /**
-     * If this Entity is out of window bounds or not.
+     * If this Entity is out of an entity grid bounds or not.
+     * @param grid the Grid whose bounds to check against.
      * @return if this Entity is out of the game bounds.
      */
-    public boolean isOutOfBounds() {
-        Vector2f bounds = game.getBounds();
+    public boolean isOutOfBounds(Grid grid) {
+        Vector2f bounds = grid.getSize();
         return pos.x > bounds.x || pos.x < -bounds.x || 
                pos.y > bounds.y || pos.y < -bounds.y;
+    }
+    
+    /**
+     * What to do when this Entity is out of bounds of the grid.
+     * @param grid the grid that this Entity is out of bounds of.
+     */
+    public void handleOutOfBounds(Grid grid) {
+        
     }
 
     /**
@@ -175,5 +170,10 @@ public abstract class Entity {
      */
     public float getRotation() {
         return sprite.getRotation();
+    }
+    
+    @Override
+    public void draw(RenderTarget target, RenderStates states) {
+        target.draw(sprite);
     }
 }

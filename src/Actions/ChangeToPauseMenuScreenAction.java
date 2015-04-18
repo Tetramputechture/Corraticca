@@ -13,7 +13,7 @@ import coratticca.Utils.Window;
  * Changes the current screen to the Pause Menu Screen.
  * @author Nick
  */
-public class ChangeToPauseMenuScreenAction extends Action {
+public class ChangeToPauseMenuScreenAction implements Action {
     
     private final GameScreen game;
     

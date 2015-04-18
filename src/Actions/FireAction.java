@@ -15,7 +15,7 @@ import org.jsfml.system.Vector2f;
  * Action to create a bullet entity.
  * @author Nick
  */
-public class FireAction extends Action {
+public class FireAction implements Action {
     
     private final int fireSpeed;
     
@@ -48,7 +48,7 @@ public class FireAction extends Action {
         
         // set position and angle based off current player sprite
         Vector2f pos = Vector2f.add(player.getPos(), new Vector2f(sin, cos));
-        BulletEntity b = new BulletEntity(g, pos);
+        BulletEntity b = new BulletEntity(pos);
         
         Vector2f forward = new Vector2f(sin, -cos);
         forward = Vector2f.mul(forward, fireSpeed);
@@ -57,7 +57,6 @@ public class FireAction extends Action {
         
         b.setRotation(playerRotation);
         g.addEntity(b); 
-        g.fireShot();
     }
 
     @Override

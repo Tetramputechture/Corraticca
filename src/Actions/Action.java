@@ -12,24 +12,18 @@ import coratticca.Utils.Window;
  * to any action. Uses the Command design pattern.
  * @author Nick
  */
-public abstract class Action {
+public interface Action {
     
     /**
      * executes the action.
      * 
      * @param window the window to handle the action
      */
-    public abstract void execute(Window window);
+    public void execute(Window window);
     
     /**
      * Returns the name of the action.
      * @return the name of the action.
      */
-    public abstract String getName();
-    
-    @Override
-    public String toString() {
-        return getName();
-    }
-    
+    public String getName();
 }

@@ -6,7 +6,6 @@
 package coratticca.Utils;
 
 import coratticca.Entities.Entity;
-import java.util.List;
 import java.util.LinkedList;
 import org.jsfml.system.Vector2f;
 
@@ -17,6 +16,9 @@ import org.jsfml.system.Vector2f;
  * @author Nick
  */
 public class Grid {
+    
+    // size of the grid
+    private final Vector2f gridSize;
     
     // size of each cell in the grid
     private final float gridCellSize;
@@ -34,19 +36,20 @@ public class Grid {
     private final int gridYOffset;
 
     // data
-    private final List<Entity>[][] grid;
+    private final LinkedList<Entity>[][] grid;
     
-    private final List<Entity> retrieveList = new LinkedList<>();
+    private final LinkedList<Entity> retrieveList;
     
     /**
      * Constructs a gridBounds with the specified boundary.
-     * @param gridBounds the size of the gridBounds.
+     * @param gridSize the size of the gridBounds.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Grid(Vector2f gridBounds) {
-        gridCellSize = gridBounds.x * cellSizeMultipler;
-        gridXOffset = (int)((gridBounds.x + gridCellSize - 1) / gridCellSize);
-        gridYOffset = (int)((gridBounds.y + gridCellSize - 1) / gridCellSize);
+    public Grid(Vector2f gridSize) {
+        this.gridSize = gridSize;
+        gridCellSize = gridSize.x * cellSizeMultipler;
+        gridXOffset = (int)((gridSize.x + gridCellSize - 1) / gridCellSize);
+        gridYOffset = (int)((gridSize.y + gridCellSize - 1) / gridCellSize);
         
         // need enough columns and rows
         // so multiply the offset by 2 to account for negative values
@@ -61,6 +64,12 @@ public class Grid {
                 grid[c][r] = new LinkedList<>();
             }
         }
+        
+        retrieveList = new LinkedList<>();
+    }
+    
+    public Vector2f getSize() {
+        return gridSize;
     }
 
     public void clear() {
@@ -95,7 +104,7 @@ public class Grid {
     public Entity getNearest(Entity e) {
         Entity nearest = null;
         float maxDist = Float.MAX_VALUE;
-        List<Entity> collidables = retrieve(e);
+        LinkedList<Entity> collidables = retrieve(e);
         
         for (Entity toCheck : collidables) {
             Vector2f diff = Vector2f.sub(toCheck.getPos(), e.getPos());
@@ -108,7 +117,7 @@ public class Grid {
         return nearest;
     }
 
-    private List<Entity> retrieve(Entity e) {
+    private LinkedList<Entity> retrieve(Entity e) {
 
         retrieveList.clear();
         
@@ -123,7 +132,7 @@ public class Grid {
         
         for (int x = (int)topLeftX; x <= bottomRightX; x++) {
             for (int y = (int)topLeftY; y <= bottomRightY; y++) {
-                List<Entity> cell = grid[x][y]; 
+                LinkedList<Entity> cell = grid[x][y]; 
                 for (Entity ent : cell) {
                     if (!retrieveList.contains(ent)) {
                         retrieveList.add(ent);

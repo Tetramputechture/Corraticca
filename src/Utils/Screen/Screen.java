@@ -8,7 +8,6 @@ package coratticca.Utils.Screen;
 import coratticca.Utils.Button;
 import coratticca.Utils.Window;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.jsfml.graphics.Color;
 
@@ -34,6 +33,8 @@ public abstract class Screen {
      */
     public abstract void show();
     
+    public abstract ScreenName getName();
+    
     public Window getWindow() {
         return window;
     }
@@ -43,7 +44,7 @@ public abstract class Screen {
      * @return a List containing the screen's buttons.
      */
     public List<Button> getButtons() {
-        return Collections.unmodifiableList(buttons);
+        return buttons;
     }
 
     /**
@@ -52,8 +53,6 @@ public abstract class Screen {
     public Color getBgColor() {
         return bgColor;
     }
-    
-    public abstract ScreenName getName();
         
     /**
      * @param bgColor the bgColor to set

@@ -22,22 +22,22 @@ public class MainMenuScreen extends Screen {
 
     public MainMenuScreen(Window w) {
         super(w);
-        super.setBgColor(Color.BLACK);
+        setBgColor(Color.BLACK);
         
         // add play button
-        super.window.getRenderWindow().setMouseCursorVisible(true);
-        buttons.add(new Button( super.window,
-                                new Vector2f(super.window.getSize().x/2, 
-                                super.window.getSize().y/2-80),
+        window.getRenderWindow().setMouseCursorVisible(true);
+        buttons.add(new Button( window,
+                                new Vector2f(window.getSize().x/2, 
+                                window.getSize().y/2-80),
                                 52, 
                                 "Play!", 
                                 "fonts/OpenSans-Regular.ttf", 
                                 Color.WHITE,
                                 new ChangeToGameScreenAction()));
         
-        buttons.add(new Button( super.window,
-                                new Vector2f(super.window.getSize().x/2, 
-                                super.window.getSize().y/2+20),
+        buttons.add(new Button( window,
+                                new Vector2f(window.getSize().x/2, 
+                                window.getSize().y/2+20),
                                 52, 
                                 "Exit!", 
                                 "fonts/OpenSans-Regular.ttf", 
@@ -47,13 +47,13 @@ public class MainMenuScreen extends Screen {
    
     @Override
     public void show() {
-        super.window.getRenderWindow().clear(super.getBgColor());
+        window.getRenderWindow().clear(getBgColor());
         
         for (Button b : buttons) {
             b.draw();
         }
 
-        super.window.getRenderWindow().display();
+        window.getRenderWindow().display();
     }
     
     @Override

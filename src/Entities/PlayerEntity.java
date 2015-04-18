@@ -5,11 +5,14 @@
  */
 package coratticca.Entities;
 
+import coratticca.Utils.CPhysics;
 import coratticca.Utils.CSprite;
 import coratticca.Utils.CPrecache;
 import coratticca.Utils.CVector;
+import coratticca.Utils.Grid;
 import coratticca.Utils.Screen.GameScreen;
 import coratticca.Utils.Screen.GameLostScreen;
+import coratticca.Utils.Window;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -33,11 +36,16 @@ public final class PlayerEntity extends Entity {
     private final int maxHealth;
     private int currentHealth;
     
-    public PlayerEntity(GameScreen g, Vector2f pos) {
-        super(g, pos);
+    private final Window window;
+    
+    public PlayerEntity(Window window, Vector2f pos) {
+        super(pos);
+        initSprite();
+                
+        this.window = window;
         
-        super.velocity = Vector2f.ZERO;
-        
+        velocity = Vector2f.ZERO;
+               
         // set movement variables
         maxMoveSpeed = 120;
         accelRate = 20;
@@ -69,26 +77,26 @@ public final class PlayerEntity extends Entity {
         Vector2f acc = target;
         
         // integrate acceleration to get velocity
-        super.velocity = Vector2f.add(super.velocity, Vector2f.mul(acc, dt));
+        velocity = Vector2f.add(velocity, Vector2f.mul(acc, dt));
 
         // limit velocity vector to maxMoveSpeed
-        float speed = CVector.length(super.velocity);
+        float speed = CVector.length(velocity);
         if (speed > maxMoveSpeed) {
-            super.velocity = Vector2f.div(super.velocity, speed);
-            super.velocity = Vector2f.mul(super.velocity, maxMoveSpeed);
+            velocity = Vector2f.div(velocity, speed);
+            velocity = Vector2f.mul(velocity, maxMoveSpeed);
         }
 
         // set velocity
-        pos = Vector2f.add(pos, super.velocity);
+        pos = Vector2f.add(pos, velocity);
         
         // apply friction
-        super.velocity = Vector2f.mul(super.velocity, fConst);
+        velocity = Vector2f.mul(velocity, fConst);
         
-        super.sprite.setPosition(pos);
+        sprite.setPosition(pos);
         
         // set player angle based on mouse position
-        Vector2f mousePos = game.getWindow().getInputHandler().getMousePos();
-        Vector2i truePos = game.getWindow().getRenderWindow().mapCoordsToPixel(pos);
+        Vector2f mousePos = window.getInputHandler().getMousePos();
+        Vector2i truePos = window.getRenderWindow().mapCoordsToPixel(pos);
         angle = Math.atan2( mousePos.y - truePos.y, 
                             mousePos.x - truePos.x);
         
@@ -97,32 +105,33 @@ public final class PlayerEntity extends Entity {
             angle += 360;
         }
         
-        super.sprite.setRotation(90 + (float)angle);
+        sprite.setRotation(90 + (float)angle);
     }
     
     @Override
-    public Sprite initSprite() {
+    public void initSprite() {
         Texture t = CPrecache.getPlayerTexture();
-        t.setSmooth(true);
         Sprite s = new Sprite(t);
         CSprite.setOriginAtCenter(s, t);
-        return s;
+        
+        sprite = s;
+        sprite.setPosition(pos);
     }
     
     @Override
-    public void detectCollisions(float dt) {
-        if (isOutOfBounds()) {
-            handleOutOfBounds();
+    public void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt) {
+        if (isOutOfBounds(grid)) {
+            handleOutOfBounds(grid);
         }
     }
     
     @Override
-    public boolean isOutOfBounds() {
-        float gWidth = game.getBounds().x;
-        float gHeight = game.getBounds().y;
+    public boolean isOutOfBounds(Grid grid) {
+        float gWidth = grid.getSize().x;
+        float gHeight = grid.getSize().y;
         
-        float pAdjustedWidth = super.sprite.getLocalBounds().width * .9f;
-        float pAdjustedHeight = super.sprite.getLocalBounds().height * .9f;
+        float pAdjustedWidth = sprite.getLocalBounds().width * .9f;
+        float pAdjustedHeight = sprite.getLocalBounds().height * .9f;
         
         return (pos.x > gWidth - pAdjustedWidth ||
                 pos.x < -gWidth + pAdjustedWidth ||
@@ -130,26 +139,16 @@ public final class PlayerEntity extends Entity {
                 pos.y < -gHeight + pAdjustedHeight);
     }
     
-    /**
-     * Resets the player's position, velocity, and health.
-     */
-    public void reset() {
-        super.velocity = Vector2f.ZERO;
-        currentHealth = maxHealth;
-    }
-    
-    /**
-     * Handles if the player collided with a wall.
-     */
-    public void handleOutOfBounds() {
+    @Override
+    public void handleOutOfBounds(Grid grid) {
         float tx = -1;
         float ty = -1;
         
-        float gWidth = game.getBounds().x;
-        float gHeight = game.getBounds().y;
+        float gWidth = grid.getSize().x;
+        float gHeight = grid.getSize().y;
         
-        float pAdjustedWidth = super.sprite.getLocalBounds().width * .9f;
-        float pAdjustedHeight = super.sprite.getLocalBounds().height * .9f;
+        float pAdjustedWidth = sprite.getLocalBounds().width * .9f;
+        float pAdjustedHeight = sprite.getLocalBounds().height * .9f;
         
         if (pos.x > gWidth - pAdjustedWidth) {
             tx = gWidth - pAdjustedWidth;
@@ -170,18 +169,14 @@ public final class PlayerEntity extends Entity {
         }
     }
     
-    /**
-     * If the player should be removed.
-     * @return if the enemy has no health, and therefore should be removed.
-     */
     @Override
-    public boolean toBeRemoved() {
+    public boolean toBeRemoved(Grid grid) {
         return currentHealth <= 0;
     }
     
     @Override
-    public void handleRemoval() {
-        getWindow().changeScreen(new GameLostScreen(game));
+    public void handleRemoval(GameScreen g) {
+        window.changeScreen(new GameLostScreen(g));
     }
     
     /**

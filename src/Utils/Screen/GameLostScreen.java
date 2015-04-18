@@ -21,15 +21,15 @@ public class GameLostScreen extends Screen {
         
         super(g.getWindow());
         
-        super.setBgColor(Color.BLACK);
+        setBgColor(Color.BLACK);
         
         // cursor must be visible
-        super.window.getRenderWindow().setMouseCursorVisible(true);
+        window.getRenderWindow().setMouseCursorVisible(true);
         
         // add game lost text
-        buttons.add(new Button( super.window,
-                                new Vector2f(super.window.getSize().x/2,
-                                super.window.getSize().y/2 - 50),
+        buttons.add(new Button( window,
+                                new Vector2f(window.getSize().x/2,
+                                window.getSize().y/2 - 50),
                                 48,
                                 "Game Lost! :(",
                                 "fonts/OpenSans-Regular.ttf",
@@ -38,8 +38,8 @@ public class GameLostScreen extends Screen {
         
         // add exit button
         buttons.add(new Button( window,
-                                new Vector2f(super.window.getSize().x/2, 
-                                super.window.getSize().y/2 + 50),
+                                new Vector2f(window.getSize().x/2, 
+                                window.getSize().y/2 + 50),
                                 24, 
                                 "Exit to Main Menu", 
                                 "fonts/OpenSans-Regular.ttf", 
@@ -48,8 +48,8 @@ public class GameLostScreen extends Screen {
         
         // add new game button
         buttons.add(new Button( window,
-                                new Vector2f(super.window.getSize().x/2,
-                                super.window.getSize().y/2 + 100),
+                                new Vector2f(window.getSize().x/2,
+                                window.getSize().y/2 + 100),
                                 24,
                                 "New Game",
                                 "fonts/OpenSans-Regular.ttf",
@@ -58,8 +58,8 @@ public class GameLostScreen extends Screen {
         
         // add stats text
         buttons.add(new Button( window,
-                                new Vector2f(super.window.getSize().x - 100,
-                                super.window.getSize().y/2 + 200),
+                                new Vector2f(window.getSize().x - 100,
+                                window.getSize().y/2 + 200),
                                 18,
                                 String.format("Asteroids blasted: %s\n"
                                         + "Shots fired: %s\n"
@@ -75,13 +75,13 @@ public class GameLostScreen extends Screen {
     @Override
     public void show() {
         
-        super.window.getRenderWindow().clear(super.getBgColor());
+        window.getRenderWindow().clear(getBgColor());
         
         for (Button i : buttons) {
             i.draw();
         }
 
-        super.window.getRenderWindow().display();
+        window.getRenderWindow().display();
     }
     
     @Override

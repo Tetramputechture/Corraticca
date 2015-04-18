@@ -11,7 +11,7 @@ import coratticca.Utils.Window;
  *
  * @author Nick
  */
-public class ExitGameAction extends Action {
+public class ExitGameAction implements Action {
 
     @Override
     public void execute(Window w) {

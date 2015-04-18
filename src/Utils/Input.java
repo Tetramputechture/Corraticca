@@ -7,9 +7,12 @@ package coratticca.Utils;
 
 import coratticca.Actions.FireAction;
 import coratticca.Actions.ChangeToPauseMenuScreenAction;
-import coratticca.Actions.ChangeToMainMenuScreenAction;
 import coratticca.Actions.Action;
+import coratticca.Actions.ChangeToGameScreenAction;
 import coratticca.Utils.Screen.GameScreen;
+import coratticca.Utils.Screen.MainMenuScreen;
+import coratticca.Utils.Screen.PauseMenuScreen;
+import coratticca.Utils.Screen.Screen;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,14 +71,20 @@ public class Input {
     public void handleKeyInput(KeyEvent keyEvent) {
 
         currentKey = keyEvent.key;
+        
+        Screen currentScreen = window.getCurrentScreen();
 
         switch (window.getCurrentScreenName()) {
             case MAIN_MENU_SCREEN:
-                handleMainMenuKeyInput();
+                handleMainMenuKeyInput((MainMenuScreen)currentScreen);
                 break;
 
             case GAME_SCREEN:
-                handleGameKeyInput();
+                handleGameKeyInput((GameScreen)currentScreen);
+                break;
+                
+            case PAUSE_MENU_SCREEN:
+                handlePauseMenuKeyInput((PauseMenuScreen)currentScreen);
                 break;
 
             default:
@@ -85,9 +94,9 @@ public class Input {
 
     /**
      * handles Main Menu key input.
+     * @param m the main menu to handle the input
      */
-    public void handleMainMenuKeyInput() {
-
+    public void handleMainMenuKeyInput(MainMenuScreen m) {
         switch (currentKey) {
             // TO DO
         }
@@ -95,18 +104,24 @@ public class Input {
 
     /**
      * handles Game key input.
+     * @param g the game to handle the input
      */
-    public void handleGameKeyInput() {
+    public void handleGameKeyInput(GameScreen g) {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            new ChangeToPauseMenuScreenAction((GameScreen) window.getCurrentScreen()).execute(window);
+            new ChangeToPauseMenuScreenAction(g).execute(window);
         } else if (gameKeys.containsKey(currentKey)) {
             gameKeys.get(currentKey).execute(window);
+        }
+    }
+    
+    public void handlePauseMenuKeyInput(PauseMenuScreen p) {
+        if (currentKey == Keyboard.Key.ESCAPE) {
+            new ChangeToGameScreenAction(p.getPreviousGameScreen()).execute(window);
         }
     }
 
     /**
      * Handles mouse click input.
-     *
      * @param mouseEvent the Mouse Event to be handled.
      */
     public void handleMouseClickInput(MouseButtonEvent mouseEvent) {
@@ -136,7 +151,6 @@ public class Input {
 
     /**
      * Handles mouse move input.
-     *
      * @param mouseEvent the Mouse Event to be handled.
      */
     public void handleMouseMoveInput(MouseEvent mouseEvent) {
@@ -156,7 +170,6 @@ public class Input {
 
     /**
      * Sets the mouse position for a specified mouse event.
-     *
      * @param mouseEvent the mouse event to get position from.
      */
     private void setMousePosition(MouseEvent mouseEvent) {
@@ -166,7 +179,6 @@ public class Input {
 
     /**
      * Sets the inputs from a file.
-     *
      * @throws FileNotFoundException
      * @throws IOException
      */
