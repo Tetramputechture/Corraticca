@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.widget;
 
 import coratticca.util.widget.widgetListener.CClickListener;
@@ -21,6 +16,8 @@ import org.jsfml.system.Vector2f;
  * @author Nick
  */
 public class CButton extends CFrame {
+    
+    private final Color defaultTextColor;
 
     /**
      * Constructs a new CButton, and fits its size to according to the Text.
@@ -38,11 +35,16 @@ public class CButton extends CFrame {
             Color backgroundColor) {
         
         super(position, text, view, borderColor, backgroundColor);
+        defaultTextColor = text.getColor();
     }
     
     @Override
     public void draw(RenderTarget rt, RenderStates states) {
         super.draw(rt, states);
+    }
+    
+    public Color getDefaultTextColor() {
+        return defaultTextColor;
     }
 
     /**
@@ -141,6 +143,8 @@ public class CButton extends CFrame {
         }
 
         selectListener.select(this);
+        
+        clearSelected();
     }
     
     public void notifyUnselectListener() {

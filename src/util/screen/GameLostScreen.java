@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.screen;
 
 import coratticca.action.ChangeToGameScreenAction;
+import coratticca.action.ChangeToMainMenuScreenAction;
 import coratticca.util.widget.CButton;
 import coratticca.util.CPrecache;
-import coratticca.util.widget.CFrame;
+import coratticca.util.CText;
+import coratticca.util.widget.CStandardSelectListener;
 import coratticca.util.widget.CWidget;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
@@ -35,13 +32,16 @@ public class GameLostScreen extends Screen {
         
         Text gameLostText = new Text("Game Lost! :(", font, 72);
         gameLostText.setColor(Color.WHITE);
+        CText.setOriginToCenter(gameLostText);
         
         Text exitText = new Text("Exit To Main Menu", font, fontSize);
         exitText.setColor(Color.WHITE);
+        CText.setOriginToCenter(exitText);
         
         Text newGameText = new Text("New Game", font, fontSize);
         newGameText.setColor(Color.WHITE);
-        
+        CText.setOriginToCenter(newGameText);
+
         Text statsText = new Text(String.format("Asteroids blasted: %s\n"
                                         + "Shots fired: %s\n"
                                         + "Accuracy: %.4f", 
@@ -49,28 +49,28 @@ public class GameLostScreen extends Screen {
                                         g.getShotsFired(), 
                                         g.getAccuracy()),
                                   font,
-                                  fontSize);
+                                  fontSize-5);
         statsText.setColor(Color.WHITE);
+        CText.setOriginToCenter(statsText);
         
         // add game lost text
-        CFrame gameLostFrame = new CFrame(new Vector2f(halfWidth,
+        CWidget gameLostWidget = new CWidget(new Vector2f(halfWidth,
                                 halfHeight - 50),
                                 gameLostText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        widgets.add(gameLostFrame);
+                                null);
+        widgets.add(gameLostWidget);
         
         // add exit button
         CButton exitButton = new CButton(new Vector2f(halfWidth, 
                                 halfHeight + 50),
                                 exitText,
                                 null,
-                                Color.WHITE,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         exitButton.addClickListener((CButton b) -> {
-            g.getWindow().getRenderWindow().close();
+            new ChangeToMainMenuScreenAction().execute(g.getWindow());
         });
+        exitButton.addSelectListener(new CStandardSelectListener(Color.RED, g.getWindow()));
         widgets.add(exitButton);
         
         // add new game button
@@ -78,22 +78,21 @@ public class GameLostScreen extends Screen {
                                 halfHeight + 100),
                                 newGameText,
                                 null,
-                                Color.WHITE,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         newGameButton.addClickListener((CButton b) -> {
             new ChangeToGameScreenAction().execute(g.getWindow());
         });
+        newGameButton.addSelectListener(new CStandardSelectListener(Color.RED, g.getWindow()));
         widgets.add(newGameButton);
         
         
         // add stats text
-        CFrame statsFrame = new CFrame(new Vector2f(halfWidth*2 - 100,
+        CWidget statsWidget = new CWidget(new Vector2f(halfWidth*2 - 100,
                                 halfHeight + 200),
                                 statsText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        widgets.add(statsFrame);
+                                null);
+        widgets.add(statsWidget);
         
     }
 

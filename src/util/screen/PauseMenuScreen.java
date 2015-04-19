@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.screen;
 
 import coratticca.util.widget.CButton;
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.action.ChangeToMainMenuScreenAction;
 import coratticca.util.CPrecache;
+import coratticca.util.CText;
+import coratticca.util.widget.CStandardSelectListener;
 import coratticca.util.widget.CWidget;
-import coratticca.util.widget.widgetListener.CClickListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
@@ -46,30 +42,34 @@ public class PauseMenuScreen extends Screen {
         
         Text exitText = new Text("Exit to Main Menu", font, fontSize);
         exitText.setColor(Color.WHITE);
+        CText.setOriginToCenter(exitText);
         
         Text resumeText = new Text("Resume Game", font, fontSize);
         resumeText.setColor(Color.WHITE);
+        CText.setOriginToCenter(resumeText);
         
         // add exit button
         CButton exitButton = new CButton(new Vector2f(halfWidth, halfHeight-100),
                                 exitText,
                                 null,
-                                Color.WHITE,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         exitButton.addClickListener((CButton b) -> {
-            System.out.println("Changing to main menu...");
+            new ChangeToMainMenuScreenAction().execute(game.getWindow());
         });
+        exitButton.addSelectListener(new CStandardSelectListener(Color.RED, game.getWindow()));
         widgets.add(exitButton);
         
         // add resume game button
         CButton resumeButton = new CButton(new Vector2f(halfWidth, halfHeight + 100),
                                 resumeText,
                                 null,
-                                Color.WHITE,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         resumeButton.addClickListener((CButton b) -> {
             new ChangeToGameScreenAction(game).execute(game.getWindow());
         });
+        resumeButton.addSelectListener(new CStandardSelectListener(Color.RED, game.getWindow()));
         widgets.add(resumeButton);
         
         // init background sprite

@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.widget;
 
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
@@ -61,12 +57,16 @@ public class CFrame extends CWidget {
      * Initializes the border rectangle via borderColor and backgroundColor.
      */
     private void initBorderRect() {
-        borderRect = new RectangleShape(size);
+        borderRect = new RectangleShape();
+       
+        FloatRect textRect = text.getGlobalBounds();
+        
         borderRect.setOrigin(text.getOrigin());
-        borderRect.setPosition(text.getPosition());
+        borderRect.setPosition(textRect.left, textRect.top-12);
+        borderRect.setSize(new Vector2f(size.x, size.y+23));
         borderRect.setOutlineColor(borderColor);
         borderRect.setFillColor(backgroundColor);
-        borderRect.setOutlineThickness(1);
+        borderRect.setOutlineThickness(5);
     }
     
     @Override

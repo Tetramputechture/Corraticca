@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util;
 
 import coratticca.util.widget.CButton;
@@ -126,8 +121,6 @@ public class Input {
      * @param mouseEvent the Mouse Event to be handled.
      */
     public void handleMouseClickInput(MouseButtonEvent mouseEvent, Window window) {
-        
-        System.out.println("Mouse Clicked!");
 
         setMousePosition(mouseEvent, window);
         currentMouseButton = mouseEvent.button;
@@ -169,7 +162,6 @@ public class Input {
                     b.notifySelectListener();
                     return;
                 } else {
-                    b.clearSelected();
                     b.notifyUnselectListener();
                 }
             } 

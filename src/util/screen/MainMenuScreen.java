@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.screen;
 
 import coratticca.util.Window;
@@ -10,9 +5,9 @@ import coratticca.util.widget.CButton;
 import coratticca.action.ExitGameAction;
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.util.CPrecache;
-import coratticca.util.widget.CFrame;
+import coratticca.util.CText;
+import coratticca.util.widget.CStandardSelectListener;
 import coratticca.util.widget.CWidget;
-import coratticca.util.widget.widgetListener.CSelectListener;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
@@ -37,42 +32,34 @@ public class MainMenuScreen extends Screen {
 
         Text playText = new Text("Play!", font, fontSize);
         playText.setColor(Color.WHITE);
+        CText.setOriginToCenter(playText);
         
         Text exitText = new Text("Exit!", font, fontSize);
         exitText.setColor(Color.WHITE);
+        CText.setOriginToCenter(exitText);
         
         CButton playButton = new CButton(new Vector2f(halfWidth, halfHeight-80),
                                 playText,
                                 null,
-                                Color.RED,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         playButton.addClickListener((CButton b) -> { 
             new ChangeToGameScreenAction().execute(w);
         });
-        playButton.addSelectListener(new CSelectListener() {
-
-            @Override
-            public void select(CButton button) {
-                button.setTextColor(Color.RED);
-            }
-
-            @Override
-            public void unselect(CButton button) {
-                button.setTextColor(Color.WHITE);
-            }
-           
-        });
+        playButton.addSelectListener(new CStandardSelectListener(Color.RED, w));
         
         widgets.add(playButton);
         
         CButton exitButton = new CButton(new Vector2f(halfWidth, halfHeight+20),
                                 exitText,
                                 null,
-                                Color.RED,
+                                Color.TRANSPARENT,
                                 Color.TRANSPARENT);
         exitButton.addClickListener((CButton b) -> {
             new ExitGameAction().execute(w);
         });
+        
+        exitButton.addSelectListener(new CStandardSelectListener(Color.RED, w));
         
         widgets.add(exitButton);
     }

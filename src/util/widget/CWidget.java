@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.widget;
 
 import org.jsfml.graphics.Color;
@@ -20,12 +15,14 @@ import org.jsfml.system.Vector2f;
  *
  * @author Nick
  */
-public abstract class CWidget implements Drawable  {
-
+public class CWidget implements Drawable  {
+    
+    
     /**
-     * The position of this CWidget.
+     * The Text object used by this CWidget. 
      */
-    protected Vector2f position;
+    protected Text text;
+
 
     /**
      * The size of this CWidget.
@@ -36,12 +33,6 @@ public abstract class CWidget implements Drawable  {
      * The bounding rectangle of this CWidget.
      */
     protected FloatRect boundingRect;
-
-    /**
-     * The Text object used by this CWidget. 
-     */
-    protected Text text;
-
     
     /**
      * The View this CWidget is parented to.
@@ -57,7 +48,6 @@ public abstract class CWidget implements Drawable  {
      * @param view the View this CWidget is parented to. Can be null.
      */
     public CWidget(Vector2f position, Text text, View view) {
-        this.position = position;
         this.text = text;
         this.text.setPosition(position);
         this.view = view;

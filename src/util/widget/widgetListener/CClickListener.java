@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.widget.widgetListener;
 
 import coratticca.util.widget.CButton;
@@ -12,7 +7,7 @@ import coratticca.util.widget.CButton;
  * change.
  * @author Nick
  */
-public interface CClickListener  {
+public interface CClickListener extends CListener  {
     
     /**
      * Called whenever the listener object is changed. 

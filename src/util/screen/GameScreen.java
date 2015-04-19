@@ -1,22 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package coratticca.util.screen;
 
 import coratticca.entity.AsteroidEntity;
 import coratticca.entity.BulletEntity;
 import coratticca.entity.PlayerEntity;
 import coratticca.entity.Entity;
-import coratticca.util.widget.CButton;
 import coratticca.util.CPhysics;
 import coratticca.util.CRandom;
 import coratticca.util.CPrecache;
 import coratticca.util.Camera;
 import coratticca.util.Grid;
 import coratticca.util.Window;
-import coratticca.util.widget.CFrame;
 import coratticca.util.widget.CWidget;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,37 +113,29 @@ public final class GameScreen extends Screen {
         entityCountText.setColor(Color.WHITE);
         
         // health text
-        CFrame healthFrame = new CFrame(new Vector2f((int) player.getPos().x + playerHealthIconOffset,
+        CWidget healthWidget = new CWidget(new Vector2f((int) player.getPos().x + playerHealthIconOffset,
                         (int) player.getPos().y - playerHealthIconOffset),
                 healthText,
-                camera.getView(),
-                Color.TRANSPARENT,
-                Color.TRANSPARENT);
-        widgets.add(healthFrame);
+                camera.getView());
+        widgets.add(healthWidget);
 
         // score text
-        CFrame scoreFrame = new CFrame(new Vector2f(0, 5),
+        CWidget scoreWidget = new CWidget(new Vector2f(5, 5),
                 scoreText,
-                null,
-                Color.TRANSPARENT,
-                Color.TRANSPARENT);
-        widgets.add(scoreFrame);
+                null);
+        widgets.add(scoreWidget);
 
         // player position debug text
-        CFrame posFrame = new CFrame(new Vector2f(0, 415),
+        CWidget posWidget = new CWidget(new Vector2f(5, 415),
                 posText,
-                null,
-                Color.TRANSPARENT,
-                Color.TRANSPARENT);
-        widgets.add(posFrame);
+                null);
+        widgets.add(posWidget);
         
         // entity count debug text
-        CFrame entityCountFrame = new CFrame(new Vector2f(0, 450),
+        CWidget entityCountWidget = new CWidget(new Vector2f(5, 450),
                 entityCountText,
-                null,
-                Color.TRANSPARENT,
-                Color.TRANSPARENT);
-        widgets.add(entityCountFrame);
+                null);
+        widgets.add(entityCountWidget);
     }
 
     /**
