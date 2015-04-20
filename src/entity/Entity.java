@@ -1,8 +1,8 @@
 package coratticca.entity;
 
-import coratticca.util.CSprite;
+import coratticca.util.SpriteUtils;
 import coratticca.util.AABB;
-import coratticca.util.CPhysics;
+import coratticca.util.PhysicsHandler;
 import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import org.jsfml.graphics.Drawable;
@@ -43,7 +43,7 @@ public abstract class Entity implements Drawable {
     }
     
     /**
-     * Initializes the Sprite of the current Entity.
+     * Initializes the SpriteUtils of the current Entity.
      */
     public abstract void initSprite();
 
@@ -59,7 +59,7 @@ public abstract class Entity implements Drawable {
      * @param physics the physics handler to handle the collisions.
      * @param dt the difference in frametime from last update.
      */
-    public abstract void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt);
+    public abstract void detectAndHandleCollisions(Grid grid, PhysicsHandler physics, float dt);
 
     /**
      * If bullet should be removed from the grid.
@@ -105,7 +105,7 @@ public abstract class Entity implements Drawable {
      * @return
      */
     public AABB getBounds() {
-        return CSprite.globalBoundsToAABB(sprite);
+        return SpriteUtils.globalBoundsToAABB(sprite);
     }
     
     /**

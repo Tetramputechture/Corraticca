@@ -1,12 +1,16 @@
 package coratticca.util.screen;
 
-import coratticca.util.widget.CButton;
+import coratticca.util.widget.Button;
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.action.ChangeToMainMenuScreenAction;
-import coratticca.util.CPrecache;
-import coratticca.util.CText;
-import coratticca.util.widget.CStandardSelectListener;
-import coratticca.util.widget.CWidget;
+import coratticca.util.Audio;
+import coratticca.util.Precache;
+import coratticca.util.TextUtils;
+import coratticca.util.Window;
+import coratticca.util.widget.Label;
+import coratticca.util.widget.Widget;
+import coratticca.util.widget.widgetListener.ButtonAdapter;
+import coratticca.util.widget.widgetListener.MouseAdapter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
@@ -17,63 +21,61 @@ import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Text;
 import org.jsfml.graphics.Texture;
 import org.jsfml.graphics.TextureCreationException;
-import org.jsfml.system.Vector2f;
 
 /**
  * The Pause Menu screen.
+ *
  * @author Nick
  */
 public class PauseMenuScreen extends Screen {
-    
+
     private final Sprite backgroundSprite;
-    
+
     private final GameScreen previousGameScreen;
-    
+
     public PauseMenuScreen(GameScreen game) {
         super(Color.BLACK);
-        
+
         previousGameScreen = game;
-        
+
+        Window gameWindow = game.getWindow();
+        Audio gameAudio = gameWindow.getAudioHandler();
+
         int halfWidth = 320;
         int halfHeight = 240;
-        
-        Font font = CPrecache.getOpenSansFont();
+
+        Font font = Precache.getOpenSansFont();
         int fontSize = 24;
-        
+
+        // add exit button
         Text exitText = new Text("Exit to Main Menu", font, fontSize);
         exitText.setColor(Color.WHITE);
-        CText.setOriginToCenter(exitText);
+        TextUtils.setOriginToCenter(exitText);
+        exitText.setPosition(halfWidth, halfHeight - 100);
+
+        Button exitButton = new Button(exitText);
+        exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        Text resumeText = new Text("Resume Game", font, fontSize);
-        resumeText.setColor(Color.WHITE);
-        CText.setOriginToCenter(resumeText);
+        MouseAdapter exitAdapter = new ButtonAdapter(new ChangeToMainMenuScreenAction(gameWindow), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        exitButton.addMouseListener(exitAdapter);
         
-        // add exit button
-        CButton exitButton = new CButton(new Vector2f(halfWidth, halfHeight-100),
-                                exitText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        exitButton.addClickListener((CButton b) -> {
-            new ChangeToMainMenuScreenAction().execute(game.getWindow());
-        });
-        exitButton.addSelectListener(new CStandardSelectListener(Color.RED, game.getWindow()));
         widgets.add(exitButton);
-        
+
+        // add resume button
+        Text resumeText = new Text("Resume Game", font, fontSize);
+        TextUtils.setOriginToCenter(resumeText);
+        resumeText.setPosition(halfWidth, halfHeight + 100);
+        resumeText.setColor(Color.WHITE);
+
         // add resume game button
-        CButton resumeButton = new CButton(new Vector2f(halfWidth, halfHeight + 100),
-                                resumeText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        resumeButton.addClickListener((CButton b) -> {
-            new ChangeToGameScreenAction(game).execute(game.getWindow());
-        });
-        resumeButton.addSelectListener(new CStandardSelectListener(Color.RED, game.getWindow()));
+        Button resumeButton = new Button(resumeText);
+        resumeButton.getFrame().setBorderColor(Color.TRANSPARENT);
+                
+        MouseAdapter resumeAdapter = new ButtonAdapter(new ChangeToGameScreenAction(gameWindow, game), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        resumeButton.addMouseListener(resumeAdapter);
         widgets.add(resumeButton);
-        
+
         // init background sprite
-        
         Texture backgroundTexture = new Texture();
         try {
             backgroundTexture.loadFromImage(game.getBGImage());
@@ -82,28 +84,27 @@ public class PauseMenuScreen extends Screen {
         }
         backgroundSprite = new Sprite(backgroundTexture);
     }
-    
+
     @Override
     public void draw(RenderTarget rt, RenderStates states) {
         // need to show the cursor
-        ((org.jsfml.window.Window)rt).setMouseCursorVisible(true);
+        ((org.jsfml.window.Window) rt).setMouseCursorVisible(true);
         rt.clear(bgColor);
         backgroundSprite.draw(rt, states);
-        
-        for (CWidget w : widgets) {
+
+        for (Widget w : widgets) {
             w.draw(rt, states);
         }
-        ((org.jsfml.window.Window)rt).display();
+        ((org.jsfml.window.Window) rt).display();
     }
-    
+
     public GameScreen getPreviousGameScreen() {
         return previousGameScreen;
     }
-   
+
     @Override
     public ScreenName getName() {
         return ScreenName.PAUSE_MENU_SCREEN;
     }
-
 
 }

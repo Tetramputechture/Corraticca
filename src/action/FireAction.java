@@ -10,29 +10,30 @@ import org.jsfml.system.Vector2f;
  * Action to create a bullet entity.
  * @author Nick
  */
-public class FireAction implements Action {
+public class FireAction extends Action {
     
     private final int fireSpeed;
     
     private final float playerVelocityScalar;
     
-    public FireAction() {
+    public FireAction(Window window) {
+        super(window);
         fireSpeed = 500;
         playerVelocityScalar = 40;
     }
     
     @Override
-    public void execute(Window w) {
+    public void execute() {
         
         GameScreen g;
         // double check if the current screen is a gamescreen
-        if (w.getCurrentScreen() instanceof GameScreen) {
-            g = (GameScreen) w.getCurrentScreen();
+        if (window.getCurrentScreen() instanceof GameScreen) {
+            g = (GameScreen) window.getCurrentScreen();
         } else {
             return;
         }
 
-        w.getAudioHandler().playSound("sounds/firesound.wav", 1);
+        window.getAudioHandler().playSound("sounds/firesound.wav", 1);
         
         PlayerEntity player = g.getCurrentPlayer();
         float playerRotation = player.getRotation();

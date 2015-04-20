@@ -39,14 +39,11 @@ public final class Window {
         
         renderWindow.setVerticalSyncEnabled(true);
         
-        currentScreen = new MainMenuScreen(this);
-        
         inputHandler = new Input();
         
         audioHandler = new Audio();
         
-        // set the inputs
-        inputHandler.setInputs();
+        currentScreen = new MainMenuScreen(this);
     }
    
     

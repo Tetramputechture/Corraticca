@@ -9,7 +9,7 @@ import org.jsfml.system.Vector2f;
  * Useful functions for sprites.
  * @author Nick
  */
-public class CSprite {
+public class SpriteUtils {
     
     public static void setOriginAtCenter(Sprite s, Texture t) {
         s.setOrigin(Vector2f.div(new Vector2f(t.getSize()), 2));

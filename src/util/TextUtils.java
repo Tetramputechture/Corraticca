@@ -4,10 +4,10 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Text;
 
 /**
- * A few useful functions for Text objects.
+ * A few useful functions for TextUtils objects.
  * @author Nick
  */
-public class CText {
+public class TextUtils {
     
     public static void setOriginToCenter(Text text) {
         FloatRect textbounds = text.getLocalBounds();

@@ -1,0 +1,58 @@
+package coratticca.util.widget;
+
+import org.jsfml.graphics.Color;
+import org.jsfml.graphics.FloatRect;
+import org.jsfml.graphics.RectangleShape;
+import org.jsfml.graphics.RenderStates;
+import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Vector2f;
+
+/**
+ * A Widget that has a border and a fill color.
+ *
+ * @author Nick
+ */
+public class Frame extends Widget {
+
+    private final RectangleShape borderRect;
+
+    private final FloatRect boundingRect;
+
+    public Frame(RectangleShape borderRect, Color fillColor) {
+        this.borderRect = borderRect;
+        this.borderRect.setFillColor(fillColor);
+        
+        boundingRect = borderRect.getGlobalBounds();
+    }
+
+    @Override
+    public void draw(RenderTarget rt, RenderStates states) {
+        if (view != null) {
+            rt.setView(view);
+            rt.draw(borderRect);
+            rt.setView(rt.getDefaultView());
+        } else {
+            rt.draw(borderRect);
+        }
+    }
+    
+    public void setBorderColor(Color color) {
+        borderRect.setOutlineColor(color);
+    }
+    
+    public Color getBorderColor() {
+        return borderRect.getOutlineColor();
+    }
+    
+    public void setFillColor(Color color) {
+        borderRect.setFillColor(color);
+    }
+    
+    public Color getFillColor() {
+        return borderRect.getFillColor();
+    }
+
+    public boolean contains(Vector2f v) {
+        return boundingRect.contains(v);
+    }
+}

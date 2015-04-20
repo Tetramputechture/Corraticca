@@ -1,10 +1,10 @@
 package coratticca.entity;
 
-import coratticca.util.CPhysics;
-import coratticca.util.CPrecache;
-import coratticca.util.CRandom;
-import coratticca.util.CSprite;
-import coratticca.util.CVector;
+import coratticca.util.PhysicsHandler;
+import coratticca.util.Precache;
+import coratticca.util.RandomUtils;
+import coratticca.util.SpriteUtils;
+import coratticca.util.Vector;
 import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import org.jsfml.graphics.Sprite;
@@ -44,7 +44,7 @@ public final class AsteroidEntity extends Entity {
         initSprite();
 
         // for some random calculations
-        CRandom rand = new CRandom();
+        RandomUtils rand = new RandomUtils();
 
         // set random angle
         sprite.setRotation(rand.randInt(0, 360));
@@ -69,12 +69,12 @@ public final class AsteroidEntity extends Entity {
     public void initSprite() {
         Texture t;
         if (Math.random() < 0.5) {
-            t = CPrecache.getAsteroidTextureA();
+            t = Precache.getAsteroidTextureA();
         } else {
-            t = CPrecache.getAsteroidTextureB();
+            t = Precache.getAsteroidTextureB();
         }
         Sprite s = new Sprite(t);
-        CSprite.setOriginAtCenter(s, t);
+        SpriteUtils.setOriginAtCenter(s, t);
 
         sprite = s;
         sprite.setPosition(pos);
@@ -87,7 +87,7 @@ public final class AsteroidEntity extends Entity {
         collidingBulletVelocity = Vector2f.ZERO;
 
         // limit asteroid velocity to max speed
-        float s = CVector.length(velocity);
+        float s = Vector.length(velocity);
         if (s > maxSpeed) {
             velocity = Vector2f.div(velocity, s);
             velocity = Vector2f.mul(velocity, maxSpeed);
@@ -99,7 +99,7 @@ public final class AsteroidEntity extends Entity {
     }
 
     @Override
-    public void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt) {
+    public void detectAndHandleCollisions(Grid grid, PhysicsHandler physics, float dt) {
 
         nearestEntity = grid.getNearest(this);
         
@@ -172,7 +172,7 @@ public final class AsteroidEntity extends Entity {
      * @param a the asteroid that is handled.
      * @param p the physics object to handle the collision.
      */
-    public void handleAsteroidIntersection(AsteroidEntity a, CPhysics p) {
+    public void handleAsteroidIntersection(AsteroidEntity a, PhysicsHandler p) {
         p.handleCollision(this, a);
     }
 

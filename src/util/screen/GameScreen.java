@@ -4,13 +4,15 @@ import coratticca.entity.AsteroidEntity;
 import coratticca.entity.BulletEntity;
 import coratticca.entity.PlayerEntity;
 import coratticca.entity.Entity;
-import coratticca.util.CPhysics;
-import coratticca.util.CRandom;
-import coratticca.util.CPrecache;
+import coratticca.util.PhysicsHandler;
+import coratticca.util.RandomUtils;
+import coratticca.util.Precache;
 import coratticca.util.Camera;
 import coratticca.util.Grid;
+import coratticca.util.TextUtils;
 import coratticca.util.Window;
-import coratticca.util.widget.CWidget;
+import coratticca.util.widget.Label;
+import coratticca.util.widget.Widget;
 import java.util.LinkedList;
 import java.util.List;
 import org.jsfml.graphics.Color;
@@ -31,11 +33,11 @@ import org.jsfml.system.Vector2f;
  */
 public final class GameScreen extends Screen {
 
-    private final CPhysics physicsHandler;
+    private final PhysicsHandler physicsHandler;
 
     private final Camera camera;
 
-    private final CRandom rand;
+    private final RandomUtils rand;
 
     private final Vector2f gridSize;
 
@@ -60,17 +62,19 @@ public final class GameScreen extends Screen {
     private float pauseTime;
     
     private final Window window;
+    
+    private Label healthLabel, scoreLabel, posLabel, entityCountLabel;
 
     public GameScreen(Window w) {
         super(Color.BLACK);
         
         this.window = w;
         
-        physicsHandler = new CPhysics();
+        physicsHandler = new PhysicsHandler();
         
         camera = new Camera(window);
         
-        rand = new CRandom();
+        rand = new RandomUtils();
         
         gameClock = new Clock();
         
@@ -88,66 +92,66 @@ public final class GameScreen extends Screen {
         camera.setPos(player.getPos());
         
         initSprites();
-        initButtons();
+        initLabels();
     }
     
     public Window getWindow() {
         return window;
     }
 
-    public void initButtons() {
+    public void initLabels() {
         
-        Font font = CPrecache.getOpenSansFont();
+        Font font = Precache.getOpenSansFont();
         int fontSize = 20;
         
+        // health label
         Text healthText = new Text(Integer.toString(player.getHealth()), font, fontSize);
         healthText.setColor(Color.WHITE);
+        healthText.setPosition(player.getPos().x + playerHealthIconOffset, player.getPos().y - playerHealthIconOffset);
         
+        healthLabel = new Label(healthText);
+        healthLabel.setView(camera.getView());
+        
+        widgets.add(healthLabel);
+        
+        // score label
         Text scoreText = new Text(String.format("Score: %s", enemiesKilled), font, fontSize);
         scoreText.setColor(Color.WHITE);
+        scoreText.setPosition(5, 5);
         
+        scoreLabel = new Label(scoreText);
+        widgets.add(scoreLabel);
+        
+        // position label
         Text posText = new Text(String.format("Postion: (%s, %s)", player.getPos().x, player.getPos().y), font, fontSize);
         posText.setColor(Color.WHITE);
+        posText.setPosition(5, 415);
         
+        // player position debug text
+        posLabel = new Label(posText);
+        widgets.add(posLabel);
+        
+        // entity count label
         Text entityCountText = new Text(String.format("Entity count: %s", entities.size()), font, fontSize);
         entityCountText.setColor(Color.WHITE);
-        
-        // health text
-        CWidget healthWidget = new CWidget(new Vector2f((int) player.getPos().x + playerHealthIconOffset,
-                        (int) player.getPos().y - playerHealthIconOffset),
-                healthText,
-                camera.getView());
-        widgets.add(healthWidget);
+        entityCountText.setPosition(5, 450);
 
-        // score text
-        CWidget scoreWidget = new CWidget(new Vector2f(5, 5),
-                scoreText,
-                null);
-        widgets.add(scoreWidget);
-
-        // player position debug text
-        CWidget posWidget = new CWidget(new Vector2f(5, 415),
-                posText,
-                null);
-        widgets.add(posWidget);
         
         // entity count debug text
-        CWidget entityCountWidget = new CWidget(new Vector2f(5, 450),
-                entityCountText,
-                null);
-        widgets.add(entityCountWidget);
+        entityCountLabel = new Label(entityCountText);
+        widgets.add(entityCountLabel);
     }
 
     /**
      * initializes the various sprites used by the game screen.
      */
     public void initSprites() {
-        Texture pT = CPrecache.getPointerTexture();
+        Texture pT = Precache.getPointerTexture();
         pointerSprite = new Sprite(pT);
         pointerSprite.setOrigin(Vector2f.div(new Vector2f(pT.getSize()), 2));
 
         // init background sprite
-        Texture bT = CPrecache.getStarfieldTexture();
+        Texture bT = Precache.getStarfieldTexture();
         backgroundSprite = new Sprite(bT);
         backgroundSprite.setOrigin(Vector2f.div(new Vector2f(bT.getSize()), 2));
     }
@@ -173,7 +177,7 @@ public final class GameScreen extends Screen {
             pauseTime = 0;
         }
         
-        backgroundSprite.draw(rt, states);
+        rt.draw(backgroundSprite);
 
         // clear grid
         grid.clear();
@@ -188,18 +192,18 @@ public final class GameScreen extends Screen {
             addEntity(new AsteroidEntity(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)));
         }
 
-        updateAndDrawButtons(rt, states);
+        updateAndDrawButtons(rt);
 
         // set pointer position
         pointerSprite.setPosition(window.getInputHandler().getMousePos());
-        pointerSprite.draw(rt, states);
+        rt.draw(pointerSprite);
         
         ((org.jsfml.window.Window)rt).display();
 
         lastTime = currentTime;
     }
 
-    public CPhysics getPhysicsHandler() {
+    public PhysicsHandler getPhysicsHandler() {
         return physicsHandler;
     }
 
@@ -236,24 +240,24 @@ public final class GameScreen extends Screen {
         }
     }
 
-    private void updateAndDrawButtons(RenderTarget rt, RenderStates states) {
+    private void updateAndDrawButtons(RenderTarget rt) {
         
         Vector2f playerPos = player.getPos();
         // update health text
-        widgets.get(0).setTextString(String.valueOf(player.getHealth()));
-        widgets.get(0).setPosition(new Vector2f(playerPos.x + playerHealthIconOffset, playerPos.y - playerHealthIconOffset));
+        healthLabel.setText(String.valueOf(player.getHealth()));
+        healthLabel.setPosition(new Vector2f(playerPos.x + playerHealthIconOffset, playerPos.y - playerHealthIconOffset));
 
         // update score text
-        widgets.get(1).setTextString(String.format("Score: %s", asteroidsBlasted));
+        scoreLabel.setText(String.format("Score: %s", asteroidsBlasted));
 
         // update player position text
-        widgets.get(2).setTextString(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
+        posLabel.setText(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
 
         // update entity count text
-        widgets.get(3).setTextString(String.format("Entity count: %s", entities.size()));
+        entityCountLabel.setText(String.format("Entity count: %s", entities.size()));
         
-        for (CWidget w : widgets) {
-            w.draw(rt, states);
+        for (Widget w : widgets) {
+            rt.draw(w);
         }
     }
 

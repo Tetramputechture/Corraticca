@@ -103,7 +103,7 @@ public class Grid {
         
         for (Entity toCheck : collidables) {
             Vector2f diff = Vector2f.sub(toCheck.getPos(), e.getPos());
-            float dist = CVector.length(diff);
+            float dist = Vector.length(diff);
             if (dist < maxDist) {
                 nearest = toCheck;
                 maxDist = dist;

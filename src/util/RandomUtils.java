@@ -7,11 +7,11 @@ import org.jsfml.system.Vector2f;
  * Various useful random functions.
  * @author Nick
  */
-public class CRandom {
+public class RandomUtils {
     
     private final Random rand;
     
-    public CRandom() {
+    public RandomUtils() {
         rand = new Random();
     }
 

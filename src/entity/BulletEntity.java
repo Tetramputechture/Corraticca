@@ -1,8 +1,8 @@
 package coratticca.entity;
 
-import coratticca.util.CPhysics;
-import coratticca.util.CPrecache;
-import coratticca.util.CSprite;
+import coratticca.util.PhysicsHandler;
+import coratticca.util.Precache;
+import coratticca.util.SpriteUtils;
 import coratticca.util.Grid;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
@@ -25,9 +25,9 @@ public final class BulletEntity extends Entity {
     
     @Override
     public void initSprite() {
-        Texture t = CPrecache.getBulletTexture();
+        Texture t = Precache.getBulletTexture();
         Sprite s = new Sprite(t);
-        CSprite.setOriginAtCenter(s, t);
+        SpriteUtils.setOriginAtCenter(s, t);
         
         sprite = s;
         sprite.setPosition(pos);
@@ -44,7 +44,7 @@ public final class BulletEntity extends Entity {
     }
     
     @Override
-    public void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt) {
+    public void detectAndHandleCollisions(Grid grid, PhysicsHandler physics, float dt) {
         nearestEntity = grid.getNearest(this);
         if (!(nearestEntity instanceof PlayerEntity) && nearestEntity != null && (physics.boxCollisionTest(nearestEntity, this))) {
             hitEntity = true;

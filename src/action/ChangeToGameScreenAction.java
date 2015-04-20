@@ -7,33 +7,37 @@ import coratticca.util.Window;
  * Changes the current screen to the Game Screen.
  * @author Nick
  */
-public class ChangeToGameScreenAction implements Action {
+public class ChangeToGameScreenAction extends Action {
     
     private final GameScreen game;
     
     /**
-     * Changes the screen to a new instance of a gameScreen.
+     * Changes the screen to a new instance of a gameScreen.     
+     * @param window the window for this Action to execute on.
      */
-    public ChangeToGameScreenAction() {
+    public ChangeToGameScreenAction(Window window) {
+        super(window);
         game = null;
     }
     
     /**
      * Changes the screen to the gameScreen specified.
+     * @param window the window for this Action to execute on.
      * @param game the gameScreen to be changed to.
      */
-    public ChangeToGameScreenAction(GameScreen game) {
+    public ChangeToGameScreenAction(Window window, GameScreen game) {
+        super(window);
         this.game = game;
     }
 
     @Override
-    public void execute(Window w) {
+    public void execute() {
         if (game != null) {
-            w.changeCurrentScreen(game);
+            window.changeCurrentScreen(game);
             game.resume();
         } else {
-            GameScreen g = new GameScreen(w);
-            w.changeCurrentScreen(g);
+            GameScreen g = new GameScreen(window);
+            window.changeCurrentScreen(g);
         }
     }
     

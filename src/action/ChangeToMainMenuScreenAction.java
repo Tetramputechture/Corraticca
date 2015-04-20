@@ -7,11 +7,15 @@ import coratticca.util.Window;
  * Changes the current screen to the Main Menu Screen.
  * @author Nick
  */
-public class ChangeToMainMenuScreenAction implements Action {
-
+public class ChangeToMainMenuScreenAction extends Action {
+    
+    public ChangeToMainMenuScreenAction(Window window) {
+        super(window);
+    }
+    
     @Override
-    public void execute(Window w) {
-        w.changeCurrentScreen(new MainMenuScreen(w));
+    public void execute() {
+        window.changeCurrentScreen(new MainMenuScreen(window));
     }
     
     @Override

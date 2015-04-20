@@ -6,11 +6,15 @@ import coratticca.util.Window;
  *
  * @author Nick
  */
-public class ExitGameAction implements Action {
+public class ExitGameAction extends Action {
+    
+    public ExitGameAction(Window window) {
+        super(window);
+    }
 
     @Override
-    public void execute(Window w) {
-        w.getRenderWindow().close();
+    public void execute() {
+        window.getRenderWindow().close();
     }
     
     @Override

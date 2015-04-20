@@ -1,6 +1,6 @@
 package coratticca.util.screen;
 
-import coratticca.util.widget.CWidget;
+import coratticca.util.widget.Widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsfml.graphics.Color;
@@ -14,7 +14,7 @@ import org.jsfml.graphics.RenderTarget;
  */
 public abstract class Screen implements Drawable {
     
-    protected final ArrayList<CWidget> widgets;
+    protected final ArrayList<Widget> widgets;
     
     protected Color bgColor;
     
@@ -30,7 +30,7 @@ public abstract class Screen implements Drawable {
      * Gets the widgets of the screen.
      * @return a List containing the screen's widgets.
      */
-    public List<CWidget> getWidgets() {
+    public List<Widget> getWidgets() {
         return widgets;
     }
 

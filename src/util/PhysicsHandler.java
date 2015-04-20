@@ -7,7 +7,7 @@ import org.jsfml.system.Vector2f;
  * Handles the game's physics.
  * @author Nick
  */
-public class CPhysics {
+public class PhysicsHandler {
     
     /**
      * Converts bounds of two entites to axis-aligned bounding boxes and checks for intersection.
@@ -43,7 +43,7 @@ public class CPhysics {
         
         Vector2f rv = Vector2f.sub(bV, aV);
         Vector2f norm = Vector2f.sub(bPos, aPos);
-        float velAlongNormal = CVector.dot(rv, norm);
+        float velAlongNormal = Vector.dot(rv, norm);
         
         // do not resolve if velocities are separating
         if(velAlongNormal > 0) {
@@ -51,18 +51,18 @@ public class CPhysics {
         }
 
         // find unit normal vector
-        Vector2f uN = CVector.normalize(norm);
+        Vector2f uN = Vector.normalize(norm);
 
         // find unit tanget vector
         Vector2f uT = new Vector2f(-uN.y, uN.x);
 
         // get normal and tangential components of both velocity vectors 
         // before the collision
-        float aVn = CVector.dot(uN, aV);
-        float aVt = CVector.dot(uT, aV);
+        float aVn = Vector.dot(uN, aV);
+        float aVt = Vector.dot(uT, aV);
 
-        float bVn = CVector.dot(uN, bV);
-        float bVt = CVector.dot(uT, bV);
+        float bVn = Vector.dot(uN, bV);
+        float bVt = Vector.dot(uT, bV);
 
         // get normal and tangential components of both velocity vectors 
         // after the collision

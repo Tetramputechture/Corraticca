@@ -1,9 +1,9 @@
 package coratticca.entity;
 
-import coratticca.util.CPhysics;
-import coratticca.util.CSprite;
-import coratticca.util.CPrecache;
-import coratticca.util.CVector;
+import coratticca.util.PhysicsHandler;
+import coratticca.util.SpriteUtils;
+import coratticca.util.Precache;
+import coratticca.util.Vector;
 import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import coratticca.util.screen.GameLostScreen;
@@ -62,7 +62,7 @@ public final class PlayerEntity extends Entity {
         target = new Vector2f(ttx, tty);
 
         // normalize target direction
-        target = CVector.normalize(target);
+        target = Vector.normalize(target);
 
         // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
@@ -75,7 +75,7 @@ public final class PlayerEntity extends Entity {
         velocity = Vector2f.add(velocity, Vector2f.mul(acc, dt));
 
         // limit velocity vector to maxMoveSpeed
-        float speed = CVector.length(velocity);
+        float speed = Vector.length(velocity);
         if (speed > maxMoveSpeed) {
             velocity = Vector2f.div(velocity, speed);
             velocity = Vector2f.mul(velocity, maxMoveSpeed);
@@ -105,16 +105,16 @@ public final class PlayerEntity extends Entity {
     
     @Override
     public void initSprite() {
-        Texture t = CPrecache.getPlayerTexture();
+        Texture t = Precache.getPlayerTexture();
         Sprite s = new Sprite(t);
-        CSprite.setOriginAtCenter(s, t);
+        SpriteUtils.setOriginAtCenter(s, t);
         
         sprite = s;
         sprite.setPosition(pos);
     }
     
     @Override
-    public void detectAndHandleCollisions(Grid grid, CPhysics physics, float dt) {
+    public void detectAndHandleCollisions(Grid grid, PhysicsHandler physics, float dt) {
         if (isOutOfBounds(grid)) {
             handleOutOfBounds(grid);
         }

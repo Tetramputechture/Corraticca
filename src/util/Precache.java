@@ -13,7 +13,7 @@ import org.jsfml.graphics.Texture;
  * Handles initializing / precaching of all textures used in the game.
  * @author Nick
  */
-public class CPrecache {
+public class Precache {
     
     private static Texture starfieldTexture;
     

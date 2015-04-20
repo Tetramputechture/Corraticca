@@ -1,13 +1,16 @@
 package coratticca.util.screen;
 
 import coratticca.util.Window;
-import coratticca.util.widget.CButton;
+import coratticca.util.widget.Button;
 import coratticca.action.ExitGameAction;
 import coratticca.action.ChangeToGameScreenAction;
-import coratticca.util.CPrecache;
-import coratticca.util.CText;
-import coratticca.util.widget.CStandardSelectListener;
-import coratticca.util.widget.CWidget;
+import coratticca.action.ChangeToMainMenuScreenAction;
+import coratticca.util.Audio;
+import coratticca.util.Precache;
+import coratticca.util.TextUtils;
+import coratticca.util.widget.Widget;
+import coratticca.util.widget.widgetListener.ButtonAdapter;
+import coratticca.util.widget.widgetListener.MouseAdapter;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
@@ -27,39 +30,36 @@ public class MainMenuScreen extends Screen {
         int halfWidth = 320;
         int halfHeight = 240;
         
-        Font font = CPrecache.getOpenSansFont();
+        Audio gameAudio = w.getAudioHandler();
+        
+        Font font = Precache.getOpenSansFont();
         int fontSize = 52;
 
+        // add play button
         Text playText = new Text("Play!", font, fontSize);
         playText.setColor(Color.WHITE);
-        CText.setOriginToCenter(playText);
+        TextUtils.setOriginToCenter(playText);
+        playText.setPosition(halfWidth, halfHeight-80);
         
-        Text exitText = new Text("Exit!", font, fontSize);
-        exitText.setColor(Color.WHITE);
-        CText.setOriginToCenter(exitText);
+        Button playButton = new Button(playText);
+        playButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        CButton playButton = new CButton(new Vector2f(halfWidth, halfHeight-80),
-                                playText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        playButton.addClickListener((CButton b) -> { 
-            new ChangeToGameScreenAction().execute(w);
-        });
-        playButton.addSelectListener(new CStandardSelectListener(Color.RED, w));
+        MouseAdapter playAdapter = new ButtonAdapter(new ChangeToGameScreenAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        playButton.addMouseListener(playAdapter);
         
         widgets.add(playButton);
         
-        CButton exitButton = new CButton(new Vector2f(halfWidth, halfHeight+20),
-                                exitText,
-                                null,
-                                Color.TRANSPARENT,
-                                Color.TRANSPARENT);
-        exitButton.addClickListener((CButton b) -> {
-            new ExitGameAction().execute(w);
-        });
+        // add exit button
+        Text exitText = new Text("Exit!", font, fontSize);
+        exitText.setColor(Color.WHITE);
+        TextUtils.setOriginToCenter(exitText);
+        exitText.setPosition(halfWidth, halfHeight+20);
         
-        exitButton.addSelectListener(new CStandardSelectListener(Color.RED, w));
+        Button exitButton = new Button(exitText);
+        exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
+        
+        MouseAdapter exitAdapter = new ButtonAdapter(new ExitGameAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        exitButton.addMouseListener(exitAdapter);
         
         widgets.add(exitButton);
     }
@@ -72,8 +72,8 @@ public class MainMenuScreen extends Screen {
         
         rt.clear(bgColor);
         
-        for (CWidget w : widgets) {
-            w.draw(rt, states);
+        for (Widget w : widgets) {
+            rt.draw(w);
         }
         ((org.jsfml.window.Window)rt).display();
     }
