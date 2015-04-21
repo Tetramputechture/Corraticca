@@ -6,7 +6,7 @@ import org.jsfml.system.Vector2f;
  * Various useful functions for vectors.
  * @author Nick
  */
-public class Vector {
+public class VectorUtils {
     
     /**
      * Finds the magnitude (length) of a vector.

@@ -2,6 +2,7 @@ package coratticca.util.widget.widgetListener;
 
 import coratticca.action.Action;
 import coratticca.util.Audio;
+import coratticca.util.Window;
 import coratticca.util.widget.Button;
 import org.jsfml.graphics.Color;
 
@@ -15,8 +16,7 @@ public class ButtonAdapter extends MouseAdapter {
     private final Action clickAction;
     private final String soundFileName;
     private final Color entranceColor;
-    private final Audio audio;
-    
+
     private final Color exitColor;
     
     private boolean shouldPlaySound;
@@ -30,19 +30,15 @@ public class ButtonAdapter extends MouseAdapter {
      * Null for no color change.
      * @param exitColor the Color for the button to change when the mouse exits the Label.
      * Null for no color change.
-     * @param audio the Audio to play the Sound when the mouse enters the label.
-     * Null if no sound.
      */
     public ButtonAdapter(Action clickAction, 
             String soundFileName, 
             Color entranceColor,
-            Color exitColor,
-            Audio audio) {
+            Color exitColor) {
         this.clickAction = clickAction;
         this.soundFileName = soundFileName;
         this.entranceColor = entranceColor;
         this.exitColor = exitColor;
-        this.audio = audio;
     }
     
     @Override
@@ -53,7 +49,7 @@ public class ButtonAdapter extends MouseAdapter {
     @Override
     public void mouseEntered(Button b) {
         if (shouldPlaySound && soundFileName != null) {
-            audio.playSound(soundFileName, 1f);
+            Window.getAudioHandler().playSound(soundFileName, 1f);
         }
         shouldPlaySound = false;
         if (entranceColor != null) {

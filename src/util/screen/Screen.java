@@ -18,9 +18,9 @@ public abstract class Screen implements Drawable {
     
     protected Color bgColor;
     
-    public Screen(Color bgColor) {
+    public Screen() {
+        bgColor = Color.BLACK;
         widgets = new ArrayList<>();
-        this.bgColor = bgColor;
     }
     
     @Override
@@ -32,6 +32,10 @@ public abstract class Screen implements Drawable {
      */
     public List<Widget> getWidgets() {
         return widgets;
+    }
+    
+    public void setBGColor(Color bgColor) {
+        this.bgColor = bgColor;
     }
 
     /**

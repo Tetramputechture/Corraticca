@@ -9,15 +9,15 @@ import coratticca.util.RandomUtils;
 import coratticca.util.Precache;
 import coratticca.util.Camera;
 import coratticca.util.Grid;
-import coratticca.util.TextUtils;
 import coratticca.util.Window;
 import coratticca.util.widget.Label;
 import coratticca.util.widget.Widget;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
-import org.jsfml.graphics.Image;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
@@ -25,6 +25,8 @@ import org.jsfml.graphics.Text;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
+import org.jsfml.window.Mouse;
 
 /**
  * The screen for the game.
@@ -61,24 +63,23 @@ public final class GameScreen extends Screen {
     private float lastTime;
     private float pauseTime;
     
-    private final Window window;
-    
     private Label healthLabel, scoreLabel, posLabel, entityCountLabel;
+    
+    private Texture bgTexture;
 
-    public GameScreen(Window w) {
-        super(Color.BLACK);
-        
-        this.window = w;
+    public GameScreen() {
+        super();
         
         physicsHandler = new PhysicsHandler();
         
-        camera = new Camera(window);
+        camera = new Camera();
+        camera.setSize(Window.getSize());
         
         rand = new RandomUtils();
         
         gameClock = new Clock();
         
-        gridSize = Vector2f.mul(window.getSize(), 2);
+        gridSize = Vector2f.mul(camera.getSize(), 2);
         
         setBgColor(new Color(150, 150, 150));
         
@@ -87,16 +88,14 @@ public final class GameScreen extends Screen {
         entities = new LinkedList<>();
         entsToBeRemoved = new LinkedList<>();
         
-        player = new PlayerEntity(window, Vector2f.ZERO);
+        player = new PlayerEntity(Vector2f.ZERO);
         entities.add(player);
         camera.setPos(player.getPos());
         
         initSprites();
         initLabels();
-    }
-    
-    public Window getWindow() {
-        return window;
+        
+        bgTexture = new Texture();
     }
 
     public void initLabels() {
@@ -162,9 +161,13 @@ public final class GameScreen extends Screen {
         camera.handleEdges(this);
         rt.setView(camera.getView());
         rt.clear(getBgColor());
+        
+        org.jsfml.window.Window rw = (org.jsfml.window.Window)rt;
+        
+        bgTexture.update(rw);
 
         // use the custom mouse sprite
-        ((org.jsfml.window.Window)rt).setMouseCursorVisible(false);
+        rw.setMouseCursorVisible(false);
 
         // set delta time
         float currentTime = gameClock.getElapsedTime().asSeconds();
@@ -186,7 +189,7 @@ public final class GameScreen extends Screen {
 
         updateEntitiesAndFillGrid(dt);
 
-        detectEntityCollisionsAndDraw(dt);
+        detectEntityCollisionsAndDraw(rt, dt);
 
         if (Math.random() < 0.01) {
             addEntity(new AsteroidEntity(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)));
@@ -195,10 +198,11 @@ public final class GameScreen extends Screen {
         updateAndDrawButtons(rt);
 
         // set pointer position
-        pointerSprite.setPosition(window.getInputHandler().getMousePos());
+        Vector2i mousePos = Mouse.getPosition(rw);
+        pointerSprite.setPosition(new Vector2f(mousePos.x, mousePos.y));
         rt.draw(pointerSprite);
         
-        ((org.jsfml.window.Window)rt).display();
+        rw.display();
 
         lastTime = currentTime;
     }
@@ -233,10 +237,10 @@ public final class GameScreen extends Screen {
         }
     }
 
-    private void detectEntityCollisionsAndDraw(float dt) {
+    private void detectEntityCollisionsAndDraw(RenderTarget rt, float dt) {
         for (Entity e : entities) {
             e.detectAndHandleCollisions(grid, physicsHandler, dt);
-            window.getRenderWindow().draw(e);
+            rt.draw(e);
         }
     }
 
@@ -273,6 +277,11 @@ public final class GameScreen extends Screen {
             pauseTime = 0;
         }
     }
+    
+    public Sprite getBGSprite() {
+        return new Sprite(bgTexture);
+    }
+   
 
     public Vector2f getBounds() {
         return gridSize;
@@ -286,11 +295,7 @@ public final class GameScreen extends Screen {
     public PlayerEntity getCurrentPlayer() {
         return player;
     }
-
-    public Image getBGImage() {
-        return window.getRenderWindow().capture();
-    }
-
+    
     public int getAsteroidsBlasted() {
         return asteroidsBlasted;
     }

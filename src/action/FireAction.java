@@ -16,8 +16,7 @@ public class FireAction extends Action {
     
     private final float playerVelocityScalar;
     
-    public FireAction(Window window) {
-        super(window);
+    public FireAction() {
         fireSpeed = 500;
         playerVelocityScalar = 40;
     }
@@ -27,13 +26,13 @@ public class FireAction extends Action {
         
         GameScreen g;
         // double check if the current screen is a gamescreen
-        if (window.getCurrentScreen() instanceof GameScreen) {
-            g = (GameScreen) window.getCurrentScreen();
+        if (Window.getCurrentScreen() instanceof GameScreen) {
+            g = (GameScreen) Window.getCurrentScreen();
         } else {
             return;
         }
 
-        window.getAudioHandler().playSound("sounds/firesound.wav", 1);
+        Window.getAudioHandler().playSound("sounds/firesound.wav", 1);
         
         PlayerEntity player = g.getCurrentPlayer();
         float playerRotation = player.getRotation();

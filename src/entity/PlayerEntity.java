@@ -3,7 +3,7 @@ package coratticca.entity;
 import coratticca.util.PhysicsHandler;
 import coratticca.util.SpriteUtils;
 import coratticca.util.Precache;
-import coratticca.util.Vector;
+import coratticca.util.VectorUtils;
 import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import coratticca.util.screen.GameLostScreen;
@@ -13,6 +13,7 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.Keyboard;
+import org.jsfml.window.Mouse;
 
 /**
  * Entity representing the player.
@@ -31,13 +32,9 @@ public final class PlayerEntity extends Entity {
     private final int maxHealth;
     private int currentHealth;
     
-    private final Window window;
-    
-    public PlayerEntity(Window window, Vector2f pos) {
+    public PlayerEntity(Vector2f pos) {
         super(pos);
         initSprite();
-                
-        this.window = window;
         
         velocity = Vector2f.ZERO;
                
@@ -62,7 +59,7 @@ public final class PlayerEntity extends Entity {
         target = new Vector2f(ttx, tty);
 
         // normalize target direction
-        target = Vector.normalize(target);
+        target = VectorUtils.normalize(target);
 
         // set length to target velocity
         // increasing accelRate should make movements more sharp and dramatic
@@ -75,7 +72,7 @@ public final class PlayerEntity extends Entity {
         velocity = Vector2f.add(velocity, Vector2f.mul(acc, dt));
 
         // limit velocity vector to maxMoveSpeed
-        float speed = Vector.length(velocity);
+        float speed = VectorUtils.length(velocity);
         if (speed > maxMoveSpeed) {
             velocity = Vector2f.div(velocity, speed);
             velocity = Vector2f.mul(velocity, maxMoveSpeed);
@@ -90,8 +87,8 @@ public final class PlayerEntity extends Entity {
         sprite.setPosition(pos);
         
         // set player angle based on mouse position
-        Vector2f mousePos = window.getInputHandler().getMousePos();
-        Vector2i truePos = window.getRenderWindow().mapCoordsToPixel(pos);
+        Vector2i mousePos = Mouse.getPosition(Window.getRenderWindow());
+        Vector2i truePos = Window.getRenderWindow().mapCoordsToPixel(pos);
         angle = Math.atan2( mousePos.y - truePos.y, 
                             mousePos.x - truePos.x);
         
@@ -171,7 +168,7 @@ public final class PlayerEntity extends Entity {
     
     @Override
     public void handleRemoval(GameScreen g) {
-        window.changeCurrentScreen(new GameLostScreen(g));
+        Window.setCurrentScreen(new GameLostScreen(g));
     }
     
     /**

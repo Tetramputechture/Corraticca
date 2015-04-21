@@ -8,13 +8,9 @@ import coratticca.util.Window;
  */
 public class ExitGameAction extends Action {
     
-    public ExitGameAction(Window window) {
-        super(window);
-    }
-
     @Override
     public void execute() {
-        window.getRenderWindow().close();
+        Window.getRenderWindow().close();
     }
     
     @Override

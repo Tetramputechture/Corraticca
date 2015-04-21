@@ -13,31 +13,27 @@ public class ChangeToGameScreenAction extends Action {
     
     /**
      * Changes the screen to a new instance of a gameScreen.     
-     * @param window the window for this Action to execute on.
      */
-    public ChangeToGameScreenAction(Window window) {
-        super(window);
-        game = null;
+    public ChangeToGameScreenAction() {
+        this(null);
     }
     
     /**
      * Changes the screen to the gameScreen specified.
-     * @param window the window for this Action to execute on.
      * @param game the gameScreen to be changed to.
      */
-    public ChangeToGameScreenAction(Window window, GameScreen game) {
-        super(window);
+    public ChangeToGameScreenAction(GameScreen game) {
         this.game = game;
     }
 
     @Override
     public void execute() {
         if (game != null) {
-            window.changeCurrentScreen(game);
+            Window.setCurrentScreen(game);
             game.resume();
         } else {
-            GameScreen g = new GameScreen(window);
-            window.changeCurrentScreen(g);
+            GameScreen g = new GameScreen();
+            Window.setCurrentScreen(g);
         }
     }
     

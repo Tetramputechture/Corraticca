@@ -11,25 +11,15 @@ import coratticca.util.Window;
 public class ChangeToPauseMenuScreenAction extends Action {
     
     private final GameScreen game;
-    
-    public ChangeToPauseMenuScreenAction(Window window, GameScreen game) {
-        super(window);
+   
+    public ChangeToPauseMenuScreenAction(GameScreen game) {
         this.game = game;
     }
 
     @Override
     public void execute() {
-        
-        GameScreen g;
-        // double check if the current screen is a gamescreen
-        if (window.getCurrentScreen() instanceof GameScreen) {
-            g = (GameScreen) window.getCurrentScreen();
-        } else {
-            return;
-        }
-        
-        window.changeCurrentScreen(new PauseMenuScreen(game));
-        g.pause();
+        Window.setCurrentScreen(new PauseMenuScreen(game));
+        game.pause();
     }
     
     @Override

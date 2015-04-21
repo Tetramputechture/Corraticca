@@ -4,8 +4,6 @@ import coratticca.util.Window;
 import coratticca.util.widget.Button;
 import coratticca.action.ExitGameAction;
 import coratticca.action.ChangeToGameScreenAction;
-import coratticca.action.ChangeToMainMenuScreenAction;
-import coratticca.util.Audio;
 import coratticca.util.Precache;
 import coratticca.util.TextUtils;
 import coratticca.util.widget.Widget;
@@ -16,7 +14,6 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
-import org.jsfml.system.Vector2f;
 
 /**
  * The Main Menu screen.
@@ -24,13 +21,10 @@ import org.jsfml.system.Vector2f;
  */
 public class MainMenuScreen extends Screen {
 
-    public MainMenuScreen(Window w) {
-        super(Color.BLACK);
+    public MainMenuScreen() {
         
-        int halfWidth = 320;
-        int halfHeight = 240;
-        
-        Audio gameAudio = w.getAudioHandler();
+        float halfWidth = Window.getSize().x/2;
+        float halfHeight = Window.getSize().y/2;
         
         Font font = Precache.getOpenSansFont();
         int fontSize = 52;
@@ -44,7 +38,7 @@ public class MainMenuScreen extends Screen {
         Button playButton = new Button(playText);
         playButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        MouseAdapter playAdapter = new ButtonAdapter(new ChangeToGameScreenAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        MouseAdapter playAdapter = new ButtonAdapter(new ChangeToGameScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         playButton.addMouseListener(playAdapter);
         
         widgets.add(playButton);
@@ -58,7 +52,7 @@ public class MainMenuScreen extends Screen {
         Button exitButton = new Button(exitText);
         exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        MouseAdapter exitAdapter = new ButtonAdapter(new ExitGameAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        MouseAdapter exitAdapter = new ButtonAdapter(new ExitGameAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         exitButton.addMouseListener(exitAdapter);
         
         widgets.add(exitButton);

@@ -2,6 +2,7 @@ package coratticca;
 
 import coratticca.util.Precache;
 import coratticca.util.Window;
+import coratticca.util.screen.MainMenuScreen;
 import java.io.IOException;
 import org.jsfml.system.Vector2i;
 
@@ -17,9 +18,9 @@ public class Coratticca {
         Precache.precacheTextures();
         
         Vector2i pos = new Vector2i(1920/4, 1080/4);
-        Vector2i size = new Vector2i(640, 480);
         
-        Window w = new Window(pos, size, "Floppy Disk Laser Shooter In Space - Alpha");
+        Window w = new Window(pos, "Floppy Disk Laser Shooter In Space - Alpha");
+        Window.setCurrentScreen(new MainMenuScreen());
         w.display();
 
     }

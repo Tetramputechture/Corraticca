@@ -2,7 +2,6 @@ package coratticca.util.screen;
 
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.action.ChangeToMainMenuScreenAction;
-import coratticca.util.Audio;
 import coratticca.util.widget.Button;
 import coratticca.util.Precache;
 import coratticca.util.TextUtils;
@@ -16,7 +15,6 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
-import org.jsfml.system.Vector2f;
 
 /**
  *
@@ -26,13 +24,10 @@ public class GameLostScreen extends Screen {
     
     public GameLostScreen(GameScreen g) {
         
-        super(Color.BLACK);
-        
-        int halfWidth = 320;
-        int halfHeight = 240;
-        
-        Window w = g.getWindow();
-        Audio gameAudio = w.getAudioHandler();
+        super();
+                  
+        float halfWidth = Window.getSize().x/2;
+        float halfHeight = Window.getSize().y/2;
         
         Font font = Precache.getOpenSansFont();
         int fontSize = 24;
@@ -56,7 +51,7 @@ public class GameLostScreen extends Screen {
         Button exitButton = new Button(exitText);
         exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        MouseAdapter exitAdapter = new ButtonAdapter(new ChangeToMainMenuScreenAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        MouseAdapter exitAdapter = new ButtonAdapter(new ChangeToMainMenuScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         exitButton.addMouseListener(exitAdapter);
         
         widgets.add(exitButton);
@@ -70,7 +65,7 @@ public class GameLostScreen extends Screen {
         Button newGameButton = new Button(newGameText);
         newGameButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
-        MouseAdapter newGameAdapter = new ButtonAdapter(new ChangeToGameScreenAction(w), "sounds/buttonsound1.wav", Color.RED, Color.WHITE, gameAudio);
+        MouseAdapter newGameAdapter = new ButtonAdapter(new ChangeToGameScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         newGameButton.addMouseListener(newGameAdapter);
         
         widgets.add(newGameButton);

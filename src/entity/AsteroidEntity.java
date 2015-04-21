@@ -4,7 +4,7 @@ import coratticca.util.PhysicsHandler;
 import coratticca.util.Precache;
 import coratticca.util.RandomUtils;
 import coratticca.util.SpriteUtils;
-import coratticca.util.Vector;
+import coratticca.util.VectorUtils;
 import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import org.jsfml.graphics.Sprite;
@@ -87,7 +87,7 @@ public final class AsteroidEntity extends Entity {
         collidingBulletVelocity = Vector2f.ZERO;
 
         // limit asteroid velocity to max speed
-        float s = Vector.length(velocity);
+        float s = VectorUtils.length(velocity);
         if (s > maxSpeed) {
             velocity = Vector2f.div(velocity, s);
             velocity = Vector2f.mul(velocity, maxSpeed);

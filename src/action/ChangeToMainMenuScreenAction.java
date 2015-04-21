@@ -9,13 +9,9 @@ import coratticca.util.Window;
  */
 public class ChangeToMainMenuScreenAction extends Action {
     
-    public ChangeToMainMenuScreenAction(Window window) {
-        super(window);
-    }
-    
     @Override
     public void execute() {
-        window.changeCurrentScreen(new MainMenuScreen(window));
+        Window.setCurrentScreen(new MainMenuScreen());
     }
     
     @Override

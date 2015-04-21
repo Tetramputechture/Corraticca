@@ -11,16 +11,20 @@ import org.jsfml.system.Vector2f;
  */
 public class Camera {
     
-    private final Window window;
-    
     private final View view;
     
     private Vector2f pos;
     
-    public Camera(Window window) {
-        this.window = window;
+    public Camera() {
         view = new View();
-        view.setSize(window.getSize());
+    }
+    
+    public void setSize(Vector2f size) {
+        view.setSize(size);
+    }
+    
+    public Vector2f getSize() {
+        return view.getSize();
     }
     
     /**
@@ -61,7 +65,7 @@ public class Camera {
     }
     
     public FloatRect getBounds() {
-        Vector2f wSize = window.getSize();
+        Vector2f wSize = view.getSize();
         return new FloatRect(pos.x - wSize.x/2f-100, pos.y - wSize.y/2f-100,
                                 wSize.x + 200, wSize.y + 200);
     }

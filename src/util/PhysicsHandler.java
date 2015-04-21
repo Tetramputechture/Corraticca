@@ -43,7 +43,7 @@ public class PhysicsHandler {
         
         Vector2f rv = Vector2f.sub(bV, aV);
         Vector2f norm = Vector2f.sub(bPos, aPos);
-        float velAlongNormal = Vector.dot(rv, norm);
+        float velAlongNormal = VectorUtils.dot(rv, norm);
         
         // do not resolve if velocities are separating
         if(velAlongNormal > 0) {
@@ -51,18 +51,18 @@ public class PhysicsHandler {
         }
 
         // find unit normal vector
-        Vector2f uN = Vector.normalize(norm);
+        Vector2f uN = VectorUtils.normalize(norm);
 
         // find unit tanget vector
         Vector2f uT = new Vector2f(-uN.y, uN.x);
 
         // get normal and tangential components of both velocity vectors 
         // before the collision
-        float aVn = Vector.dot(uN, aV);
-        float aVt = Vector.dot(uT, aV);
+        float aVn = VectorUtils.dot(uN, aV);
+        float aVt = VectorUtils.dot(uT, aV);
 
-        float bVn = Vector.dot(uN, bV);
-        float bVt = Vector.dot(uT, bV);
+        float bVn = VectorUtils.dot(uN, bV);
+        float bVt = VectorUtils.dot(uT, bV);
 
         // get normal and tangential components of both velocity vectors 
         // after the collision

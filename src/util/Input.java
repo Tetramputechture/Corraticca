@@ -35,23 +35,23 @@ public class Input {
      *
      * @param keyEvent the keyEvent to be handled.
      */
-    public void handleKeyInput(KeyEvent keyEvent, Window window) {
+    public void handleKeyInput(KeyEvent keyEvent) {
 
         currentKey = keyEvent.key;
+        
+        Screen currentScreen = Window.getCurrentScreen();
 
-        Screen currentScreen = window.getCurrentScreen();
-
-        switch (window.getCurrentScreenName()) {
+        switch (currentScreen.getName()) {
             case MAIN_MENU_SCREEN:
                 handleMainMenuKeyInput((MainMenuScreen) currentScreen);
                 break;
 
             case GAME_SCREEN:
-                handleGameKeyInput((GameScreen) currentScreen, window);
+                handleGameKeyInput((GameScreen) currentScreen);
                 break;
 
             case PAUSE_MENU_SCREEN:
-                handlePauseMenuKeyInput((PauseMenuScreen) currentScreen, window);
+                handlePauseMenuKeyInput((PauseMenuScreen) currentScreen);
                 break;
 
             default:
@@ -75,15 +75,15 @@ public class Input {
      *
      * @param g the game to handle the input
      */
-    public void handleGameKeyInput(GameScreen g, Window window) {
+    public void handleGameKeyInput(GameScreen g) {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            new ChangeToPauseMenuScreenAction(window, g).execute();
+            new ChangeToPauseMenuScreenAction(g).execute();
         }
     }
 
-    public void handlePauseMenuKeyInput(PauseMenuScreen p, Window window) {
+    public void handlePauseMenuKeyInput(PauseMenuScreen p) {
         if (currentKey == Keyboard.Key.ESCAPE) {
-            new ChangeToGameScreenAction(p.getPreviousGameScreen().getWindow()).execute();
+            new ChangeToGameScreenAction(p.getPreviousGameScreen()).execute();
         }
     }
 
@@ -92,17 +92,17 @@ public class Input {
      *
      * @param mouseEvent the Mouse Event to be handled.
      */
-    public void handleMouseClickInput(MouseButtonEvent mouseEvent, Window window) {
+    public void handleMouseClickInput(MouseButtonEvent mouseEvent) {
 
-        setMousePosition(mouseEvent, window);
+        setMousePosition(mouseEvent);
         currentMouseButton = mouseEvent.button;
 
         if (currentMouseButton == Mouse.Button.LEFT) {
-            if (window.getCurrentScreen() instanceof GameScreen) {
-                new FireAction(window).execute();
+            if (Window.getCurrentScreen() instanceof GameScreen) {
+                new FireAction().execute();
                 return;
             }
-            for (Widget w : window.getCurrentScreen().getWidgets()) {
+            for (Widget w : Window.getCurrentScreen().getWidgets()) {
                 if (w instanceof Button) {
                     Button b = (Button) w;
                     if (b.getFrame().contains(currentMousePos)) {
@@ -120,11 +120,11 @@ public class Input {
      *
      * @param mouseEvent the Mouse Event to be handled.
      */
-    public void handleMouseMoveInput(MouseEvent mouseEvent, Window window) {
+    public void handleMouseMoveInput(MouseEvent mouseEvent) {
 
-        setMousePosition(mouseEvent, window);
+        setMousePosition(mouseEvent);
 
-        for (Widget w : window.getCurrentScreen().getWidgets()) {
+        for (Widget w : Window.getCurrentScreen().getWidgets()) {
             if (w instanceof Button) {
                 Button b = (Button) w;
                 if (b.getFrame().contains(currentMousePos)) {
@@ -142,8 +142,8 @@ public class Input {
      *
      * @param mouseEvent the mouse event to get position from.
      */
-    private void setMousePosition(MouseEvent mouseEvent, Window window) {
-        Vector2i tpos = window.getRenderWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position));
+    private void setMousePosition(MouseEvent mouseEvent) {
+        Vector2i tpos = Window.getRenderWindow().mapCoordsToPixel(new Vector2f(mouseEvent.position));
         currentMousePos = new Vector2f(tpos);
     }
 
