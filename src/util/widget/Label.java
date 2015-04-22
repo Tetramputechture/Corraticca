@@ -32,8 +32,13 @@ public class Label extends Widget {
             rt.draw(text);
             rt.setView(rt.getDefaultView());
         } else {
+            rt.setView(rt.getDefaultView());
             rt.draw(text);
         }
+    }
+    
+    public Text getTextObject() {
+        return text;
     }
     
     public String getText() {
@@ -44,8 +49,8 @@ public class Label extends Widget {
         this.text.setString(text);
     }
     
-    public void setPosition(Vector2f position) {
-        text.setPosition(position);
+    public void setPosition(float x, float y) {
+        text.setPosition(new Vector2f(x, y));
     }
     
     public Vector2f getPosition() {

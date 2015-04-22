@@ -15,6 +15,7 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
+import org.jsfml.system.Vector2f;
 
 /**
  *
@@ -22,12 +23,19 @@ import org.jsfml.graphics.Text;
  */
 public class GameLostScreen extends Screen {
     
-    public GameLostScreen(GameScreen g) {
-        
+    private final GameScreen game;
+    
+    private Label gameLostLabel;
+    
+    private Button exitButton;
+    
+    private Button newGameButton;
+    
+    private Label statsLabel;
+    
+    public GameLostScreen(GameScreen game) {
         super();
-                  
-        float halfWidth = Window.getSize().x/2;
-        float halfHeight = Window.getSize().y/2;
+        this.game = game;     
         
         Font font = Precache.getOpenSansFont();
         int fontSize = 24;
@@ -36,9 +44,8 @@ public class GameLostScreen extends Screen {
         Text gameLostText = new Text("Game Lost! :(", font, 72);
         gameLostText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(gameLostText);
-        gameLostText.setPosition(halfWidth, halfHeight - 50);
         
-        Label gameLostLabel = new Label(gameLostText);
+        gameLostLabel = new Label(gameLostText);
         
         widgets.add(gameLostLabel);
         
@@ -46,9 +53,8 @@ public class GameLostScreen extends Screen {
         Text exitText = new Text("Exit To Main Menu", font, fontSize);
         exitText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(exitText);
-        exitText.setPosition(halfWidth, halfHeight + 50);
         
-        Button exitButton = new Button(exitText);
+        exitButton = new Button(exitText);
         exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
         MouseAdapter exitAdapter = new ButtonAdapter(new ChangeToMainMenuScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
@@ -60,9 +66,8 @@ public class GameLostScreen extends Screen {
         Text newGameText = new Text("New Game", font, fontSize);
         newGameText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(newGameText);
-        newGameText.setPosition(halfWidth, halfHeight + 100);
         
-        Button newGameButton = new Button(newGameText);
+        newGameButton = new Button(newGameText);
         newGameButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
         MouseAdapter newGameAdapter = new ButtonAdapter(new ChangeToGameScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
@@ -74,17 +79,28 @@ public class GameLostScreen extends Screen {
         Text statsText = new Text(String.format("Asteroids blasted: %s\n"
                                         + "Shots fired: %s\n"
                                         + "Accuracy: %.4f", 
-                                        g.getAsteroidsBlasted(), 
-                                        g.getShotsFired(), 
-                                        g.getAccuracy()),
+                                        game.getAsteroidsBlasted(), 
+                                        game.getShotsFired(), 
+                                        game.getAccuracy()),
                                   font,
                                   fontSize-5);
         statsText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(statsText);
-        statsText.setPosition(halfWidth*2 - 100, halfHeight + 200);
         
-        Label statsLabel = new Label(statsText);
+        statsLabel = new Label(statsText);
         widgets.add(statsLabel);
+        
+        updateWidgets(Window.getSize());
+    }
+    
+    @Override
+    public final void updateWidgets(Vector2f screenSize) {
+        float halfWidth = screenSize.x/2;
+        
+        gameLostLabel.setPosition(halfWidth, screenSize.y*.395833f);
+        exitButton.setPosition(halfWidth, screenSize.y*.604167f);
+        newGameButton.setPosition(halfWidth, screenSize.y*.708333f);
+        statsLabel.setPosition(screenSize.x*.84375f, screenSize.y*.916667f);
     }
 
     @Override

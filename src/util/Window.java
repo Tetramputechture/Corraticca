@@ -15,6 +15,7 @@ import org.jsfml.graphics.TextureCreationException;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
+import org.jsfml.window.WindowStyle;
 import org.jsfml.window.event.Event;
 import org.jsfml.window.event.KeyEvent;
 import org.jsfml.window.event.MouseButtonEvent;
@@ -27,7 +28,7 @@ import org.jsfml.window.event.MouseEvent;
  */
 public final class Window {
 
-    public static final Vector2f size;
+    private static Vector2f size;
 
     private static Screen currentScreen;
 
@@ -50,13 +51,18 @@ public final class Window {
     }
 
     public Window(Vector2i pos, String title) throws IOException {
-        renderWindow.create(new VideoMode((int) size.x, (int) size.y), title);
+        renderWindow.create(new VideoMode((int) size.x, (int) size.y), title, WindowStyle.CLOSE | WindowStyle.TITLEBAR);
         renderWindow.setPosition(pos);
         renderWindow.setVerticalSyncEnabled(true);
     }
 
     public static Vector2f getSize() {
         return size;
+    }
+    
+    public static void setSize(float width, float height) {
+        size = new Vector2f(width, height);
+        currentScreen.updateWidgets(size);
     }
 
     public static Screen getCurrentScreen() {

@@ -14,18 +14,20 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
+import org.jsfml.system.Vector2f;
 
 /**
  * The Main Menu screen.
  * @author Nick
  */
 public class MainMenuScreen extends Screen {
+    
+    private final Button playButton;
+    
+    private final Button exitButton;
 
     public MainMenuScreen() {
-        
-        float halfWidth = Window.getSize().x/2;
-        float halfHeight = Window.getSize().y/2;
-        
+
         Font font = Precache.getOpenSansFont();
         int fontSize = 52;
 
@@ -33,9 +35,8 @@ public class MainMenuScreen extends Screen {
         Text playText = new Text("Play!", font, fontSize);
         playText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(playText);
-        playText.setPosition(halfWidth, halfHeight-80);
         
-        Button playButton = new Button(playText);
+        playButton = new Button(playText);
         playButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
         MouseAdapter playAdapter = new ButtonAdapter(new ChangeToGameScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
@@ -47,15 +48,25 @@ public class MainMenuScreen extends Screen {
         Text exitText = new Text("Exit!", font, fontSize);
         exitText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(exitText);
-        exitText.setPosition(halfWidth, halfHeight+20);
-        
-        Button exitButton = new Button(exitText);
+
+        exitButton = new Button(exitText);
         exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
         
         MouseAdapter exitAdapter = new ButtonAdapter(new ExitGameAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         exitButton.addMouseListener(exitAdapter);
         
         widgets.add(exitButton);
+        
+        updateWidgets(Window.getSize());
+    }
+    
+    @Override
+    public final void updateWidgets(Vector2f size) {
+        float halfWidth = size.x/2;
+        
+        playButton.setPosition(halfWidth, size.y/3);
+        
+        exitButton.setPosition(halfWidth, size.y*.5417f);
     }
    
     

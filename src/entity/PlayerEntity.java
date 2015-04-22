@@ -8,6 +8,7 @@ import coratticca.util.Grid;
 import coratticca.util.screen.GameScreen;
 import coratticca.util.screen.GameLostScreen;
 import coratticca.util.Window;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
@@ -176,6 +177,8 @@ public final class PlayerEntity extends Entity {
      * @param r the health amount to be changed by.
      */
     public void changeHealth(int r) {
+        Color c = sprite.getColor();
+        sprite.setColor(new Color(c.r, c.g, c.b, c.a - 100));
         currentHealth += r;
     }
     

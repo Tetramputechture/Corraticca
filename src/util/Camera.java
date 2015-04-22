@@ -28,11 +28,11 @@ public class Camera {
     }
     
     /**
-     * Handles when the view of the camera is near an edge.
+     * Updates this Camera's view.
      * When the player is near an edge, the camera stops following the player.
      * @param game the game that specifies the edges
      */
-    public void handleEdges(GameScreen game) {
+    public void updateView(GameScreen game) {
         Vector2f playerPos = game.getCurrentPlayer().getPos();
         
         Vector2f gameBounds = game.getBounds();

@@ -14,9 +14,9 @@ import org.jsfml.system.Vector2f;
  */
 public class Frame extends Widget {
 
-    private final RectangleShape borderRect;
+    private RectangleShape borderRect;
 
-    private final FloatRect boundingRect;
+    private FloatRect boundingRect;
 
     public Frame(RectangleShape borderRect, Color fillColor) {
         this.borderRect = borderRect;
@@ -34,6 +34,11 @@ public class Frame extends Widget {
         } else {
             rt.draw(borderRect);
         }
+    }
+    
+    public void setBorderRect(RectangleShape borderRect) {
+        this.borderRect = borderRect;
+        boundingRect = borderRect.getGlobalBounds();
     }
     
     public void setBorderColor(Color color) {

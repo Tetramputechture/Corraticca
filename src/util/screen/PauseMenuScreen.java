@@ -15,6 +15,7 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Text;
+import org.jsfml.system.Vector2f;
 
 /**
  * The Pause Menu screen.
@@ -26,15 +27,16 @@ public class PauseMenuScreen extends Screen {
     private final GameScreen previousGameScreen;
     
     private final Sprite bgSprite;
+    
+    private final Button exitButton;
+    
+    private final Button resumeButton;
 
     public PauseMenuScreen(GameScreen game) {
 
         previousGameScreen = game;
         
         bgSprite = Window.getBGSprite();
-
-        float halfWidth = Window.getSize().x/2;
-        float halfHeight = Window.getSize().y/2;
 
         Font font = Precache.getOpenSansFont();
         int fontSize = 24;
@@ -43,9 +45,8 @@ public class PauseMenuScreen extends Screen {
         Text exitText = new Text("Exit to Main Menu", font, fontSize);
         exitText.setColor(Color.WHITE);
         TextUtils.setOriginToCenter(exitText);
-        exitText.setPosition(halfWidth, halfHeight - 100);
 
-        Button exitButton = new Button(exitText);
+        exitButton = new Button(exitText);
         exitButton.getFrame().setBorderColor(Color.TRANSPARENT);
 
         MouseAdapter exitAdapter = new ButtonAdapter(new ChangeToMainMenuScreenAction(), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
@@ -56,16 +57,25 @@ public class PauseMenuScreen extends Screen {
         // add resume button
         Text resumeText = new Text("Resume Game", font, fontSize);
         TextUtils.setOriginToCenter(resumeText);
-        resumeText.setPosition(halfWidth, halfHeight + 100);
         resumeText.setColor(Color.WHITE);
 
         // add resume game button
-        Button resumeButton = new Button(resumeText);
+        resumeButton = new Button(resumeText);
         resumeButton.getFrame().setBorderColor(Color.TRANSPARENT);
 
         MouseAdapter resumeAdapter = new ButtonAdapter(new ChangeToGameScreenAction(game), "sounds/buttonsound1.wav", Color.RED, Color.WHITE);
         resumeButton.addMouseListener(resumeAdapter);
         widgets.add(resumeButton);
+        
+        updateWidgets(Window.getSize());
+    }
+    
+    @Override
+    public final void updateWidgets(Vector2f size) {
+        float halfWidth = size.x/2;
+        
+        exitButton.setPosition(halfWidth, size.y*.291667f);
+        resumeButton.setPosition(halfWidth, size.y*.708333f);
     }
 
     @Override

@@ -191,7 +191,7 @@ public final class AsteroidEntity extends Entity {
             // display death particle
         } else {
             for (int i = 0; i < size; i++) {
-                g.addEntity(new AsteroidEntity(new Vector2f(pos.x + 20 + i * 5, pos.y + 20 + i * 5), size));
+                g.addEntity(new AsteroidEntity(new Vector2f(pos.x + 20 + i * 5, pos.y + 20 + i * 5), size-1));
             }
         }
     }

@@ -52,7 +52,6 @@ public final class GameScreen extends Screen {
     private Sprite backgroundSprite;
 
     private final PlayerEntity player;
-    private final int playerHealthIconOffset = 15;
 
     private int enemiesKilled;
     private int asteroidsBlasted;
@@ -62,83 +61,82 @@ public final class GameScreen extends Screen {
     private Clock pauseClock;
     private float lastTime;
     private float pauseTime;
-    
+
     private Label healthLabel, scoreLabel, posLabel, entityCountLabel;
-    
-    private Texture bgTexture;
 
     public GameScreen() {
         super();
-        
+
         physicsHandler = new PhysicsHandler();
-        
+
         camera = new Camera();
         camera.setSize(Window.getSize());
-        
+
         rand = new RandomUtils();
-        
+
         gameClock = new Clock();
-        
+
         gridSize = Vector2f.mul(camera.getSize(), 2);
-        
+
         setBgColor(new Color(150, 150, 150));
-        
+
         grid = new Grid(gridSize);
-        
+
         entities = new LinkedList<>();
         entsToBeRemoved = new LinkedList<>();
-        
+
         player = new PlayerEntity(Vector2f.ZERO);
         entities.add(player);
-        camera.setPos(player.getPos());
         
+        camera.setPos(player.getPos());
+
         initSprites();
         initLabels();
-        
-        bgTexture = new Texture();
     }
 
     public void initLabels() {
-        
+
         Font font = Precache.getOpenSansFont();
         int fontSize = 20;
-        
-        // health label
-        Text healthText = new Text(Integer.toString(player.getHealth()), font, fontSize);
-        healthText.setColor(Color.WHITE);
-        healthText.setPosition(player.getPos().x + playerHealthIconOffset, player.getPos().y - playerHealthIconOffset);
-        
-        healthLabel = new Label(healthText);
-        healthLabel.setView(camera.getView());
-        
-        widgets.add(healthLabel);
-        
+
         // score label
         Text scoreText = new Text(String.format("Score: %s", enemiesKilled), font, fontSize);
         scoreText.setColor(Color.WHITE);
-        scoreText.setPosition(5, 5);
-        
+
         scoreLabel = new Label(scoreText);
         widgets.add(scoreLabel);
-        
+
         // position label
         Text posText = new Text(String.format("Postion: (%s, %s)", player.getPos().x, player.getPos().y), font, fontSize);
         posText.setColor(Color.WHITE);
-        posText.setPosition(5, 415);
-        
-        // player position debug text
+
         posLabel = new Label(posText);
         widgets.add(posLabel);
-        
+
         // entity count label
         Text entityCountText = new Text(String.format("Entity count: %s", entities.size()), font, fontSize);
         entityCountText.setColor(Color.WHITE);
-        entityCountText.setPosition(5, 450);
 
-        
-        // entity count debug text
         entityCountLabel = new Label(entityCountText);
         widgets.add(entityCountLabel);
+
+        updateWidgets(Window.getSize());
+    }
+
+    @Override
+    public void updateWidgets(Vector2f size) {
+        
+        Vector2f playerPos = player.getPos();
+
+        scoreLabel.setPosition(5, 5);
+        scoreLabel.setText(String.format("Score: %s", asteroidsBlasted));
+        
+        posLabel.setPosition(5, size.y - 65);
+        posLabel.setText(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
+
+        entityCountLabel.setPosition(5, size.y - 30);
+        
+        entityCountLabel.setText(String.format("Entity count: %s", entities.size()));
     }
 
     /**
@@ -157,14 +155,12 @@ public final class GameScreen extends Screen {
 
     @Override
     public void draw(RenderTarget rt, RenderStates states) {
-        
-        camera.handleEdges(this);
+
+        camera.updateView(this);
         rt.setView(camera.getView());
         rt.clear(getBgColor());
-        
-        org.jsfml.window.Window rw = (org.jsfml.window.Window)rt;
-        
-        bgTexture.update(rw);
+
+        org.jsfml.window.Window rw = (org.jsfml.window.Window) rt;
 
         // use the custom mouse sprite
         rw.setMouseCursorVisible(false);
@@ -179,7 +175,7 @@ public final class GameScreen extends Screen {
             dt -= pauseTime;
             pauseTime = 0;
         }
-        
+
         rt.draw(backgroundSprite);
 
         // clear grid
@@ -194,14 +190,18 @@ public final class GameScreen extends Screen {
         if (Math.random() < 0.01) {
             addEntity(new AsteroidEntity(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)));
         }
+        
+        updateWidgets(Window.getSize());
 
-        updateAndDrawButtons(rt);
-
+        for (Widget w : widgets) {
+            rt.draw(w);
+        }
+        
         // set pointer position
         Vector2i mousePos = Mouse.getPosition(rw);
         pointerSprite.setPosition(new Vector2f(mousePos.x, mousePos.y));
         rt.draw(pointerSprite);
-        
+
         rw.display();
 
         lastTime = currentTime;
@@ -244,27 +244,6 @@ public final class GameScreen extends Screen {
         }
     }
 
-    private void updateAndDrawButtons(RenderTarget rt) {
-        
-        Vector2f playerPos = player.getPos();
-        // update health text
-        healthLabel.setText(String.valueOf(player.getHealth()));
-        healthLabel.setPosition(new Vector2f(playerPos.x + playerHealthIconOffset, playerPos.y - playerHealthIconOffset));
-
-        // update score text
-        scoreLabel.setText(String.format("Score: %s", asteroidsBlasted));
-
-        // update player position text
-        posLabel.setText(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
-
-        // update entity count text
-        entityCountLabel.setText(String.format("Entity count: %s", entities.size()));
-        
-        for (Widget w : widgets) {
-            rt.draw(w);
-        }
-    }
-
     public void pause() {
         pauseClock = new Clock();
         pauseTime = 0;
@@ -277,11 +256,6 @@ public final class GameScreen extends Screen {
             pauseTime = 0;
         }
     }
-    
-    public Sprite getBGSprite() {
-        return new Sprite(bgTexture);
-    }
-   
 
     public Vector2f getBounds() {
         return gridSize;
@@ -295,7 +269,7 @@ public final class GameScreen extends Screen {
     public PlayerEntity getCurrentPlayer() {
         return player;
     }
-    
+
     public int getAsteroidsBlasted() {
         return asteroidsBlasted;
     }

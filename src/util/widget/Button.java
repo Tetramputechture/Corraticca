@@ -38,16 +38,9 @@ public class Button extends Widget {
      */
     public Button(Text text) {
         label = new Label(text);
+        frame = new Frame(new RectangleShape(), Color.TRANSPARENT);
         
-        RectangleShape buttonBorder = new RectangleShape();
-        FloatRect textRect = text.getGlobalBounds();
-        
-        buttonBorder.setPosition(textRect.left, textRect.top);
-        buttonBorder.setSize(new Vector2f(textRect.width+10, textRect.height+10));
-        buttonBorder.setOutlineColor(Color.WHITE);
-        buttonBorder.setOutlineThickness(5);
-        
-        frame = new Frame(buttonBorder, Color.TRANSPARENT);
+        updateFrame();
     }
     
     @Override
@@ -56,20 +49,37 @@ public class Button extends Widget {
         rt.draw(frame);
     }
     
+    private void updateFrame() {
+        RectangleShape buttonBorder = new RectangleShape();
+        FloatRect textRect = label.getTextObject().getGlobalBounds();
+        
+        buttonBorder.setPosition(textRect.left, textRect.top);
+        buttonBorder.setSize(new Vector2f(textRect.width+10, textRect.height+10));
+        buttonBorder.setFillColor(Color.TRANSPARENT);
+        
+        frame.setBorderRect(buttonBorder);
+    }
+    
+    public void setPosition(float x, float y) {
+        label.setPosition(x, y);  
+        updateFrame();
+    }
+    
     public Label getLabel() {
         return label;
     }
     
+    /**
+     * Sets the Label of this button, also changing the Frame of this button.
+     * @param label the Label to set.
+     */
     public void setLabel(Label label) {
         this.label = label;
+        updateFrame();
     }
     
     public Frame getFrame() {
         return frame;
-    }
-    
-    public void setFrame(Frame frame) {
-        this.frame = frame;
     }
     
     /**

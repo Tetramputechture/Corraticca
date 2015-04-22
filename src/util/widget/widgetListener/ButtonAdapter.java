@@ -1,7 +1,6 @@
 package coratticca.util.widget.widgetListener;
 
 import coratticca.action.Action;
-import coratticca.util.Audio;
 import coratticca.util.Window;
 import coratticca.util.widget.Button;
 import org.jsfml.graphics.Color;

@@ -7,6 +7,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Drawable;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Vector2f;
 
 /**
  * A Screen abstract class.
@@ -25,6 +26,8 @@ public abstract class Screen implements Drawable {
     
     @Override
     public abstract void draw(RenderTarget rendertarget, RenderStates states);
+    
+    public abstract void updateWidgets(Vector2f screenSize);
     
     /**
      * Gets the widgets of the screen.
