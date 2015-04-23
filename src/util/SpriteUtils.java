@@ -1,36 +1,37 @@
 package coratticca.util;
 
+import coratticca.physics.AABB;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
-import org.jsfml.system.Vector2f;
+import coratticca.vector.Vector2;
 
 /**
  * Useful functions for sprites.
+ *
  * @author Nick
  */
 public class SpriteUtils {
-    
+
     public static void setOriginAtCenter(Sprite s, Texture t) {
-        s.setOrigin(Vector2f.div(new Vector2f(t.getSize()), 2));
+        s.setOrigin((new Vector2(t.getSize()).scl(0.5f)).toVector2f());
     }
-    
+
     public static AABB globalBoundsToAABB(Sprite s) {
-        
+
         // make new bounding boxes, s little smaller than the sprites bounding boxes
         // this stops objects from colliding before intersecting
-        
         float adjustmentScalar = 2.5f;
-        
+
         FloatRect bounds = s.getGlobalBounds();
-        
+
         // convert bounds to aabb
-        Vector2f c = new Vector2f((bounds.left + bounds.width/2), 
-                                            bounds.top + bounds.height/2);
-        
-        Vector2f r = new Vector2f(bounds.width/adjustmentScalar, bounds.height/adjustmentScalar);
-                
+        Vector2 c = new Vector2((bounds.left + bounds.width / 2),
+                bounds.top + bounds.height / 2);
+
+        Vector2 r = new Vector2(bounds.width / adjustmentScalar, bounds.height / adjustmentScalar);
+
         return new AABB(c, r);
     }
-    
+
 }

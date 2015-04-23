@@ -1,29 +1,31 @@
 package coratticca.action;
 
-import coratticca.entity.BulletEntity;
-import coratticca.entity.PlayerEntity;
-import coratticca.util.screen.GameScreen;
-import coratticca.util.Window;
-import org.jsfml.system.Vector2f;
+import coratticca.entity.gameentity.BulletEntity;
+import coratticca.entity.gameentity.PlayerEntity;
+import coratticca.screen.GameScreen;
+import coratticca.window.Window;
+import coratticca.vector.Vector2;
+import coratticca.vector.Vector2;
 
-/** 
+/**
  * Action to create a bullet entity.
+ *
  * @author Nick
  */
 public class FireAction extends Action {
-    
+
     private final int fireSpeed;
-    
+
     private final float playerVelocityScalar;
-    
+
     public FireAction() {
         fireSpeed = 500;
         playerVelocityScalar = 40;
     }
-    
+
     @Override
     public void execute() {
-        
+
         GameScreen g;
         // double check if the current screen is a gamescreen
         if (Window.getCurrentScreen() instanceof GameScreen) {
@@ -33,25 +35,25 @@ public class FireAction extends Action {
         }
 
         Window.getAudioHandler().playSound("sounds/firesound.wav", 1);
-        
+
         PlayerEntity player = g.getCurrentPlayer();
         float playerRotation = player.getRotation();
-        
-        float angle = (float)(Math.toRadians(playerRotation));
-        float sin = (float)Math.sin(angle);
-        float cos = (float)Math.cos(angle);
-        
+
+        float angle = (float) (Math.toRadians(playerRotation));
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+
         // set position and angle based off current player sprite
-        Vector2f pos = Vector2f.add(player.getPos(), new Vector2f(sin, cos));
+        Vector2 pos = player.getPos().add(new Vector2(sin, cos));
         BulletEntity b = new BulletEntity(pos);
-        
-        Vector2f forward = new Vector2f(sin, -cos);
-        forward = Vector2f.mul(forward, fireSpeed);
-        Vector2f inheritedVelocity = Vector2f.mul(player.getVelocity(), playerVelocityScalar);
-        b.setVelocity(Vector2f.add(forward, inheritedVelocity));
-        
+
+        Vector2 forward = new Vector2(sin, -cos);
+        forward = forward.scl(fireSpeed);
+        Vector2 inheritedVelocity = player.getVelocity().scl(playerVelocityScalar);
+        b.setVelocity(forward.add(inheritedVelocity));
+
         b.setRotation(playerRotation);
-        g.addEntity(b); 
+        g.addEntity(b);
     }
 
     @Override
