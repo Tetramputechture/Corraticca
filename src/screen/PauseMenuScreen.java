@@ -1,14 +1,14 @@
 package coratticca.screen;
 
-import coratticca.util.widget.Button;
+import coratticca.widget.Button;
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.action.ChangeToMainMenuScreenAction;
 import coratticca.util.PrecacheUtils;
 import coratticca.util.TextUtils;
 import coratticca.window.Window;
-import coratticca.util.widget.Widget;
-import coratticca.util.widget.widgetListener.ButtonAdapter;
-import coratticca.util.widget.widgetListener.MouseAdapter;
+import coratticca.widget.Widget;
+import coratticca.widget.widgetlistener.ButtonAdapter;
+import coratticca.widget.widgetlistener.MouseAdapter;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderStates;

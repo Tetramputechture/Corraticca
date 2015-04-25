@@ -1,12 +1,11 @@
 package coratticca.entity.gameentity;
 
-import coratticca.entity.Entity;
+import coratticca.entitygrid.EntityGrid;
 import coratticca.physics.CollisionHandler;
+import coratticca.screen.GameScreen;
 import coratticca.util.PrecacheUtils;
 import coratticca.util.RandomUtils;
 import coratticca.util.SpriteUtils;
-import coratticca.entitygrid.EntityGrid;
-import coratticca.screen.GameScreen;
 import coratticca.vector.Vector2;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;

@@ -1,6 +1,6 @@
 package coratticca.input;
 
-import coratticca.util.widget.Button;
+import coratticca.widget.Button;
 import coratticca.action.ChangeToPauseMenuScreenAction;
 import coratticca.action.ChangeToGameScreenAction;
 import coratticca.action.FireAction;
@@ -9,7 +9,7 @@ import coratticca.screen.GameScreen;
 import coratticca.screen.MainMenuScreen;
 import coratticca.screen.PauseMenuScreen;
 import coratticca.screen.Screen;
-import coratticca.util.widget.Widget;
+import coratticca.widget.Widget;
 import coratticca.vector.Vector2;
 import org.jsfml.window.Keyboard;
 import org.jsfml.window.Mouse;

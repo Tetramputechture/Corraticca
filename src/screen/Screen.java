@@ -1,6 +1,6 @@
 package coratticca.screen;
 
-import coratticca.util.widget.Widget;
+import coratticca.widget.Widget;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsfml.graphics.Color;

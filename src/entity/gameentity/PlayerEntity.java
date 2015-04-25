@@ -1,6 +1,5 @@
 package coratticca.entity.gameentity;
 
-import coratticca.entity.Entity;
 import coratticca.physics.CollisionHandler;
 import coratticca.util.SpriteUtils;
 import coratticca.util.PrecacheUtils;
