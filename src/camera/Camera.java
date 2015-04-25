@@ -35,7 +35,7 @@ public class Camera {
      * @param game the game that specifies the edges
      */
     public void updateView(GameScreen game) {
-        Vector2 playerPos = game.getCurrentPlayer().getPos();
+        Vector2 playerPos = game.getCurrentPlayer().getPosition();
 
         Vector2 gameBounds = game.getBounds();
 

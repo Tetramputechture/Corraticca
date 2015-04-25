@@ -148,7 +148,7 @@ public class Vector2 {
 
     @Override
     public String toString() {
-        return String.format("Vector: <%.0f, %.0f>", x, y);
+        return String.format("Vector: <%.30f, %.30f>", x, y);
     }
 
 }

@@ -4,6 +4,7 @@ import coratticca.physics.CollisionHandler;
 import coratticca.util.SpriteUtils;
 import coratticca.util.PrecacheUtils;
 import coratticca.entitygrid.EntityGrid;
+import coratticca.particlesystem.ParticleSystem;
 import coratticca.screen.GameScreen;
 import coratticca.screen.GameLostScreen;
 import coratticca.window.Window;
@@ -11,6 +12,8 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import coratticca.vector.Vector2;
+import org.jsfml.graphics.RenderStates;
+import org.jsfml.graphics.RenderTarget;
 import org.jsfml.window.Keyboard;
 import org.jsfml.window.Mouse;
 
@@ -21,10 +24,9 @@ import org.jsfml.window.Mouse;
  */
 public final class PlayerEntity extends GameEntity {
 
-    private double angle;
+    private float angle;
 
     private final float maxMoveSpeed;
-    private Vector2 target;
 
     private final float accelRate;
     private final float fConst;
@@ -32,8 +34,10 @@ public final class PlayerEntity extends GameEntity {
     private final int maxHealth;
     private int currentHealth;
 
-    public PlayerEntity(Vector2 pos) {
-        super(pos);
+    private final ParticleSystem moveParticleSystem;
+
+    public PlayerEntity(Vector2 position) {
+        super(position);
         initSprite();
 
         velocity = Vector2.Zero;
@@ -44,6 +48,8 @@ public final class PlayerEntity extends GameEntity {
         fConst = 0.95f;
         maxHealth = 3;
         currentHealth = maxHealth;
+
+        moveParticleSystem = new ParticleSystem(position);
     }
 
     /**
@@ -57,7 +63,8 @@ public final class PlayerEntity extends GameEntity {
         // handle key presses
         int ttx = (Keyboard.isKeyPressed(Keyboard.Key.A) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.D) ? 1 : 0);
         int tty = (Keyboard.isKeyPressed(Keyboard.Key.W) ? -1 : 0) + (Keyboard.isKeyPressed(Keyboard.Key.S) ? 1 : 0);
-        target = new Vector2(ttx, tty);
+
+        Vector2 target = new Vector2(ttx, tty);
 
         // normalize target direction
         target = target.normalize();
@@ -67,7 +74,7 @@ public final class PlayerEntity extends GameEntity {
         target = target.scl(accelRate);
 
         // target is now acceleration
-        Vector2 acc = target;
+        Vector2 acc = new Vector2(target);
 
         // integrate acceleration to get velocity
         velocity = velocity.sclAdd(acc, dt);
@@ -86,14 +93,38 @@ public final class PlayerEntity extends GameEntity {
         // set player angle based on mouse position
         Vector2 mousePos = new Vector2(Mouse.getPosition(Window.getRenderWindow()));
         Vector2 truePos = new Vector2(Window.getRenderWindow().mapCoordsToPixel(position.toVector2f()));
-        angle = Math.atan2(mousePos.y - truePos.y, mousePos.x - truePos.x);
+        angle = (float) Math.atan2(mousePos.y - truePos.y, mousePos.x - truePos.x);
 
         angle *= (180 / Math.PI);
         if (angle < 0) {
             angle += 360;
         }
+        
+        angle += 90;
 
-        sprite.setRotation(90 + (float) angle);
+        sprite.setRotation(angle);
+        
+        System.out.println(velocity);
+
+        // if moving, stream particles from opposite side of movement 
+        if (ttx != 0 || tty != 0) {
+            moveParticleSystem.addParticle();
+        }
+              
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+        Vector2 size = getSize();
+        
+        // set position based off current player sprite
+        Vector2 particlePos = position.add(new Vector2(sin*(size.x/2.5f), cos * (size.y/2.5f)));
+        moveParticleSystem.setOrigin(particlePos);
+
+    }
+
+    @Override
+    public void draw(RenderTarget target, RenderStates states) {
+        target.draw(sprite);
+        target.draw(moveParticleSystem);
     }
 
     @Override

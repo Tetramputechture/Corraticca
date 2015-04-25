@@ -7,6 +7,7 @@ import coratticca.physics.CollisionHandler;
 import coratticca.util.SpriteUtils;
 import coratticca.screen.GameScreen;
 import coratticca.vector.Vector2;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Sprite;
@@ -25,6 +26,8 @@ public abstract class GameEntity extends Entity {
     public GameEntity(Vector2 pos) {
         super(pos);
     }
+    
+    public abstract void update(float dt);
     
     /**
      * Initializes the Sprite of the current GameEntity.
@@ -88,12 +91,13 @@ public abstract class GameEntity extends Entity {
     }
 
     /**
-     * Gets the size of this GameEntity.
+     * Gets the size of the sprite this GameEntity.
      *
-     * @return this GameEntity's size.
+     * @return this GameEntity's sprite's size, as a Vector2 (width, height)
      */
-    public float getSize() {
-        return sprite.getScale().x;
+    public Vector2 getSize() {
+        FloatRect bounds = sprite.getGlobalBounds();
+        return new Vector2(bounds.width, bounds.height);
     }
 
     /**

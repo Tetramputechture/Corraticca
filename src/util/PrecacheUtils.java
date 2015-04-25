@@ -27,8 +27,6 @@ public class PrecacheUtils {
     private static Texture asteroidTextureA;
     private static Texture asteroidTextureB;
 
-    private static Texture enemyTexture;
-
     private static Font openSansFont;
 
     public static void precacheTextures() {
@@ -41,8 +39,6 @@ public class PrecacheUtils {
         precacheBulletTexture();
 
         precacheAsteroidTextures();
-
-        precacheEnemyTexture();
     }
 
     public static void precacheFonts() {
@@ -96,10 +92,6 @@ public class PrecacheUtils {
         asteroidTextureB = loadTexture("sprites/asteroidB.png");
     }
 
-    private static void precacheEnemyTexture() {
-        enemyTexture = loadTexture("sprites/enemy.png");
-    }
-
     public static Texture getStarfieldTexture() {
         return starfieldTexture;
     }
@@ -122,10 +114,6 @@ public class PrecacheUtils {
 
     public static Texture getAsteroidTextureB() {
         return asteroidTextureB;
-    }
-
-    public static Texture getEnemyTexture() {
-        return enemyTexture;
     }
 
     public static Font getOpenSansFont() {

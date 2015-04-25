@@ -18,7 +18,7 @@ public class FireAction extends Action {
     private final float playerVelocityScalar;
 
     public FireAction() {
-        fireSpeed = 500;
+        fireSpeed = 400;
         playerVelocityScalar = 63;
     }
 
@@ -37,15 +37,17 @@ public class FireAction extends Action {
 
         PlayerEntity player = g.getCurrentPlayer();
         float playerRotation = player.getRotation();
+        Vector2 playerSize = player.getSize();
 
+        
         float angle = (float) (Math.toRadians(playerRotation));
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
-
         // set position and angle based off current player sprite
-        Vector2 pos = player.getPos().add(new Vector2(sin, cos));
-        BulletEntity b = new BulletEntity(pos);
+        BulletEntity b = new BulletEntity(player.getPosition().add(new Vector2(sin*(playerSize.x/2.5f), -cos * (playerSize.y/2.5f))));
         b.setRotation(playerRotation);
+
+        
 
         Vector2 forward = new Vector2(sin, -cos);
         forward = forward.scl(fireSpeed);

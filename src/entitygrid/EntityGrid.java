@@ -79,7 +79,7 @@ public class EntityGrid {
 
         // get all the points the entity takes up
         // do not accept values outside of the grid
-        Vector2 ePos = e.getPos();
+        Vector2 ePos = e.getPosition();
 
         float topLeftX = Math.max(0, (ePos.x / gridCellSize) + gridXOffset);
         float topLeftY = Math.max(0, (ePos.y / gridCellSize) + gridYOffset);
@@ -101,7 +101,7 @@ public class EntityGrid {
         LinkedList<GameEntity> collidables = retrieve(e);
 
         for (GameEntity toCheck : collidables) {
-            float dist = toCheck.getPos().dst(e.getPos());
+            float dist = toCheck.getPosition().dst(e.getPosition());
             if (dist < maxDist) {
                 nearest = toCheck;
                 maxDist = dist;
@@ -114,7 +114,7 @@ public class EntityGrid {
 
         retrieveList.clear();
 
-        Vector2 ePos = e.getPos();
+        Vector2 ePos = e.getPosition();
 
         float topLeftX = Math.max(0, (ePos.x / gridCellSize) + gridXOffset);
         float topLeftY = Math.max(0, (ePos.y / gridCellSize) + gridYOffset);

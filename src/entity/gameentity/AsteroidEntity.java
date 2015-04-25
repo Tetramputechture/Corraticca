@@ -21,7 +21,7 @@ public final class AsteroidEntity extends GameEntity {
     private final float speed;
     private final float maxSpeed = 50;
 
-    private int size;
+    private int mass;
     private static final float sizeScalarCoefficient = 1;
 
     // to make collisions feel more natural, add a little to the bounds
@@ -49,7 +49,7 @@ public final class AsteroidEntity extends GameEntity {
         sprite.setRotation(rand.randInt(0, 360));
 
         sprite.setScale(size, size);
-        this.size = size;
+        this.mass = size;
 
         // set speed based on size
         speed = sizeScalarCoefficient * 1 / size;
@@ -156,7 +156,7 @@ public final class AsteroidEntity extends GameEntity {
      * @param b the bullet that is handled.
      */
     public void handleBulletIntersection(BulletEntity b) {
-        collidingBulletVelocity = b.getVelocity().div(size * 3).add(velocity);
+        collidingBulletVelocity = b.getVelocity().div(mass * 3).add(velocity);
         health--;
     }
 
@@ -181,22 +181,21 @@ public final class AsteroidEntity extends GameEntity {
         // if size is 2: explode into 2 size 1 asteroids
         // if size is 3: explode into 3 size 2 asteroids
         // if size is 4: explode into 4 size 3 asteroids
-        if (size == 1) {
+        if (mass == 1) {
             // display death particle
         } else {
-            for (int i = 0; i < size; i++) {
-                g.addEntity(new AsteroidEntity(new Vector2(position.x + 20 + i * 5, position.y + 20 + i * 5), size - 1));
+            for (int i = 0; i < mass; i++) {
+                g.addEntity(new AsteroidEntity(new Vector2(position.x + 20 + i * 5, position.y + 20 + i * 5), mass - 1));
             }
         }
     }
 
-    @Override
-    public float getSize() {
-        return size;
+    public float getMass() {
+        return mass;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setMass(int mass) {
+        this.mass = mass;
     }
 
     @Override

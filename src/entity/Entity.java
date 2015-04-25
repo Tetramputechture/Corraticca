@@ -32,28 +32,21 @@ public abstract class Entity implements Drawable {
     }
 
     /**
-     * Updates the entity based on time.
-     *
-     * @param dt the difference in frametime from last update.
-     */
-    public abstract void update(float dt);
-
-    /**
      * Gets the position of the entity relative to the current window.
      *
      * @return the position of the entity as a float vector
      */
-    public Vector2 getPos() {
+    public Vector2 getPosition() {
         return position;
     }
 
     /**
      * Sets the position of the entity.
      *
-     * @param pos the position to be set.
+     * @param position the position to be set.
      */
-    public void setPos(Vector2 pos) {
-        this.position = pos;
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
     /**

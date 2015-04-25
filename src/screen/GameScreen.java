@@ -1,5 +1,6 @@
 package coratticca.screen;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Particle;
 import coratticca.entity.gameentity.AsteroidEntity;
 import coratticca.entity.gameentity.BulletEntity;
 import coratticca.entity.gameentity.PlayerEntity;
@@ -8,7 +9,9 @@ import coratticca.physics.CollisionHandler;
 import coratticca.util.RandomUtils;
 import coratticca.util.PrecacheUtils;
 import coratticca.camera.Camera;
+import coratticca.entity.particleentity.ParticleEntity;
 import coratticca.entitygrid.EntityGrid;
+import coratticca.particlesystem.ParticleSystem;
 import coratticca.util.SpriteUtils;
 import coratticca.window.Window;
 import coratticca.widget.Label;
@@ -86,7 +89,7 @@ public final class GameScreen extends Screen {
         player = new PlayerEntity(Vector2.Zero);
         entities.add(player);
 
-        camera.setPos(player.getPos());
+        camera.setPos(player.getPosition());
 
         initSprites();
         initLabels();
@@ -105,7 +108,7 @@ public final class GameScreen extends Screen {
         widgets.add(scoreLabel);
 
         // position label
-        Text posText = new Text(String.format("Postion: (%s, %s)", player.getPos().x, player.getPos().y), font, fontSize);
+        Text posText = new Text(String.format("Postion: (%s, %s)", player.getPosition().x, player.getPosition().y), font, fontSize);
         posText.setColor(Color.WHITE);
 
         posLabel = new Label(posText);
@@ -124,7 +127,7 @@ public final class GameScreen extends Screen {
     @Override
     public void updateWidgets(Vector2 size) {
 
-        Vector2 playerPos = player.getPos();
+        Vector2 playerPos = player.getPosition();
 
         scoreLabel.setPosition(5, 5);
         scoreLabel.setText(String.format("Score: %s", asteroidsBlasted));

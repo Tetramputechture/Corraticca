@@ -38,14 +38,14 @@ public class CollisionHandler {
         }
 
         // make a few variables to make equations easier to read
-        Vector2 aPos = a.getPos();
-        Vector2 bPos = b.getPos();
+        Vector2 aPos = a.getPosition();
+        Vector2 bPos = b.getPosition();
 
         Vector2 aV = a.getVelocity();
         Vector2 bV = b.getVelocity();
 
-        float aMass = a.getSize();
-        float bMass = b.getSize();
+        float aMass = a.getSize().x;
+        float bMass = b.getSize().x;
 
         // no mass makes no sense in collisions
         if (aMass == 0 || bMass == 0) {
