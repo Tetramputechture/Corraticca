@@ -9,13 +9,9 @@ import java.util.Random;
  *
  * @author Nick
  */
-public class RandomUtils {
+public final class RandomUtils {
 
-    private final Random rand;
-
-    public RandomUtils() {
-        rand = new Random();
-    }
+    private static final Random rand = new Random();
 
     /**
      * Returns a random integer between two bounds.
@@ -24,7 +20,7 @@ public class RandomUtils {
      * @param max the upper bound.
      * @return a random integer between min and max.
      */
-    public int randInt(int min, int max) {
+    public static int randInt(int min, int max) {
         int randomNum = rand.nextInt(java.lang.Math.abs((max - min) + 1)) + min;
         return randomNum;
     }
@@ -36,7 +32,7 @@ public class RandomUtils {
      * @param max the upper bound.
      * @return a random float between min and max.
      */
-    public float randFloat(float min, float max) {
+    public static float randFloat(float min, float max) {
         double randomNum = min + (max - min) * rand.nextDouble();
         return (float) randomNum;
     }
@@ -50,7 +46,7 @@ public class RandomUtils {
      * @param yUpperBound the upper bound of the y component.
      * @return a random vector with components between the specified bounds.
      */
-    public Vector2 randVector(float xLowerBound, float xUpperBound,
+    public static Vector2 randVector(float xLowerBound, float xUpperBound,
             float yLowerBound, float yUpperBound) {
         return new Vector2(randFloat(xLowerBound, xUpperBound), randFloat(yLowerBound, yUpperBound));
     }
@@ -61,7 +57,7 @@ public class RandomUtils {
      * @param c the Camera that specifies the view.
      * @return a random vector on the edge of the game view.
      */
-    public Vector2 getRandomEdgeVector(Camera c) {
+    public static Vector2 getRandomEdgeVector(Camera c) {
         Vector2 cCenter = new Vector2(c.getView().getCenter());
         Vector2 cSize = new Vector2(c.getView().getSize());
 

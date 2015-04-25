@@ -19,14 +19,20 @@ public class ParticleEntity extends Entity {
 
     private float lifespan;
     
-    private final RandomUtils random = new RandomUtils();
+    private float decayRate;
+    
+    private float radius;
+    
+    private Color color;
 
     public ParticleEntity(Vector2 position) {
         super(position);
         velocity = Vector2.Zero;
-        acceleration = new Vector2(0, 0.05f);
-
-        lifespan = random.randInt(200, 255);
+        acceleration = Vector2.Zero;
+        lifespan = 255;
+        decayRate = 2;
+        radius = 2;
+        color = Color.WHITE;
     }
     
     public void setAcceleration(Vector2 acceleration) {
@@ -36,7 +42,27 @@ public class ParticleEntity extends Entity {
     public Vector2 getAcceleraion() {
         return acceleration;
     }
+    
+    public void setDecayRate(float decayRate) {
+        this.decayRate = decayRate;
+    }
+    
+    public float getDecayRate() {
+        return decayRate;
+    }
+    
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
 
+    public float getRadius() {
+        return radius;
+    }
+    
+    public void setColor(Color color) {     
+        this.color = color;       
+    }
+    
     public boolean isDead() {
         return lifespan < 0.0;
     }
@@ -45,13 +71,14 @@ public class ParticleEntity extends Entity {
         velocity = velocity.add(acceleration);
         position = position.add(velocity);
 
-        lifespan -= 2.0;
+        lifespan -= decayRate;
     }
 
     @Override
     public void draw(RenderTarget rt, RenderStates rs) {
-        CircleShape c = new CircleShape(2);
-        c.setFillColor(new Color(62, 108, 213, (int) lifespan));
+        CircleShape c = new CircleShape(radius);
+        color = new Color(color.r, color.g, color.b, (int) lifespan);
+        c.setFillColor(color);
         c.setPosition(position.toVector2f());
         rt.draw(c);
     }

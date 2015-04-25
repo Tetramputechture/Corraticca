@@ -1,6 +1,5 @@
 package coratticca.screen;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Particle;
 import coratticca.entity.gameentity.AsteroidEntity;
 import coratticca.entity.gameentity.BulletEntity;
 import coratticca.entity.gameentity.PlayerEntity;
@@ -9,9 +8,7 @@ import coratticca.physics.CollisionHandler;
 import coratticca.util.RandomUtils;
 import coratticca.util.PrecacheUtils;
 import coratticca.camera.Camera;
-import coratticca.entity.particleentity.ParticleEntity;
 import coratticca.entitygrid.EntityGrid;
-import coratticca.particlesystem.ParticleSystem;
 import coratticca.util.SpriteUtils;
 import coratticca.window.Window;
 import coratticca.widget.Label;
@@ -39,8 +36,6 @@ public final class GameScreen extends Screen {
     private final CollisionHandler physicsHandler;
 
     private final Camera camera;
-
-    private final RandomUtils rand;
 
     private final Vector2 gridSize;
 
@@ -73,13 +68,11 @@ public final class GameScreen extends Screen {
         camera = new Camera();
         camera.setSize(Window.getSize());
 
-        rand = new RandomUtils();
-
         gameClock = new Clock();
 
         gridSize = camera.getSize().scl(2);
 
-        setBgColor(new Color(150, 150, 150));
+        setBgColor(new Color(150, 0, 150));
 
         grid = new EntityGrid(gridSize);
 
@@ -149,7 +142,7 @@ public final class GameScreen extends Screen {
         SpriteUtils.setOriginAtCenter(pointerSprite, pT);
 
         // init background sprite
-        Texture bT = PrecacheUtils.getStarfieldTexture();
+        Texture bT = PrecacheUtils.getRandomStarfieldTexture(gridSize.scl(2));
         backgroundSprite = new Sprite(bT);
         SpriteUtils.setOriginAtCenter(backgroundSprite, bT);
     }
@@ -187,9 +180,11 @@ public final class GameScreen extends Screen {
         updateEntitiesAndFillGrid(dt);
 
         detectEntityCollisionsAndDraw(rt, dt);
+        
+        rt.draw(player);
 
         if (Math.random() < 0.01) {
-            addEntity(new AsteroidEntity(rand.getRandomEdgeVector(camera), rand.randInt(1, 3)));
+            addEntity(new AsteroidEntity(RandomUtils.getRandomEdgeVector(camera), RandomUtils.randInt(1, 3)));
         }
 
         updateWidgets(Window.getSize());
@@ -215,6 +210,7 @@ public final class GameScreen extends Screen {
     private void checkAndRemoveEntities() {
 
         entsToBeRemoved.clear();
+
 
         for (GameEntity e : entities) {
             if (e.toBeRemoved(grid)) {

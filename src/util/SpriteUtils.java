@@ -19,19 +19,19 @@ public class SpriteUtils {
 
     public static AABB globalBoundsToAABB(Sprite s) {
 
-        // make new bounding boxes, s little smaller than the sprites bounding boxes
+        // make new bounding boxes, a little smaller than the sprites bounding boxes
         // this stops objects from colliding before intersecting
         float adjustmentScalar = 2.5f;
 
         FloatRect bounds = s.getGlobalBounds();
 
         // convert bounds to aabb
-        Vector2 c = new Vector2((bounds.left + bounds.width / 2),
+        Vector2 center = new Vector2((bounds.left + bounds.width / 2),
                 bounds.top + bounds.height / 2);
 
-        Vector2 r = new Vector2(bounds.width / adjustmentScalar, bounds.height / adjustmentScalar);
+        Vector2 radius = new Vector2(bounds.width / adjustmentScalar, bounds.height / adjustmentScalar);
 
-        return new AABB(c, r);
+        return new AABB(center, radius);
     }
 
 }

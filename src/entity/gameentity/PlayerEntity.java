@@ -7,6 +7,7 @@ import coratticca.entitygrid.EntityGrid;
 import coratticca.particlesystem.ParticleSystem;
 import coratticca.screen.GameScreen;
 import coratticca.screen.GameLostScreen;
+import coratticca.util.RandomUtils;
 import coratticca.window.Window;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
@@ -52,11 +53,6 @@ public final class PlayerEntity extends GameEntity {
         moveParticleSystem = new ParticleSystem(position);
     }
 
-    /**
-     * Updates the player entity based on frametime.
-     *
-     * @param dt the difference in time since last frame.
-     */
     @Override
     public void update(float dt) {
 
@@ -103,8 +99,6 @@ public final class PlayerEntity extends GameEntity {
         angle += 90;
 
         sprite.setRotation(angle);
-        
-        System.out.println(velocity);
 
         // if moving, stream particles from opposite side of movement 
         if (ttx != 0 || tty != 0) {
@@ -113,18 +107,19 @@ public final class PlayerEntity extends GameEntity {
               
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
-        Vector2 size = getSize();
         
         // set position based off current player sprite
-        Vector2 particlePos = position.add(new Vector2(sin*(size.x/2.5f), cos * (size.y/2.5f)));
+        Vector2 particlePos = position.add(new Vector2(cos, sin));
         moveParticleSystem.setOrigin(particlePos);
-
+        moveParticleSystem.setParticleDecayRate(RandomUtils.randInt(5, 10));
+        moveParticleSystem.setParticleVelocity(RandomUtils.randVector(0, 1f, 0, 1f));
+        moveParticleSystem.setParticleColor(Color.WHITE);
     }
 
     @Override
     public void draw(RenderTarget target, RenderStates states) {
-        target.draw(sprite);
         target.draw(moveParticleSystem);
+        target.draw(sprite);
     }
 
     @Override

@@ -2,12 +2,16 @@ package coratticca.util;
 
 import coratticca.entity.gameentity.PlayerEntity;
 import coratticca.screen.MainMenuScreen;
+import coratticca.vector.Vector2;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsfml.graphics.Font;
+import org.jsfml.graphics.Image;
 import org.jsfml.graphics.Texture;
+import org.jsfml.graphics.TextureCreationException;
 
 /**
  * Handles initializing / precaching of all textures used in the game.
@@ -94,6 +98,48 @@ public class PrecacheUtils {
 
     public static Texture getStarfieldTexture() {
         return starfieldTexture;
+    }
+
+    public static Texture getRandomStarfieldTexture(Vector2 textureSize) {
+        int[] pixels = new int[(int) (textureSize.x * textureSize.y)];
+        int rows = (int) textureSize.y;
+        int cols = (int) textureSize.x;
+
+        // calculate ARGB values for white and black pixels
+        int argbWhite = ((0xff) << 24) 
+                | ((255 & 0x0ff) << 16)
+                | ((255 & 0x0ff) << 8)
+                | (255 & 0x0ff);
+        
+        int argbBlack = ((255 & 0xff) << 24) 
+                | ((0 & 0x0ff) << 16)
+                | ((0 & 0x0ff) << 8)
+                | (0 & 0x0ff);
+        
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int index = row * cols + col;
+                if (Math.random() < 0.0005) {
+                    pixels[index] = argbWhite;
+                } else {
+                    pixels[index] = argbBlack;
+                }
+            }
+        }
+        
+        Image i = new Image();
+        i.create(cols, rows, pixels);
+        
+        Texture t = new Texture();
+        try {
+            t.loadFromImage(i);
+        } catch (TextureCreationException ex) {
+            Logger.getLogger(PrecacheUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        System.out.println(t.getSize());
+        
+        return t;
     }
 
     public static Texture getPointerTexture() {
