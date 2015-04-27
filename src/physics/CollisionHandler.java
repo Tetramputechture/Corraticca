@@ -44,8 +44,8 @@ public class CollisionHandler {
         Vector2 aV = a.getVelocity();
         Vector2 bV = b.getVelocity();
 
-        float aMass = a.getSize().x;
-        float bMass = b.getSize().x;
+        float aMass = a.getMass();
+        float bMass = b.getMass();
 
         // no mass makes no sense in collisions
         if (aMass == 0 || bMass == 0) {
@@ -57,7 +57,7 @@ public class CollisionHandler {
         float velAlongNormal = rv.dot(norm);
 
         // do not resolve if velocities are separating
-        if (velAlongNormal > 0) {
+        if (velAlongNormal > 0.001) {
             return;
         }
 

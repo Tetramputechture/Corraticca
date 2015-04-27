@@ -2,9 +2,12 @@ package coratticca.action;
 
 import coratticca.entity.gameentity.BulletEntity;
 import coratticca.entity.gameentity.PlayerEntity;
+import coratticca.particlesystem.ParticleSystem;
 import coratticca.screen.GameScreen;
+import coratticca.util.RandomUtils;
 import coratticca.window.Window;
 import coratticca.vector.Vector2;
+import org.jsfml.graphics.Color;
 
 /**
  * Action to create a bullet entity.
@@ -16,9 +19,11 @@ public class FireAction extends Action {
     private final int fireSpeed;
 
     private final float playerVelocityScalar;
+    
+    private ParticleSystem mps;
 
     public FireAction() {
-        fireSpeed = 400;
+        fireSpeed = 600;
         playerVelocityScalar = 63;
     }
 
@@ -49,7 +54,12 @@ public class FireAction extends Action {
         forward = forward.scl(fireSpeed);
         Vector2 inheritedVelocity = player.getVelocity().scl(playerVelocityScalar);
         b.setVelocity(forward.add(inheritedVelocity));
-
+        
+        mps = b.getMoveParticleSystem();
+        
+        mps.setParticleDecayRate(RandomUtils.randInt(15, 20));
+        mps.setParticleColor(Color.RED);
+        mps.setParticleRadius(1);
         g.addEntity(b);
     }
 

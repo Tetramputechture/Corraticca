@@ -33,8 +33,7 @@ public class MainMenuScreen extends Screen {
         int fontSize = 52;
 
         // add play button
-        Text playText = new Text("Play!", font, fontSize);
-        playText.setColor(Color.WHITE);
+        Text playText = new Text("play", font, fontSize);
         TextUtils.setOriginToCenter(playText);
 
         playButton = new Button(playText);
@@ -46,8 +45,7 @@ public class MainMenuScreen extends Screen {
         widgets.add(playButton);
 
         // add exit button
-        Text exitText = new Text("Exit!", font, fontSize);
-        exitText.setColor(Color.WHITE);
+        Text exitText = new Text("exit", font, fontSize);
         TextUtils.setOriginToCenter(exitText);
 
         exitButton = new Button(exitText);

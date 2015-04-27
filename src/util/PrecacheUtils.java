@@ -137,8 +137,6 @@ public class PrecacheUtils {
             Logger.getLogger(PrecacheUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        System.out.println(t.getSize());
-        
         return t;
     }
 

@@ -20,7 +20,7 @@ public class Coratticca {
 
         Vector2 pos = new Vector2(1920 / 4, 1080 / 4);
 
-        Window w = new Window(pos, "Floppy Disk Laser Shooter In Space - Alpha");
+        Window w = new Window(pos, "Corattica - Alpha");
         Window.setCurrentScreen(new MainMenuScreen());
         w.display();
 

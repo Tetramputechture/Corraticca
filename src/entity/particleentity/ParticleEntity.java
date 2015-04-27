@@ -1,12 +1,12 @@
 package coratticca.entity.particleentity;
 
 import coratticca.entity.Entity;
-import coratticca.util.RandomUtils;
 import coratticca.vector.Vector2;
 import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
+import org.jsfml.graphics.Sprite;
 
 /**
  * A ParticleEntity that has a position, velocity, acceleration, and lifespan.
@@ -24,6 +24,8 @@ public class ParticleEntity extends Entity {
     private float radius;
     
     private Color color;
+    
+    private Sprite sprite;
 
     public ParticleEntity(Vector2 position) {
         super(position);
@@ -33,6 +35,7 @@ public class ParticleEntity extends Entity {
         decayRate = 2;
         radius = 2;
         color = Color.WHITE;
+        sprite = null;
     }
     
     public void setAcceleration(Vector2 acceleration) {
@@ -41,6 +44,14 @@ public class ParticleEntity extends Entity {
     
     public Vector2 getAcceleraion() {
         return acceleration;
+    }
+    
+    public void setLifespan(float lifespan) {
+        this.lifespan = lifespan;
+    }
+    
+    public float getLifespan() {
+        return lifespan;
     }
     
     public void setDecayRate(float decayRate) {
@@ -53,6 +64,9 @@ public class ParticleEntity extends Entity {
     
     public void setRadius(float radius) {
         this.radius = radius;
+        if (sprite != null) {
+            sprite.setScale(new Vector2(radius, radius).toVector2f());
+        }
     }
 
     public float getRadius() {
@@ -60,7 +74,15 @@ public class ParticleEntity extends Entity {
     }
     
     public void setColor(Color color) {     
-        this.color = color;       
+        this.color = color;      
+    }
+    
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
+    }
+    
+    public Sprite getSprite() {
+        return sprite;
     }
     
     public boolean isDead() {
@@ -76,11 +98,17 @@ public class ParticleEntity extends Entity {
 
     @Override
     public void draw(RenderTarget rt, RenderStates rs) {
-        CircleShape c = new CircleShape(radius);
         color = new Color(color.r, color.g, color.b, (int) lifespan);
-        c.setFillColor(color);
-        c.setPosition(position.toVector2f());
-        rt.draw(c);
+        if (sprite == null) {
+            CircleShape c = new CircleShape(radius);
+            c.setFillColor(color);
+            c.setPosition(position.toVector2f());
+            rt.draw(c);
+        } else {
+            sprite.setColor(color);
+            sprite.setPosition(position.toVector2f());
+            rt.draw(sprite);
+        }
     }
 
 }

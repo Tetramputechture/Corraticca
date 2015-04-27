@@ -19,18 +19,27 @@ import org.jsfml.graphics.Sprite;
 public abstract class GameEntity extends Entity {
     
     /**
-     * This GameGameEntity's sprite.
+     * This GameEntity's sprite.
      */
     protected Sprite sprite;
+    
+    /**
+     * This GameEntity's mass.
+     */
+    protected int mass;
 
     public GameEntity(Vector2 pos) {
         super(pos);
     }
     
+    /**
+     * Updates this GameEntity based on delta time.
+     * @param dt the difference in frametime from last update.
+     */
     public abstract void update(float dt);
     
     /**
-     * Initializes the Sprite of the current GameEntity.
+     * Initializes the Sprite of this GameEntity.
      */
     public abstract void initSprite();
      
@@ -43,10 +52,18 @@ public abstract class GameEntity extends Entity {
         return sprite;
     }
     
+    public int getMass() {
+        return mass;
+    }
+
+    public void setMass(int mass) {
+        this.mass = mass;
+    }
+    
     /**
      * Returns the AABB of this GameEntity.
      *
-     * @return
+     * @return the AABB of this GameEntity.
      */
     public AABB getBounds() {
         return SpriteUtils.globalBoundsToAABB(sprite);
@@ -65,7 +82,7 @@ public abstract class GameEntity extends Entity {
      * If this GameEntity should be removed from the grid.
      *
      * @param grid the grid for the GameEntity to be removed from.
-     * @return iff the GameEntity should be removed from the EntityGrid.
+     * @return if the GameEntity should be removed from the EntityGrid.
      */
     public abstract boolean toBeRemoved(EntityGrid grid);
 

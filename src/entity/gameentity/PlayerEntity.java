@@ -7,12 +7,12 @@ import coratticca.entitygrid.EntityGrid;
 import coratticca.particlesystem.ParticleSystem;
 import coratticca.screen.GameScreen;
 import coratticca.screen.GameLostScreen;
-import coratticca.util.RandomUtils;
 import coratticca.window.Window;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Sprite;
 import org.jsfml.graphics.Texture;
 import coratticca.vector.Vector2;
+import org.jsfml.graphics.BlendMode;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.window.Keyboard;
@@ -42,6 +42,7 @@ public final class PlayerEntity extends GameEntity {
         initSprite();
 
         velocity = Vector2.Zero;
+        mass = 500;
 
         // set movement variables
         maxMoveSpeed = 120;
@@ -108,17 +109,18 @@ public final class PlayerEntity extends GameEntity {
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
         
-        // set position based off current player sprite
+        // set position and angle of particle based off current player sprite
         Vector2 particlePos = position.add(new Vector2(cos, sin));
         moveParticleSystem.setOrigin(particlePos);
-        moveParticleSystem.setParticleDecayRate(RandomUtils.randInt(5, 10));
-        moveParticleSystem.setParticleVelocity(RandomUtils.randVector(0, 1f, 0, 1f));
-        moveParticleSystem.setParticleColor(Color.WHITE);
+        
+        moveParticleSystem.setParticleDecayRate(4);
+        
+        moveParticleSystem.setParticleRadius(2);
     }
 
     @Override
     public void draw(RenderTarget target, RenderStates states) {
-        target.draw(moveParticleSystem);
+        target.draw(moveParticleSystem, new RenderStates(BlendMode.ADD));
         target.draw(sprite);
     }
 

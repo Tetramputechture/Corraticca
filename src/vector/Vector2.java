@@ -1,5 +1,6 @@
 package coratticca.vector;
 
+import coratticca.util.NumberUtils;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
@@ -148,7 +149,12 @@ public class Vector2 {
 
     @Override
     public String toString() {
-        return String.format("Vector: <%.30f, %.30f>", x, y);
+        StringBuilder sb = new StringBuilder("Vector: <");
+        sb.append(NumberUtils.roundTo3(x));
+        sb.append(", ");
+        sb.append(NumberUtils.roundTo3(y));
+        sb.append(">");
+        return sb.toString();
     }
 
 }

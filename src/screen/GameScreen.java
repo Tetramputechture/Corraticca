@@ -9,6 +9,7 @@ import coratticca.util.RandomUtils;
 import coratticca.util.PrecacheUtils;
 import coratticca.camera.Camera;
 import coratticca.entitygrid.EntityGrid;
+import coratticca.util.NumberUtils;
 import coratticca.util.SpriteUtils;
 import coratticca.window.Window;
 import coratticca.widget.Label;
@@ -49,16 +50,16 @@ public final class GameScreen extends Screen {
 
     private final PlayerEntity player;
 
-    private int enemiesKilled;
     private int asteroidsBlasted;
     private int shotsFired;
 
     private final Clock gameClock;
     private Clock pauseClock;
     private float lastTime;
+    private float dt;
     private float pauseTime;
 
-    private Label scoreLabel, posLabel, entityCountLabel;
+    private Label scoreLabel, posLabel, entityCountLabel, msPerFrameLabel;
 
     public GameScreen() {
         super();
@@ -94,26 +95,25 @@ public final class GameScreen extends Screen {
         int fontSize = 20;
 
         // score label
-        Text scoreText = new Text(String.format("Score: %s", enemiesKilled), font, fontSize);
-        scoreText.setColor(Color.WHITE);
-
+        Text scoreText = new Text("", font, fontSize);
         scoreLabel = new Label(scoreText);
         widgets.add(scoreLabel);
 
         // position label
-        Text posText = new Text(String.format("Postion: (%s, %s)", player.getPosition().x, player.getPosition().y), font, fontSize);
-        posText.setColor(Color.WHITE);
-
+        Text posText = new Text("", font, fontSize);
         posLabel = new Label(posText);
         widgets.add(posLabel);
 
         // entity count label
-        Text entityCountText = new Text(String.format("Entity count: %s", entities.size()), font, fontSize);
-        entityCountText.setColor(Color.WHITE);
-
+        Text entityCountText = new Text("", font, fontSize);
         entityCountLabel = new Label(entityCountText);
         widgets.add(entityCountLabel);
-
+        
+        // ms/f label
+        Text msPerFrameText = new Text("", font, fontSize);
+        msPerFrameLabel = new Label(msPerFrameText);
+        widgets.add(msPerFrameLabel);
+        
         updateWidgets(Window.getSize());
     }
 
@@ -123,14 +123,29 @@ public final class GameScreen extends Screen {
         Vector2 playerPos = player.getPosition();
 
         scoreLabel.setPosition(5, 5);
-        scoreLabel.setText(String.format("Score: %s", asteroidsBlasted));
+        
+        StringBuilder scoreSb = new StringBuilder("score: ");
+        scoreSb.append(asteroidsBlasted);
+        scoreLabel.setText(scoreSb.toString());
 
-        posLabel.setPosition(5, size.y - 65);
-        posLabel.setText(String.format("Position: (%.0f, %.0f)", playerPos.x, playerPos.y));
+        posLabel.setPosition(5, size.y - 90);
+        StringBuilder posSb = new StringBuilder("position: ");
+        posSb.append(NumberUtils.round(playerPos.x));
+        posSb.append(", ");
+        posSb.append(NumberUtils.round(playerPos.y));
+        posLabel.setText(posSb.toString());
 
-        entityCountLabel.setPosition(5, size.y - 30);
-
-        entityCountLabel.setText(String.format("Entity count: %s", entities.size()));
+        entityCountLabel.setPosition(5, size.y - 60);
+        
+        StringBuilder entityCountSb = new StringBuilder("entity count: ");
+        entityCountSb.append(entities.size());
+        entityCountLabel.setText(entityCountSb.toString());
+        
+        msPerFrameLabel.setPosition(5, size.y - 30);
+        
+        StringBuilder mspfSb = new StringBuilder("ms/f: ");
+        mspfSb.append(NumberUtils.roundTo3(dt*1000));
+        msPerFrameLabel.setText(mspfSb.toString());    
     }
 
     /**
@@ -161,7 +176,7 @@ public final class GameScreen extends Screen {
 
         // set delta time
         float currentTime = gameClock.getElapsedTime().asSeconds();
-        float dt = currentTime - lastTime;
+        dt = currentTime - lastTime;
 
         // if game was paused, subtract the time paused from dt only on the first
         // frame out of pause

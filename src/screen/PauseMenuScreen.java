@@ -42,8 +42,7 @@ public class PauseMenuScreen extends Screen {
         int fontSize = 24;
 
         // add exit button
-        Text exitText = new Text("Exit to Main Menu", font, fontSize);
-        exitText.setColor(Color.WHITE);
+        Text exitText = new Text("exit to main menu", font, fontSize);
         TextUtils.setOriginToCenter(exitText);
 
         exitButton = new Button(exitText);
@@ -55,9 +54,8 @@ public class PauseMenuScreen extends Screen {
         widgets.add(exitButton);
 
         // add resume button
-        Text resumeText = new Text("Resume Game", font, fontSize);
+        Text resumeText = new Text("resume", font, fontSize);
         TextUtils.setOriginToCenter(resumeText);
-        resumeText.setColor(Color.WHITE);
 
         // add resume game button
         resumeButton = new Button(resumeText);

@@ -41,8 +41,7 @@ public class GameLostScreen extends Screen {
         int fontSize = 24;
 
         // game lost label
-        Text gameLostText = new Text("Game Lost! :(", font, 72);
-        gameLostText.setColor(Color.WHITE);
+        Text gameLostText = new Text("game lost :(", font, 72);
         TextUtils.setOriginToCenter(gameLostText);
 
         gameLostLabel = new Label(gameLostText);
@@ -50,8 +49,7 @@ public class GameLostScreen extends Screen {
         widgets.add(gameLostLabel);
 
         // exit button
-        Text exitText = new Text("Exit To Main Menu", font, fontSize);
-        exitText.setColor(Color.WHITE);
+        Text exitText = new Text("exit to main menu", font, fontSize);
         TextUtils.setOriginToCenter(exitText);
 
         exitButton = new Button(exitText);
@@ -63,8 +61,7 @@ public class GameLostScreen extends Screen {
         widgets.add(exitButton);
 
         // new game button
-        Text newGameText = new Text("New Game", font, fontSize);
-        newGameText.setColor(Color.WHITE);
+        Text newGameText = new Text("new game", font, fontSize);
         TextUtils.setOriginToCenter(newGameText);
 
         newGameButton = new Button(newGameText);
@@ -76,15 +73,13 @@ public class GameLostScreen extends Screen {
         widgets.add(newGameButton);
 
         // stats label
-        Text statsText = new Text(String.format("Asteroids blasted: %s\n"
-                + "Shots fired: %s\n"
-                + "Accuracy: %.4f",
-                game.getAsteroidsBlasted(),
-                game.getShotsFired(),
-                game.getAccuracy()),
-                font,
-                fontSize - 5);
-        statsText.setColor(Color.WHITE);
+        StringBuilder statsSb = new StringBuilder("asteroids blasted: " );
+        statsSb.append(game.getAsteroidsBlasted());
+        statsSb.append("\nshots fired: ");
+        statsSb.append(game.getShotsFired());
+        statsSb.append("\naccuracy: ");
+        statsSb.append(game.getAccuracy());
+        Text statsText = new Text(statsSb.toString(), font, fontSize - 5);
         TextUtils.setOriginToCenter(statsText);
 
         statsLabel = new Label(statsText);
